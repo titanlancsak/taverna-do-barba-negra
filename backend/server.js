@@ -17,6 +17,9 @@ app.get('/api/health', (req, res) => {
 const imageRoutes = require('./routes/image');
 app.use('/api/image', imageRoutes);
 
+const downloadRoutes = require('./routes/download');
+app.use('/api/download', downloadRoutes);
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

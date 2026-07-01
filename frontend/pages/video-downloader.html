@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video/Audio Downloader - Blackbeard's Tavern</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/tools.css">
+</head>
+<body>
+  <header>
+    <h1>🏴‍☠️ Blackbeard's Tavern 🍺</h1>
+    <nav>
+      <a href="../index.html">Home</a>
+      <a href="image-converter.html">Image Converter</a>
+      <a href="video-downloader.html">Video/Audio Downloader</a>
+      <a href="audio-converter.html">Audio Converter</a>
+      <a href="language-courses.html">Language Courses</a>
+      <a href="free-books.html">Free Books</a>
+      <a href="linux-distros.html">Linux Distros</a>
+      <a href="scripts.html">Useful Scripts</a>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Video/Audio Downloader</h2>
+    <p>Paste a link and download it as video (MP4) or audio (MP3).</p>
+
+    <form id="download-form">
+      <input type="url" id="url-input" placeholder="https://..." required>
+
+      <label for="type-select">Download as:</label>
+      <select id="type-select">
+        <option value="video">Video (MP4)</option>
+        <option value="audio">Audio (MP3)</option>
+      </select>
+
+      <button type="submit">Download</button>
+    </form>
+
+    <p id="status-message"></p>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Blackbeard's Tavern</p>
+  </footer>
+
+  <script src="../js/video-downloader.js"></script>
+</body>
+</html>
