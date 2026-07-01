@@ -23,6 +23,9 @@ app.use('/api/download', downloadRoutes);
 const audioRoutes = require('./routes/audio');
 app.use('/api/audio', audioRoutes);
 
+const musicRoutes = require('./routes/music');
+app.use('/api/music', musicRoutes);
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
