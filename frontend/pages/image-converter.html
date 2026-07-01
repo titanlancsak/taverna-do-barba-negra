@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Converter - Blackbeard's Tavern</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/tools.css">
+</head>
+<body>
+  <header>
+    <h1>🏴‍☠️ Blackbeard's Tavern 🍺</h1>
+    <nav>
+      <a href="../index.html">Home</a>
+      <a href="image-converter.html">Image Converter</a>
+      <a href="video-downloader.html">Video/Audio Downloader</a>
+      <a href="audio-converter.html">Audio Converter</a>
+      <a href="language-courses.html">Language Courses</a>
+      <a href="free-books.html">Free Books</a>
+      <a href="linux-distros.html">Linux Distros</a>
+      <a href="scripts.html">Useful Scripts</a>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Image Format Converter</h2>
+    <p>Upload an image and convert it between PNG, JPEG, and GIF.</p>
+
+    <form id="convert-form">
+      <input type="file" id="image-input" accept="image/*" required>
+
+      <label for="format-select">Convert to:</label>
+      <select id="format-select">
+        <option value="png">PNG</option>
+        <option value="jpeg">JPEG</option>
+        <option value="gif">GIF</option>
+      </select>
+
+      <button type="submit">Convert</button>
+    </form>
+
+    <p id="status-message"></p>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Blackbeard's Tavern</p>
+  </footer>
+
+  <script src="../js/image-converter.js"></script>
+</body>
+</html>
