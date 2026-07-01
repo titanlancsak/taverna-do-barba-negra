@@ -1,0 +1,8 @@
+node_modules/
+backend/uploads/*
+backend/converted/*
+!backend/uploads/.gitkeep
+!backend/converted/.gitkeep
+.env
+.DS_Store
+*.log
