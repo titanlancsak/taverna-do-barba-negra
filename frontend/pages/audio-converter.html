@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Audio Converter - Blackbeard's Tavern</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/tools.css">
+</head>
+<body>
+  <header>
+    <h1>🏴‍☠️ Blackbeard's Tavern 🍺</h1>
+    <nav>
+      <a href="../index.html">Home</a>
+      <a href="image-converter.html">Image Converter</a>
+      <a href="video-downloader.html">Video/Audio Downloader</a>
+      <a href="audio-converter.html">Audio Converter</a>
+      <a href="language-courses.html">Language Courses</a>
+      <a href="free-books.html">Free Books</a>
+      <a href="linux-distros.html">Linux Distros</a>
+      <a href="scripts.html">Useful Scripts</a>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Audio Format Converter</h2>
+    <p>Upload an audio file and convert it to another format.</p>
+
+    <form id="convert-form">
+      <input type="file" id="audio-input" accept="audio/*" required>
+
+      <label for="format-select">Convert to:</label>
+      <select id="format-select">
+        <option value="mp3">MP3</option>
+        <option value="wav">WAV</option>
+        <option value="ogg">OGG</option>
+        <option value="aac">AAC</option>
+        <option value="flac">FLAC</option>
+        <option value="m4a">M4A</option>
+      </select>
+
+      <button type="submit">Convert</button>
+    </form>
+
+    <p id="status-message"></p>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Blackbeard's Tavern</p>
+  </footer>
+
+  <script src="../js/audio-converter.js"></script>
+</body>
+</html>

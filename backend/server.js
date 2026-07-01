@@ -20,6 +20,9 @@ app.use('/api/image', imageRoutes);
 const downloadRoutes = require('./routes/download');
 app.use('/api/download', downloadRoutes);
 
+const audioRoutes = require('./routes/audio');
+app.use('/api/audio', audioRoutes);
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
