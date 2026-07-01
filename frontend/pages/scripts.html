@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Useful Scripts - Blackbeard's Tavern</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/tools.css">
+</head>
+<body>
+  <header>
+    <h1>🏴‍☠️ Blackbeard's Tavern 🍺</h1>
+    <nav>
+      <a href="../index.html">Home</a>
+      <a href="image-converter.html">Image Converter</a>
+      <a href="video-downloader.html">Video/Audio Downloader</a>
+      <a href="audio-converter.html">Audio Converter</a>
+      <a href="language-courses.html">Language Courses</a>
+      <a href="free-books.html">Free Books</a>
+      <a href="linux-distros.html">Linux Distros</a>
+      <a href="scripts.html">Useful Scripts</a>
+    </nav>
+  </header>
+
+  <main class="content-list">
+    <h2>Useful Automation Scripts</h2>
+    <p>Copy and paste these into your terminal. Always read a script before running it.</p>
+
+    <div class="script-card">
+      <h3>System update (Rocky/RHEL-based)</h3>
+      <pre><code>sudo dnf update -y && sudo dnf autoremove -y</code></pre>
+      <button class="copy-btn">Copy</button>
+    </div>
+
+    <div class="script-card">
+      <h3>Find largest files on disk</h3>
+      <pre><code>du -ah / 2>/dev/null | sort -rh | head -20</code></pre>
+      <button class="copy-btn">Copy</button>
+    </div>
+
+    <div class="script-card">
+      <h3>Check open ports</h3>
+      <pre><code>sudo ss -tulpn</code></pre>
+      <button class="copy-btn">Copy</button>
+    </div>
+
+    <div class="script-card">
+      <h3>Backup a folder with timestamp</h3>
+      <pre><code>tar -czf backup_$(date +%Y%m%d_%H%M%S).tar.gz /path/to/folder</code></pre>
+      <button class="copy-btn">Copy</button>
+    </div>
+
+    <div class="script-card">
+      <h3>Monitor system resources live</h3>
+      <pre><code>htop</code></pre>
+      <button class="copy-btn">Copy</button>
+    </div>
+
+    <div class="script-card">
+      <h3>Auto-organize Downloads folder by file type</h3>
+      <pre><code>mkdir -p ~/Downloads/{Images,Videos,Audio,Documents,Archives,Scripts}
+cd ~/Downloads
+for f in *; do
+  [ -f "$f" ] || continue
+  case "${f,,}" in
+    *.jpg|*.jpeg|*.png|*.gif|*.webp|*.svg) mv "$f" Images/ ;;
+    *.mp4|*.mkv|*.mov|*.avi|*.webm) mv "$f" Videos/ ;;
+    *.mp3|*.wav|*.flac|*.ogg|*.m4a) mv "$f" Audio/ ;;
+    *.pdf|*.docx|*.txt|*.xlsx|*.pptx) mv "$f" Documents/ ;;
+    *.zip|*.tar|*.gz|*.rar|*.7z) mv "$f" Archives/ ;;
+    *.sh|*.py|*.js) mv "$f" Scripts/ ;;
+  esac
+done
+echo "Downloads folder organized!"</code></pre>
+      <button class="copy-btn">Copy</button>
+    </div>
+
+    <div class="script-card">
+      <h3>Watch a folder and auto-sort new files (live)</h3>
+      <pre><code>sudo dnf install inotify-tools -y
+mkdir -p ~/Downloads/{Images,Videos,Audio,Documents,Archives}
+inotifywait -m -e create --format '%f' ~/Downloads | while read FILE; do
+  case "${FILE,,}" in
+    *.jpg|*.jpeg|*.png|*.gif) mv ~/Downloads/"$FILE" ~/Downloads/Images/ ;;
+    *.mp4|*.mkv|*.mov) mv ~/Downloads/"$FILE" ~/Downloads/Videos/ ;;
+    *.mp3|*.wav|*.flac) mv ~/Downloads/"$FILE" ~/Downloads/Audio/ ;;
+    *.pdf|*.docx|*.txt) mv ~/Downloads/"$FILE" ~/Downloads/Documents/ ;;
+    *.zip|*.tar|*.gz) mv ~/Downloads/"$FILE" ~/Downloads/Archives/ ;;
+  esac
+done</code></pre>
+      <button class="copy-btn">Copy</button>
+    </div>
+
+    <div class="script-card">
+      <h3>Delete files older than 30 days in a folder</h3>
+      <pre><code>find /path/to/folder -type f -mtime +30 -delete</code></pre>
+      <button class="copy-btn">Copy</button>
+    </div>
+
+    <div class="script-card">
+      <h3>Check disk space usage summary</h3>
+      <pre><code>df -h --total | grep total</code></pre>
+      <button class="copy-btn">Copy</button>
+    </div>
+
+    <div class="script-card">
+      <h3>List all running services</h3>
+      <pre><code>systemctl list-units --type=service --state=running</code></pre>
+      <button class="copy-btn">Copy</button>
+    </div>
+
+    <div class="script-card">
+      <h3>Create a swap file (useful for low-RAM VMs)</h3>
+      <pre><code>sudo fallocate -l 2G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab</code></pre>
+      <button class="copy-btn">Copy</button>
+    </div>
+
+    <div class="script-card">
+      <h3>Compress all images in a folder (requires ImageMagick)</h3>
+      <pre><code>sudo dnf install ImageMagick -y
+cd /path/to/folder
+mkdir -p compressed
+for f in *.jpg *.jpeg *.png; do
+  [ -f "$f" ] || continue
+  convert "$f" -quality 75 -resize 1920x1920\> "compressed/$f"
+done
+echo "Images compressed into ./compressed"</code></pre>
+      <button class="copy-btn">Copy</button>
+    </div>
+
+    <div class="script-card">
+      <h3>Find and kill a process using a specific port</h3>
+      <pre><code>sudo lsof -i :PORT_NUMBER
+# then run:
+sudo kill -9 PID</code></pre>
+      <button class="copy-btn">Copy</button>
+    </div>
+
+    <div class="script-card">
+      <h3>Auto-renew SSL certificates (Certbot cron check)</h3>
+      <pre><code>sudo certbot renew --dry-run</code></pre>
+      <button class="copy-btn">Copy</button>
+    </div>
+
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Blackbeard's Tavern</p>
+  </footer>
+
+  <script src="../js/scripts-page.js"></script>
+</body>
+</html>
