@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Audio Converter - Blackbeard's Tavern</title>
+  <title>Music Player - Blackbeard's Tavern</title>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/tools.css">
 </head>
@@ -22,33 +22,22 @@
     </nav>
   </header>
 
-  <main>
-    <h2>Audio Format Converter</h2>
-    <p>Upload an audio file and convert it to another format.</p>
+  <main class="content-list">
+    <h2>Music Player</h2>
+    <p>Pick a track and hit play.</p>
 
-    <form id="convert-form">
-      <input type="file" id="audio-input" accept="audio/*" required>
+    <div id="player-box">
+      <p id="now-playing">No track selected</p>
+      <audio id="audio-player" controls></audio>
+    </div>
 
-      <label for="format-select">Convert to:</label>
-      <select id="format-select">
-        <option value="mp3">MP3</option>
-        <option value="wav">WAV</option>
-        <option value="ogg">OGG</option>
-        <option value="aac">AAC</option>
-        <option value="flac">FLAC</option>
-        <option value="m4a">M4A</option>
-      </select>
-
-      <button type="submit">Convert</button>
-    </form>
-
-    <p id="status-message"></p>
+    <ul id="track-list" class="link-list"></ul>
   </main>
 
   <footer>
     <p>&copy; 2026 Blackbeard's Tavern</p>
   </footer>
 
-  <script src="../js/audio-converter.js"></script>
+  <script src="../js/music-player.js"></script>
 </body>
 </html>
