@@ -5,13 +5,17 @@ const path = require('path');
 const fs = require('fs');
 
 const router = express.Router();
+const { heavyLimiter } = require('../middleware/rateLimiters');
 
-const upload = multer({ dest: path.join(__dirname, '..', 'uploads') });
+const upload = multer({
+  dest: path.join(__dirname, '..', 'uploads'),
+  limits: { fileSize: 30 * 1024 * 1024 } // 30MB max
+});
 const CONVERTED_DIR = path.join(__dirname, '..', 'converted');
 
 const allowedFormats = ['mp3', 'wav', 'ogg', 'aac', 'flac', 'm4a'];
 
-router.post('/convert', upload.single('audio'), (req, res) => {
+router.post('/convert', heavyLimiter, upload.single('audio'), (req, res) => {
   const { format } = req.body;
 
   if (!req.file) {

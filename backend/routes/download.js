@@ -5,6 +5,7 @@ const fs = require('fs');
 const crypto = require('crypto');
 
 const router = express.Router();
+const { heavyLimiter } = require('../middleware/rateLimiters');
 
 // Detecta o caminho do yt-dlp dependendo do ambiente (Mac local vs VM Linux)
 function findYtDlpPath() {
@@ -24,11 +25,30 @@ function findYtDlpPath() {
 const YT_DLP_PATH = findYtDlpPath();
 const DOWNLOAD_DIR = path.join(__dirname, '..', 'converted');
 
-router.post('/fetch', (req, res) => {
+router.post('/fetch', heavyLimiter, (req, res) => {
   const { url, type } = req.body;
 
-  if (!url || !/^https?:\/\//.test(url)) {
+  if (!url || typeof url !== 'string' || url.length > 2000) {
     return res.status(400).json({ error: 'Invalid URL' });
+  }
+
+  let parsedUrl;
+  try {
+    parsedUrl = new URL(url);
+  } catch {
+    return res.status(400).json({ error: 'Invalid URL format' });
+  }
+
+  if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
+    return res.status(400).json({ error: 'Only http/https URLs are allowed' });
+  }
+
+  const blockedHosts = ['localhost', '127.0.0.1', '0.0.0.0', '169.254.169.254'];
+  const hostname = parsedUrl.hostname.toLowerCase();
+  const isPrivateIp = /^(10\.|172\.(1[6-9]|2[0-9]|3[0-1])\.|192\.168\.)/.test(hostname);
+
+  if (blockedHosts.includes(hostname) || isPrivateIp || hostname.endsWith('.local')) {
+    return res.status(400).json({ error: 'This URL is not allowed' });
   }
 
   if (!['video', 'audio'].includes(type)) {

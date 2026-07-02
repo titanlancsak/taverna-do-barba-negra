@@ -8,6 +8,9 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
+const { generalLimiter } = require('./middleware/rateLimiters');
+app.use(generalLimiter);
+
 // Rota de teste
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Blackbeard\'s Tavern backend is running' });

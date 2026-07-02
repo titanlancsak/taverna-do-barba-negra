@@ -5,11 +5,15 @@ const path = require('path');
 const fs = require('fs');
 
 const router = express.Router();
+const { heavyLimiter } = require('../middleware/rateLimiters');
 
 // Configuração do multer (armazena upload temporário)
-const upload = multer({ dest: path.join(__dirname, '..', 'uploads') });
+const upload = multer({
+  dest: path.join(__dirname, '..', 'uploads'),
+  limits: { fileSize: 15 * 1024 * 1024 } // 15MB max
+});
 
-router.post('/convert', upload.single('image'), async (req, res) => {
+router.post('/convert', heavyLimiter, upload.single('image'), async (req, res) => {
   try {
     const { format } = req.body; // 'png', 'jpeg', ou 'gif'
     const allowedFormats = ['png', 'jpeg', 'gif'];
