@@ -1,0 +1,22 @@
+const { Resend } = require('resend');
+require('dotenv').config();
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+async function sendVerificationEmail(toEmail, token) {
+  const verificationUrl = `http://${process.env.APP_URL || '202.226.4.51'}/verify-email.html?token=${token}`;
+
+  await resend.emails.send({
+    from: 'Blackbeard\'s Tavern <onboarding@resend.dev>', // trocar depois pelo domínio próprio
+    to: toEmail,
+    subject: 'Confirm your email - Blackbeard\'s Tavern',
+    html: `
+      <h2>Welcome to Blackbeard's Tavern! 🏴‍☠️</h2>
+      <p>Click the link below to confirm your email and activate your account:</p>
+      <a href="${verificationUrl}">${verificationUrl}</a>
+      <p>This link expires in 24 hours.</p>
+    `
+  });
+}
+
+module.exports = { sendVerificationEmail };
