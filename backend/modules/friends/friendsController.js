@@ -1,5 +1,56 @@
 const pool = require('../../db/pool');
 
+async function sendRequestByEmail(req, res) {
+  try {
+    const requesterId = req.user.userId;
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required' });
+    }
+
+    const userResult = await pool.query('SELECT id FROM users WHERE email = $1', [email.toLowerCase()]);
+
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({ error: 'No user found with that email' });
+    }
+
+    const addresseeId = userResult.rows[0].id;
+
+    if (requesterId === addresseeId) {
+      return res.status(400).json({ error: 'You cannot add yourself as a friend' });
+    }
+
+    const existing = await pool.query(
+      `SELECT id, status FROM friendships
+       WHERE (requester_id = $1 AND addressee_id = $2)
+          OR (requester_id = $2 AND addressee_id = $1)`,
+      [requesterId, addresseeId]
+    );
+
+    if (existing.rows.length > 0) {
+      const rel = existing.rows[0];
+      if (rel.status === 'accepted') {
+        return res.status(409).json({ error: 'You are already friends' });
+      }
+      if (rel.status === 'pending') {
+        return res.status(409).json({ error: 'A friend request is already pending' });
+      }
+      await pool.query('DELETE FROM friendships WHERE id = $1', [rel.id]);
+    }
+
+    await pool.query(
+      'INSERT INTO friendships (requester_id, addressee_id, status) VALUES ($1, $2, $3)',
+      [requesterId, addresseeId, 'pending']
+    );
+
+    res.status(201).json({ message: 'Friend request sent' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to send friend request' });
+  }
+}
+
 async function sendRequest(req, res) {
   try {
     const requesterId = req.user.userId;
@@ -158,4 +209,4 @@ async function listPendingRequests(req, res) {
   }
 }
 
-module.exports = { sendRequest, respondRequest, removeFriend, listFriends, listPendingRequests };
+module.exports = { sendRequest, sendRequestByEmail, respondRequest, removeFriend, listFriends, listPendingRequests };

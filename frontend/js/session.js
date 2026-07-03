@@ -27,6 +27,11 @@ function renderAuthNav() {
   const prefix = isInPages ? '' : 'pages/';
 
   if (token && user) {
+    const friendsLink = document.createElement('a');
+    friendsLink.className = 'auth-link';
+    friendsLink.href = `${prefix}friends.html`;
+    friendsLink.textContent = 'Friends';
+
     const profileLink = document.createElement('a');
     profileLink.className = 'auth-link';
     profileLink.href = `${prefix}profile.html`;
@@ -46,6 +51,7 @@ function renderAuthNav() {
       logout();
     });
 
+    nav.appendChild(friendsLink);
     nav.appendChild(profileLink);
     nav.appendChild(userSpan);
     nav.appendChild(logoutLink);

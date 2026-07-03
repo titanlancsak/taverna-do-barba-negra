@@ -367,3 +367,93 @@ button:hover {
   background-color: #e0703f !important;
   color: #fff !important;
 }
+
+#add-friend-box {
+  display: flex;
+  gap: 8px;
+  margin: 20px 0;
+  flex-wrap: wrap;
+}
+
+#add-friend-email {
+  flex: 1;
+  min-width: 200px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #3a2c1e;
+  background-color: #1b1b1b;
+  color: #f5f0e6;
+}
+
+#add-friend-btn {
+  background-color: #d4a017;
+  color: #1b1b1b;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#add-friend-status {
+  width: 100%;
+  font-size: 13px;
+  color: #e0703f;
+}
+
+.friend-card, .request-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background-color: #23180f;
+  border: 1px solid #3a2c1e;
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.friend-pic, .request-pic {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  background-color: #555;
+}
+
+.friend-info, .request-info {
+  flex: 1;
+}
+
+.friend-name, .request-name {
+  font-weight: bold;
+  color: #d4a017;
+}
+
+.friend-course {
+  font-size: 12px;
+  color: #8a7a68;
+}
+
+.request-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.accept-btn, .decline-btn, .remove-friend-btn {
+  border: none;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.accept-btn {
+  background-color: #d4a017;
+  color: #1b1b1b;
+}
+
+.decline-btn, .remove-friend-btn {
+  background-color: #3a2c1e;
+  color: #f5f0e6;
+}
