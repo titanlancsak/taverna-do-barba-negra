@@ -35,6 +35,12 @@ app.use('/api/auth', authRoutes);
 const profileRoutes = require('./modules/profile/profileRoutes');
 app.use('/api/profile', profileRoutes);
 
+const feedRoutes = require('./modules/feed/feedRoutes');
+app.use('/api/feed', feedRoutes);
+
+const friendsRoutes = require('./modules/friends/friendsRoutes');
+app.use('/api/friends', friendsRoutes);
+
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

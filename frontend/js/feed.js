@@ -1,0 +1,352 @@
+const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '';
+
+const token = localStorage.getItem('taverna_token');
+const currentUser = JSON.parse(localStorage.getItem('taverna_user') || 'null');
+
+const postsContainer = document.getElementById('posts-container');
+const postContentInput = document.getElementById('post-content-input');
+const postMediaInput = document.getElementById('post-media-input');
+const postSubmitBtn = document.getElementById('post-submit-btn');
+const postStatusMessage = document.getElementById('post-status-message');
+const postMediaFilename = document.getElementById('post-media-filename');
+
+postContentInput.addEventListener('input', () => {
+  postContentInput.style.height = 'auto';
+  postContentInput.style.height = postContentInput.scrollHeight + 'px';
+});
+
+postMediaInput.addEventListener('change', () => {
+  postMediaFilename.textContent = postMediaInput.files[0]?.name || '';
+});
+
+function timeAgo(dateString) {
+  const seconds = Math.floor((new Date() - new Date(dateString)) / 1000);
+  if (seconds < 60) return 'just now';
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function renderPost(post) {
+  const authorPic = post.author_picture ? `..${post.author_picture}` : 'assets/default-avatar.png';
+  const mediaHtml = post.media_url
+    ? (post.media_type === 'video'
+        ? `<video class="post-media" src="..${post.media_url}" controls></video>`
+        : `<img class="post-media" src="..${post.media_url}" alt="Post media">`)
+    : '';
+
+  return `
+    <div class="post-card" data-post-id="${post.id}">
+      <div class="post-header">
+        <img class="post-author-pic" src="${authorPic}" alt="">
+        <div>
+          <div class="post-author-name">${escapeHtml(post.author_name)}</div>
+          <div class="post-date">${timeAgo(post.created_at)}</div>
+        </div>
+      </div>
+      ${post.content ? `<div class="post-content">${escapeHtml(post.content)}</div>` : ''}
+      ${mediaHtml}
+      <div class="post-actions">
+        <button class="like-btn ${post.liked_by_me ? 'liked' : ''}" data-post-id="${post.id}">
+          ❤️ <span class="like-count">${post.like_count}</span>
+        </button>
+        <button class="comment-toggle-btn" data-post-id="${post.id}">
+          💬 ${post.comment_count} Comments
+        </button>
+        ${currentUser && currentUser.id === post.author_id ? `<button class="post-delete-btn" data-post-id="${post.id}">🗑 Delete</button>` : ''}
+      </div>
+      <div class="comments-box" data-post-id="${post.id}">
+        <div class="comments-list"></div>
+        ${token ? `
+          <div class="comment-form">
+            <input type="text" class="comment-input" placeholder="Write a comment..." maxlength="500">
+            <button class="comment-submit-btn" data-post-id="${post.id}">Send</button>
+          </div>
+        ` : '<p><a href="pages/login.html">Log in</a> to comment.</p>'}
+      </div>
+    </div>
+  `;
+}
+
+let currentPage = 1;
+let isLoadingMore = false;
+let hasMorePosts = true;
+
+async function loadFeed() {
+  try {
+    const response = await fetch(`${API_BASE}/api/feed/posts?page=1`, {
+      headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+    });
+    const data = await response.json();
+
+    hasMorePosts = data.hasMore;
+
+    if (!data.posts.length) {
+      postsContainer.innerHTML = '<p>No posts yet. Be the first to post!</p>';
+      return;
+    }
+
+    postsContainer.innerHTML = data.posts.map(renderPost).join('');
+    attachPostListeners();
+    setupInfiniteScroll();
+  } catch (err) {
+    console.error(err);
+    postsContainer.innerHTML = '<p>Failed to load feed.</p>';
+  }
+}
+
+async function loadMorePosts() {
+  if (isLoadingMore || !hasMorePosts) return;
+  isLoadingMore = true;
+  currentPage++;
+
+  const loadingIndicator = document.createElement('p');
+  loadingIndicator.id = 'loading-more-indicator';
+  loadingIndicator.textContent = 'Loading more posts...';
+  postsContainer.appendChild(loadingIndicator);
+
+  try {
+    const response = await fetch(`${API_BASE}/api/feed/posts?page=${currentPage}`, {
+      headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+    });
+    const data = await response.json();
+
+    document.getElementById('loading-more-indicator')?.remove();
+
+    hasMorePosts = data.hasMore;
+
+    if (data.posts.length) {
+      postsContainer.insertAdjacentHTML('beforeend', data.posts.map(renderPost).join(''));
+      attachPostListeners();
+    }
+  } catch (err) {
+    console.error(err);
+    document.getElementById('loading-more-indicator')?.remove();
+  } finally {
+    isLoadingMore = false;
+  }
+}
+
+function setupInfiniteScroll() {
+  window.addEventListener('scroll', () => {
+    const nearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 400;
+    if (nearBottom) {
+      loadMorePosts();
+    }
+  });
+}
+
+function attachPostListeners() {
+  document.querySelectorAll('.like-btn').forEach(btn => {
+    btn.addEventListener('click', () => handleLike(btn));
+  });
+
+  document.querySelectorAll('.comment-toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => toggleComments(btn.dataset.postId));
+  });
+
+  document.querySelectorAll('.comment-submit-btn').forEach(btn => {
+    btn.addEventListener('click', () => submitComment(btn.dataset.postId));
+  });
+
+  document.querySelectorAll('.post-delete-btn').forEach(btn => {
+    btn.addEventListener('click', () => handleDeletePost(btn.dataset.postId));
+  });
+}
+
+async function handleDeletePost(postId) {
+  if (!confirm('Delete this post? This cannot be undone.')) return;
+
+  try {
+    const response = await fetch(`${API_BASE}/api/feed/posts/${postId}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    if (!response.ok) throw new Error('Failed to delete post');
+
+    document.querySelector(`.post-card[data-post-id="${postId}"]`).remove();
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function handleLike(btn) {
+  if (!token) {
+    window.location.href = 'pages/login.html';
+    return;
+  }
+
+  const postId = btn.dataset.postId;
+
+  try {
+    const response = await fetch(`${API_BASE}/api/feed/posts/${postId}/like`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const data = await response.json();
+
+    const countSpan = btn.querySelector('.like-count');
+    let count = parseInt(countSpan.textContent);
+
+    if (data.liked) {
+      btn.classList.add('liked');
+      countSpan.textContent = count + 1;
+    } else {
+      btn.classList.remove('liked');
+      countSpan.textContent = count - 1;
+    }
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function toggleComments(postId) {
+  const box = document.querySelector(`.comments-box[data-post-id="${postId}"]`);
+  const isOpen = box.classList.contains('open');
+
+  if (isOpen) {
+    box.classList.remove('open');
+    return;
+  }
+
+  box.classList.add('open');
+  await loadComments(postId);
+}
+
+async function loadComments(postId) {
+  const box = document.querySelector(`.comments-box[data-post-id="${postId}"]`);
+  const list = box.querySelector('.comments-list');
+  list.innerHTML = '<p>Loading comments...</p>';
+
+  try {
+    const response = await fetch(`${API_BASE}/api/feed/posts/${postId}/comments`);
+    const data = await response.json();
+
+    if (!data.comments.length) {
+      list.innerHTML = '<p>No comments yet.</p>';
+      return;
+    }
+
+    list.innerHTML = data.comments.map(c => `
+      <div class="comment-item" data-comment-id="${c.id}">
+        <span class="comment-author">${escapeHtml(c.author_name)}</span>: ${escapeHtml(c.content)}
+        ${currentUser && currentUser.id === c.user_id ? `<button class="comment-delete-btn" data-comment-id="${c.id}" data-post-id="${postId}">✕</button>` : ''}
+      </div>
+    `).join('');
+
+    list.querySelectorAll('.comment-delete-btn').forEach(btn => {
+      btn.addEventListener('click', () => handleDeleteComment(btn.dataset.commentId, btn.dataset.postId));
+    });
+  } catch (err) {
+    list.innerHTML = '<p>Failed to load comments.</p>';
+  }
+}
+
+async function handleDeleteComment(commentId, postId) {
+  if (!confirm('Delete this comment?')) return;
+
+  try {
+    const response = await fetch(`${API_BASE}/api/feed/comments/${commentId}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    if (!response.ok) throw new Error('Failed to delete comment');
+
+    await loadComments(postId);
+
+    const card = document.querySelector(`.post-card[data-post-id="${postId}"]`);
+    const toggleBtn = card.querySelector('.comment-toggle-btn');
+    const currentCount = parseInt(toggleBtn.textContent.match(/\d+/)[0]);
+    toggleBtn.textContent = `💬 ${Math.max(0, currentCount - 1)} Comments`;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function submitComment(postId) {
+  const box = document.querySelector(`.comments-box[data-post-id="${postId}"]`);
+  const input = box.querySelector('.comment-input');
+  const content = input.value.trim();
+
+  if (!content) return;
+
+  try {
+    const response = await fetch(`${API_BASE}/api/feed/posts/${postId}/comments`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ content })
+    });
+
+    if (!response.ok) throw new Error('Failed to post comment');
+
+    input.value = '';
+    await loadComments(postId);
+
+    const card = document.querySelector(`.post-card[data-post-id="${postId}"]`);
+    const toggleBtn = card.querySelector('.comment-toggle-btn');
+    const currentCount = parseInt(toggleBtn.textContent.match(/\d+/)[0]);
+    toggleBtn.textContent = `💬 ${currentCount + 1} Comments`;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+postSubmitBtn.addEventListener('click', async () => {
+  if (!token) {
+    window.location.href = 'pages/login.html';
+    return;
+  }
+
+  const content = postContentInput.value.trim();
+  const mediaFile = postMediaInput.files[0];
+
+  if (!content && !mediaFile) {
+    postStatusMessage.textContent = 'Write something or attach media first.';
+    return;
+  }
+
+  postStatusMessage.textContent = 'Posting...';
+  postSubmitBtn.disabled = true;
+
+  const formData = new FormData();
+  if (content) formData.append('content', content);
+  if (mediaFile) formData.append('media', mediaFile);
+
+  try {
+    const response = await fetch(`${API_BASE}/api/feed/posts`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}` },
+      body: formData
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) throw new Error(data.error || 'Failed to post');
+
+    postContentInput.value = '';
+    postMediaInput.value = '';
+    postMediaFilename.textContent = '';
+    postStatusMessage.textContent = '';
+    await loadFeed();
+  } catch (err) {
+    postStatusMessage.textContent = err.message;
+  } finally {
+    postSubmitBtn.disabled = false;
+  }
+});
+
+loadFeed();

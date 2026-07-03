@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Blackbeard's Tavern</title>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/tools.css">
 </head>
 <body>
   <header>
@@ -22,12 +23,31 @@
 
   <main>
     <p>Welcome to Blackbeard's Tavern — your all-in-one toolbox.</p>
+
+    <section id="feed-section">
+      <h2>Community Feed</h2>
+
+      <div id="post-form-box">
+        <textarea id="post-content-input" placeholder="What's on your mind, pirate?" maxlength="1000" rows="1"></textarea>
+        <div class="post-form-actions">
+          <label for="post-media-input" class="file-label">📎 Attach media</label>
+          <input type="file" id="post-media-input" accept="image/*,video/*">
+          <span id="post-media-filename"></span>
+          <button id="post-submit-btn">Post</button>
+        </div>
+        <p id="post-status-message"></p>
+      </div>
+
+      <div id="posts-container">
+        <p>Loading feed...</p>
+      </div>
+    </section>
   </main>
 
   <footer>
     <p>&copy; 2026 Blackbeard's Tavern</p>
   </footer>
   <script src="js/session.js"></script>
-  <script src="js/session.js"></script>
+  <script src="js/feed.js"></script>
 </body>
 </html>
