@@ -79,7 +79,8 @@ async function openWidget(userId, userName, userPic) {
   chatWidgetName.textContent = userName;
   chatWidgetAvatar.src = userPic ? '..' + userPic : '../assets/default-avatar.svg';
   chatWidget.style.display = 'flex';
-  chatWidgetMessages.innerHTML = '<p style="font-size:12px;color:#8a7a68;">Loading...</p>';
+  chatWidgetAvatar.onerror = () => { chatWidgetAvatar.src = '../assets/default-avatar.svg'; };
+  chatWidgetMessages.innerHTML = '<p class="widget-empty-state">Loading...</p>';
 
   try {
     const response = await fetch(`${API_BASE}/api/chat/history/${userId}`, {
@@ -88,7 +89,11 @@ async function openWidget(userId, userName, userPic) {
     const data = await response.json();
 
     chatWidgetMessages.innerHTML = '';
-    data.messages.forEach(appendWidgetMessage);
+    if (!data.messages.length) {
+      chatWidgetMessages.innerHTML = '<p class="widget-empty-state">Say hi! 👋</p>';
+    } else {
+      data.messages.forEach(appendWidgetMessage);
+    }
     scrollWidgetToBottom();
   } catch (err) {
     chatWidgetMessages.innerHTML = '<p>Failed to load messages.</p>';
@@ -98,6 +103,7 @@ async function openWidget(userId, userName, userPic) {
 }
 
 function appendWidgetMessage(message) {
+  chatWidgetMessages.querySelector('.widget-empty-state')?.remove();
   const isSent = message.sender_id === currentUser.id;
   const bubble = document.createElement('div');
   bubble.className = `widget-msg ${isSent ? 'sent' : 'received'}`;

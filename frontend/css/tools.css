@@ -524,15 +524,21 @@ button:hover {
   bottom: 20px;
   right: 20px;
   width: 320px;
-  height: 420px;
+  height: 440px;
   background-color: #23180f;
   border: 1px solid #3a2c1e;
-  border-radius: 14px;
+  border-radius: 16px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.5);
   z-index: 1000;
+  animation: chat-widget-in 0.2s ease-out;
+}
+
+@keyframes chat-widget-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 #chat-widget-header {
@@ -549,6 +555,7 @@ button:hover {
   height: 30px;
   border-radius: 50%;
   object-fit: cover;
+  background-color: #3a2c1e;
 }
 
 #chat-widget-name {
@@ -561,9 +568,18 @@ button:hover {
 #chat-widget-close {
   background: none;
   border: none;
-  color: #f5f0e6;
+  color: #b8a894;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 16px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  transition: background-color 0.15s;
+}
+
+#chat-widget-close:hover {
+  background-color: #3a2c1e;
+  color: #f5f0e6;
 }
 
 #chat-widget-messages {
@@ -627,9 +643,10 @@ button:hover {
 #chat-widget-input-box {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px;
+  gap: 8px;
+  padding: 10px;
   border-top: 1px solid #3a2c1e;
+  background-color: #1e150c;
 }
 
 #chat-widget-attach-btn {
@@ -655,11 +672,24 @@ button:hover {
   background-color: #d4a017;
   color: #1b1b1b;
   border: none;
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
   border-radius: 50%;
   cursor: pointer;
   font-size: 13px;
+  transition: transform 0.1s;
+}
+
+#chat-widget-send:hover {
+  transform: scale(1.08);
+}
+
+.widget-empty-state {
+  text-align: center;
+  color: #8a7a68;
+  font-size: 13px;
+  margin-top: 40px;
 }
 
 @media (max-width: 500px) {
