@@ -150,3 +150,11 @@ messageInput.addEventListener('keypress', (e) => {
 
 loadConversations();
 loadFriendsForSelect();
+
+// Se veio de "friends.html" com um usuário específico, já abre o chat direto
+const urlParams = new URLSearchParams(window.location.search);
+const preselectedUserId = urlParams.get('userId');
+const preselectedUserName = urlParams.get('name');
+if (preselectedUserId && preselectedUserName) {
+  openChat(parseInt(preselectedUserId), preselectedUserName);
+}

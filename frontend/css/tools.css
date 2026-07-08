@@ -613,3 +613,15 @@ button:hover {
   font-weight: bold;
   cursor: pointer;
 }
+
+.chat-with-friend-btn {
+  border: none;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: bold;
+  background-color: #d4a017;
+  color: #1b1b1b;
+  margin-right: 6px;
+}

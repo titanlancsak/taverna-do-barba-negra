@@ -86,12 +86,19 @@ async function loadFriends() {
           <div class="friend-name">${escapeHtml(f.display_name)}</div>
           ${f.course ? `<div class="friend-course">${escapeHtml(f.course)}</div>` : ''}
         </div>
+        <button class="chat-with-friend-btn" data-id="${f.id}" data-name="${escapeHtml(f.display_name)}">Chat</button>
         <button class="remove-friend-btn" data-id="${f.id}">Remove</button>
       </div>
     `).join('');
 
     friendsList.querySelectorAll('.remove-friend-btn').forEach(btn => {
       btn.addEventListener('click', () => removeFriend(btn.dataset.id));
+    });
+
+    friendsList.querySelectorAll('.chat-with-friend-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        window.location.href = `chat.html?userId=${btn.dataset.id}&name=${encodeURIComponent(btn.dataset.name)}`;
+      });
     });
   } catch (err) {
     friendsList.innerHTML = '<p>Failed to load friends.</p>';
