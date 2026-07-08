@@ -9,7 +9,7 @@ require('dotenv').config();
 const app = express();
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
-  cors: { origin: '*' } // ajustamos isso quando tivermos domínio fixo
+	cors: { origin: ['https://blackbeardtavern.me', 'http://localhost:8080'] }
 });
 
 const PORT = process.env.PORT || 3000;
