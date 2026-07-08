@@ -4,7 +4,7 @@ require('dotenv').config();
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 async function sendVerificationEmail(toEmail, token) {
-  const verificationUrl = `http://${process.env.APP_URL || '202.226.4.51'}/verify-email.html?token=${token}`;
+  const verificationUrl = `https://blackbeardtavern.me/pages/verify-email.html?token=${token}`;
 
   await resend.emails.send({
     from: 'Blackbeard\'s Tavern <onboarding@resend.dev>', // trocar depois pelo domínio próprio
