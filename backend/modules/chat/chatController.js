@@ -1,4 +1,11 @@
 const pool = require('../../db/pool');
+const sharp = require('sharp');
+const { execFile } = require('child_process');
+const path = require('path');
+const fs = require('fs');
+const crypto = require('crypto');
+
+const MEDIA_DIR = path.join(__dirname, '..', '..', '..', 'frontend', 'assets', 'chat-media');
 
 // Lista as conversas do usuário (uma linha por pessoa com quem já trocou mensagem)
 async function getConversations(req, res) {
@@ -69,4 +76,77 @@ async function getHistory(req, res) {
   }
 }
 
-module.exports = { getConversations, getHistory };
+async function uploadMedia(req, res) {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    const inputPath = req.file.path;
+    const mimetype = req.file.mimetype;
+    let mediaUrl, mediaType;
+
+    if (mimetype.startsWith('image/')) {
+      let metadata;
+      try {
+        metadata = await sharp(inputPath).metadata();
+      } catch {
+        fs.unlinkSync(inputPath);
+        return res.status(400).json({ error: 'Invalid image file' });
+      }
+
+      const allowedFormats = ['jpeg', 'png', 'webp', 'gif'];
+      if (!allowedFormats.includes(metadata.format)) {
+        fs.unlinkSync(inputPath);
+        return res.status(400).json({ error: 'Unsupported image format' });
+      }
+
+      const filename = `${crypto.randomBytes(16).toString('hex')}.webp`;
+      const outputPath = path.join(MEDIA_DIR, filename);
+
+      await sharp(inputPath)
+        .resize(800, 800, { fit: 'inside', withoutEnlargement: true })
+        .webp({ quality: 80 })
+        .toFile(outputPath);
+
+      fs.unlinkSync(inputPath);
+      mediaUrl = `/assets/chat-media/${filename}`;
+      mediaType = 'image';
+
+    } else if (mimetype.startsWith('video/')) {
+      const filename = `${crypto.randomBytes(16).toString('hex')}.mp4`;
+      const outputPath = path.join(MEDIA_DIR, filename);
+
+      await new Promise((resolve, reject) => {
+        execFile('ffmpeg', [
+          '-i', inputPath,
+          '-t', '30',
+          '-vf', "scale='min(720,iw)':-2",
+          '-c:v', 'libx264', '-crf', '28', '-preset', 'fast',
+          '-c:a', 'aac', '-b:a', '96k',
+          outputPath
+        ], (err) => {
+          fs.unlinkSync(inputPath);
+          if (err) return reject(err);
+          resolve();
+        });
+      }).catch(() => {
+        throw new Error('Invalid or unsupported video file');
+      });
+
+      mediaUrl = `/assets/chat-media/${filename}`;
+      mediaType = 'video';
+
+    } else {
+      fs.unlinkSync(inputPath);
+      return res.status(400).json({ error: 'Only image or video files are allowed' });
+    }
+
+    res.json({ mediaUrl, mediaType });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message || 'Failed to upload media' });
+  }
+}
+
+module.exports = { getConversations, getHistory, uploadMedia };

@@ -86,35 +86,35 @@ io.on('connection', (socket) => {
 
   socket.on('send_message', async (data) => {
     try {
-      const { receiverId, content } = data;
+      const { receiverId, content, mediaUrl, mediaType } = data;
 
-      if (!receiverId || !content || !content.trim()) {
+      if (!receiverId || (!content || !content.trim()) && !mediaUrl) {
         return socket.emit('error_message', { error: 'Invalid message data' });
       }
 
-      if (content.length > 2000) {
+      if (content && content.length > 2000) {
         return socket.emit('error_message', { error: 'Message is too long' });
       }
 
       const pool = require('./db/pool');
       const result = await pool.query(
-        `INSERT INTO messages (sender_id, receiver_id, content)
-         VALUES ($1, $2, $3) RETURNING id, created_at`,
-        [userId, receiverId, content.trim()]
+        `INSERT INTO messages (sender_id, receiver_id, content, media_url, media_type)
+         VALUES ($1, $2, $3, $4, $5) RETURNING id, created_at`,
+        [userId, receiverId, content ? content.trim() : null, mediaUrl || null, mediaType || null]
       );
 
       const message = {
         id: result.rows[0].id,
         sender_id: userId,
         receiver_id: receiverId,
-        content: content.trim(),
+        content: content ? content.trim() : null,
+        media_url: mediaUrl || null,
+        media_type: mediaType || null,
         created_at: result.rows[0].created_at
       };
 
-      // Envia a mensagem de volta pro remetente (confirmação)
       socket.emit('new_message', message);
 
-      // Envia a mensagem pro destinatário, se estiver online (pode ter várias abas)
       const receiverSockets = onlineUsers.get(receiverId);
       if (receiverSockets) {
         receiverSockets.forEach(socketId => {
@@ -124,6 +124,40 @@ io.on('connection', (socket) => {
     } catch (err) {
       console.error(err);
       socket.emit('error_message', { error: 'Failed to send message' });
+    }
+  });
+
+  socket.on('delete_message', async (data) => {
+    try {
+      const { messageId } = data;
+      const pool = require('./db/pool');
+
+      const result = await pool.query('SELECT sender_id, receiver_id FROM messages WHERE id = $1', [messageId]);
+
+      if (result.rows.length === 0) {
+        return socket.emit('error_message', { error: 'Message not found' });
+      }
+
+      const msg = result.rows[0];
+
+      if (msg.sender_id !== userId) {
+        return socket.emit('error_message', { error: 'You can only delete your own messages' });
+      }
+
+      await pool.query('DELETE FROM messages WHERE id = $1', [messageId]);
+
+      const payload = { messageId };
+      socket.emit('message_deleted', payload);
+
+      const receiverSockets = onlineUsers.get(msg.receiver_id);
+      if (receiverSockets) {
+        receiverSockets.forEach(socketId => {
+          io.to(socketId).emit('message_deleted', payload);
+        });
+      }
+    } catch (err) {
+      console.error(err);
+      socket.emit('error_message', { error: 'Failed to delete message' });
     }
   });
 

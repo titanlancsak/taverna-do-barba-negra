@@ -17,26 +17,25 @@
 
   <main>
     <h2>Chat</h2>
-
-    <div id="chat-layout">
-      <div id="conversations-panel">
-        <h3>Conversations</h3>
-        <div id="conversations-list"><p>Loading...</p></div>
-        <hr>
-        <h3>Start new chat</h3>
-        <select id="friend-select"><option value="">Select a friend...</option></select>
-      </div>
-
-      <div id="chat-panel">
-        <div id="chat-header"><p>Select a conversation to start chatting</p></div>
-        <div id="messages-container"></div>
-        <div id="message-input-box" style="display:none;">
-          <input type="text" id="message-input" placeholder="Type a message..." maxlength="2000">
-          <button id="send-message-btn">Send</button>
-        </div>
-      </div>
-    </div>
+    <p>Select a friend below to start chatting.</p>
+    <div id="conversations-list"></div>
   </main>
+
+  <!-- Widget de chat flutuante -->
+  <div id="chat-widget" style="display:none;">
+    <div id="chat-widget-header">
+      <img id="chat-widget-avatar" src="" alt="">
+      <span id="chat-widget-name"></span>
+      <button id="chat-widget-close">✕</button>
+    </div>
+    <div id="chat-widget-messages"></div>
+    <div id="chat-widget-input-box">
+      <label for="chat-widget-media-input" id="chat-widget-attach-btn">📎</label>
+      <input type="file" id="chat-widget-media-input" accept="image/*,video/*">
+      <input type="text" id="chat-widget-input" placeholder="Type a message...">
+      <button id="chat-widget-send">➤</button>
+    </div>
+  </div>
 
   <footer>
     <p>&copy; 2026 Blackbeard Tavern</p>
