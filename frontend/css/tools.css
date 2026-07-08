@@ -460,18 +460,19 @@ button:hover {
 
 #chat-layout {
   display: flex;
+  align-items: flex-start;
   gap: 16px;
   max-width: 900px;
   margin: 20px auto;
-  height: 500px;
 }
 
 #conversations-panel {
-  width: 260px;
+  width: 240px;
   background-color: #23180f;
   border: 1px solid #3a2c1e;
   border-radius: 12px;
   padding: 14px;
+  max-height: 600px;
   overflow-y: auto;
 }
 
@@ -550,6 +551,7 @@ button:hover {
   border: 1px solid #3a2c1e;
   border-radius: 12px;
   overflow: hidden;
+  height: 600px;
 }
 
 #chat-header {

@@ -1,4 +1,4 @@
-# Blackbeard's Tavern
+# Blackbeard Tavern
 
 A multi-tool website hosted on a Rocky Linux VM with Nginx.
 

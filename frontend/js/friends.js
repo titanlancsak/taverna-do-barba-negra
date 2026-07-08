@@ -31,7 +31,7 @@ async function loadPendingRequests() {
 
     pendingList.innerHTML = data.requests.map(r => `
       <div class="request-card">
-        <img class="request-pic" src="${r.profile_picture_url ? '..' + r.profile_picture_url : '../assets/default-avatar.png'}" alt="">
+        <img class="request-pic" src="${r.profile_picture_url ? '..' + r.profile_picture_url : '../assets/default-avatar.svg'}" alt="">
         <div class="request-info">
           <div class="request-name">${escapeHtml(r.display_name)}</div>
         </div>
@@ -81,7 +81,7 @@ async function loadFriends() {
 
     friendsList.innerHTML = data.friends.map(f => `
       <div class="friend-card">
-        <img class="friend-pic" src="${f.profile_picture_url ? '..' + f.profile_picture_url : '../assets/default-avatar.png'}" alt="">
+        <img class="friend-pic" src="${f.profile_picture_url ? '..' + f.profile_picture_url : '../assets/default-avatar.svg'}" alt="">
         <div class="friend-info">
           <div class="friend-name">${escapeHtml(f.display_name)}</div>
           ${f.course ? `<div class="friend-course">${escapeHtml(f.course)}</div>` : ''}

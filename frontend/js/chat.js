@@ -57,7 +57,7 @@ async function loadConversations() {
     } else {
       conversationsList.innerHTML = data.conversations.map(c => `
         <div class="conversation-item ${activeChatUserId === c.other_user_id ? 'active' : ''}" data-id="${c.other_user_id}" data-name="${escapeHtml(c.display_name)}">
-          <img class="conversation-pic" src="${c.profile_picture_url ? '..' + c.profile_picture_url : '../assets/default-avatar.png'}" alt="">
+          <img class="conversation-pic" src="${c.profile_picture_url ? '..' + c.profile_picture_url : '../assets/default-avatar.svg'}" alt="">
           <div>
             <div class="conversation-name">${escapeHtml(c.display_name)}</div>
             <div class="conversation-preview">${escapeHtml(c.last_message || '')}</div>

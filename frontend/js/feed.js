@@ -37,7 +37,7 @@ function escapeHtml(text) {
 }
 
 function renderPost(post) {
-  const authorPic = post.author_picture ? `..${post.author_picture}` : 'assets/default-avatar.png';
+  const authorPic = post.author_picture ? `..${post.author_picture}` : 'assets/default-avatar.svg';
   const mediaHtml = post.media_url
     ? (post.media_type === 'video'
         ? `<video class="post-media" src="..${post.media_url}" controls></video>`

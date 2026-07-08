@@ -11,7 +11,7 @@ async function sendVerificationEmail(toEmail, token) {
     to: toEmail,
     subject: 'Confirm your email - Blackbeard\'s Tavern',
     html: `
-      <h2>Welcome to Blackbeard's Tavern! 🏴‍☠️</h2>
+      <h2>Welcome to Blackbeard Tavern! 🏴‍☠️</h2>
       <p>Click the link below to confirm your email and activate your account:</p>
       <a href="${verificationUrl}">${verificationUrl}</a>
       <p>This link expires in 24 hours.</p>
