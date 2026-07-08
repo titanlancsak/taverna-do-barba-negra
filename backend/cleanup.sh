@@ -4,7 +4,7 @@
 UPLOADS_DIR="/var/www/taverna-do-barba-negra/backend/uploads"
 CONVERTED_DIR="/var/www/taverna-do-barba-negra/backend/converted"
 
-find "$UPLOADS_DIR" -type f -mmin +60 -delete
-find "$CONVERTED_DIR" -type f -mmin +60 -delete
+find "$UPLOADS_DIR" -type f -mmin +60 ! -name ".*" -delete
+find "$CONVERTED_DIR" -type f -mmin +60 ! -name ".*" -delete
 
 echo "$(date): Cleanup executed" >> /var/www/taverna-do-barba-negra/backend/cleanup.log
