@@ -65,11 +65,19 @@ async function loadConversations() {
           <div class="conversation-preview">${c.last_message ? escapeHtml(c.last_message) : '📎 Media'}</div>
         </div>
         ${c.unread_count > 0 ? `<span class="unread-badge">${c.unread_count}</span>` : ''}
+        <button class="conversation-delete-btn" data-id="${c.other_user_id}" data-name="${escapeHtml(c.display_name)}" title="Delete conversation">🗑</button>
       </div>
     `).join('');
 
     conversationsList.querySelectorAll('.conversation-item').forEach(item => {
       item.addEventListener('click', () => openWidget(parseInt(item.dataset.id), item.dataset.name, item.dataset.pic));
+    });
+
+    conversationsList.querySelectorAll('.conversation-delete-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation(); // não abrir o chat ao clicar em deletar
+        deleteConversation(parseInt(btn.dataset.id), btn.dataset.name);
+      });
     });
   } catch (err) {
     conversationsList.innerHTML = '<p>Failed to load conversations.</p>';
@@ -141,6 +149,38 @@ function scrollWidgetToBottom() {
 chatWidgetClose.addEventListener('click', () => {
   chatWidget.style.display = 'none';
   activeChatUserId = null;
+});
+
+async function deleteConversation(otherUserId, otherUserName) {
+  if (!confirm(`Delete your entire chat with ${otherUserName}? This removes the history for both of you and can't be undone.`)) {
+    return;
+  }
+
+  try {
+    const response = await fetch(`${API_BASE}/api/chat/conversation/${otherUserId}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || 'Failed to delete conversation');
+
+    if (activeChatUserId === otherUserId) {
+      chatWidget.style.display = 'none';
+      activeChatUserId = null;
+    }
+    loadConversations();
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+// Se a conversa foi apagada (por mim em outra aba, ou pelo outro), reflete aqui
+socket.on('conversation_deleted', ({ withUserId }) => {
+  if (activeChatUserId === withUserId) {
+    chatWidget.style.display = 'none';
+    activeChatUserId = null;
+  }
+  loadConversations();
 });
 
 function sendTextMessage() {

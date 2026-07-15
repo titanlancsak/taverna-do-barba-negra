@@ -24,6 +24,7 @@ const chatWidgetMembersBtn = document.getElementById('chat-widget-members-btn');
 
 const membersModal = document.getElementById('members-modal');
 const membersList = document.getElementById('members-list');
+const membersActions = document.getElementById('members-actions');
 const membersModalClose = document.getElementById('members-modal-close');
 
 let activeGroupId = null;
@@ -257,9 +258,72 @@ chatWidgetMembersBtn.addEventListener('click', async () => {
         ${m.role === 'owner' ? '<span class="member-role">OWNER</span>' : ''}
       </div>
     `).join('');
+
+    // Ações do grupo: sair (todos) e deletar (só o dono)
+    const me = data.members.find(m => m.id === currentUser.id);
+    const isOwner = me && me.role === 'owner';
+    membersActions.innerHTML = `
+      <button id="leave-group-btn">Leave group</button>
+      ${isOwner ? '<button id="delete-group-btn">Delete group</button>' : ''}
+    `;
+
+    document.getElementById('leave-group-btn').addEventListener('click', () => leaveGroup(activeGroupId));
+    if (isOwner) {
+      document.getElementById('delete-group-btn').addEventListener('click', () => deleteGroup(activeGroupId));
+    }
   } catch (err) {
     membersList.innerHTML = '<p>Failed to load members.</p>';
   }
+});
+
+async function leaveGroup(groupId) {
+  if (!confirm('Leave this group? You will need to be re-invited to join again.')) return;
+
+  try {
+    const response = await fetch(`${API_BASE}/api/groups/${groupId}/leave`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || 'Failed to leave group');
+
+    afterGroupRemoved(groupId);
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+async function deleteGroup(groupId) {
+  if (!confirm('Delete this group for everyone? All messages will be lost and this cannot be undone.')) return;
+
+  try {
+    const response = await fetch(`${API_BASE}/api/groups/${groupId}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || 'Failed to delete group');
+
+    afterGroupRemoved(groupId);
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+// Fecha modal/widget se o grupo saiu de cena e recarrega a lista
+function afterGroupRemoved(groupId) {
+  membersModal.style.display = 'none';
+  if (activeGroupId === groupId) {
+    socket.emit('leave_group_room', { groupId });
+    chatWidget.style.display = 'none';
+    activeGroupId = null;
+  }
+  loadGroups();
+}
+
+// Se o dono apagou o grupo enquanto eu estava dentro, reflete aqui
+socket.on('group_deleted', ({ groupId }) => {
+  afterGroupRemoved(groupId);
 });
 
 membersModalClose.addEventListener('click', () => {

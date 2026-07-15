@@ -1,6 +1,6 @@
 const express = require('express');
 const {
-  createGroup, listMyGroups, getGroupMembers, inviteMember, leaveGroup, getGroupHistory
+  createGroup, listMyGroups, getGroupMembers, inviteMember, leaveGroup, deleteGroup, getGroupHistory
 } = require('./groupsController');
 const { requireAuth } = require('../../middleware/authMiddleware');
 const { postLimiter } = require('../../middleware/rateLimiters');
@@ -12,6 +12,7 @@ router.get('/', requireAuth, listMyGroups);
 router.get('/:groupId/members', requireAuth, getGroupMembers);
 router.post('/:groupId/invite', requireAuth, inviteMember);
 router.delete('/:groupId/leave', requireAuth, leaveGroup);
+router.delete('/:groupId', requireAuth, deleteGroup);
 router.get('/:groupId/messages', requireAuth, getGroupHistory);
 
 module.exports = router;

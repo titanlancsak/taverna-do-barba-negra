@@ -156,4 +156,51 @@ async function uploadMedia(req, res) {
   }
 }
 
-module.exports = { getConversations, getHistory, uploadMedia };
+// Apaga toda a conversa 1-a-1 entre o usuário e outra pessoa (some pra ambos os lados)
+async function deleteConversation(req, res) {
+  try {
+    const userId = req.user.userId;
+    const otherUserId = parseInt(req.params.userId);
+
+    if (!otherUserId || otherUserId === userId) {
+      return res.status(400).json({ error: 'Invalid conversation' });
+    }
+
+    await pool.query(
+      `DELETE FROM messages
+       WHERE (sender_id = $1 AND receiver_id = $2) OR (sender_id = $2 AND receiver_id = $1)`,
+      [userId, otherUserId]
+    );
+
+    // Remove as notificações de mensagem trocadas entre os dois, dos dois lados
+    await pool.query(
+      `DELETE FROM notifications
+       WHERE type = 'message'
+         AND ((user_id = $1 AND actor_id = $2) OR (user_id = $2 AND actor_id = $1))`,
+      [userId, otherUserId]
+    );
+
+    // Avisa em tempo real: minhas outras abas e o outro usuário (pra fechar/atualizar o chat)
+    const io = req.app.get('io');
+    const onlineUsers = req.app.get('onlineUsers');
+    if (io && onlineUsers) {
+      [userId, otherUserId].forEach(uid => {
+        const sockets = onlineUsers.get(uid);
+        if (sockets) {
+          sockets.forEach(socketId => {
+            io.to(socketId).emit('conversation_deleted', {
+              withUserId: uid === userId ? otherUserId : userId
+            });
+          });
+        }
+      });
+    }
+
+    res.json({ message: 'Conversation deleted' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to delete conversation' });
+  }
+}
+
+module.exports = { getConversations, getHistory, uploadMedia, deleteConversation };

@@ -1,7 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
-const { getConversations, getHistory, uploadMedia } = require('./chatController');
+const { getConversations, getHistory, uploadMedia, deleteConversation } = require('./chatController');
 const { requireAuth } = require('../../middleware/authMiddleware');
 
 const router = express.Router();
@@ -14,5 +14,6 @@ const upload = multer({
 router.get('/conversations', requireAuth, getConversations);
 router.get('/history/:userId', requireAuth, getHistory);
 router.post('/media', requireAuth, upload.single('media'), uploadMedia);
+router.delete('/conversation/:userId', requireAuth, deleteConversation);
 
 module.exports = router;

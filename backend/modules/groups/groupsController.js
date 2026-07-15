@@ -191,17 +191,66 @@ async function leaveGroup(req, res) {
     const userId = req.user.userId;
     const groupId = parseInt(req.params.groupId);
 
+    const membership = await pool.query(
+      'SELECT role FROM group_members WHERE group_id = $1 AND user_id = $2',
+      [groupId, userId]
+    );
+    if (membership.rows.length === 0) {
+      return res.status(400).json({ error: 'You are not a member of this group' });
+    }
+    const wasOwner = membership.rows[0].role === 'owner';
+
     await pool.query('DELETE FROM group_members WHERE group_id = $1 AND user_id = $2', [groupId, userId]);
 
-    const remaining = await pool.query('SELECT id FROM group_members WHERE group_id = $1', [groupId]);
+    const remaining = await pool.query(
+      'SELECT user_id FROM group_members WHERE group_id = $1 ORDER BY joined_at ASC',
+      [groupId]
+    );
+
     if (remaining.rows.length === 0) {
+      // Ninguém sobrou: apaga o grupo
       await pool.query('DELETE FROM groups WHERE id = $1', [groupId]);
+    } else if (wasOwner) {
+      // O dono saiu mas ainda há membros: promove o mais antigo a dono
+      const newOwnerId = remaining.rows[0].user_id;
+      await pool.query(
+        "UPDATE group_members SET role = 'owner' WHERE group_id = $1 AND user_id = $2",
+        [groupId, newOwnerId]
+      );
+      await pool.query('UPDATE groups SET creator_id = $1 WHERE id = $2', [newOwnerId, groupId]);
     }
 
     res.json({ message: 'Left the group' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to leave group' });
+  }
+}
+
+// Apaga o grupo inteiro (membros e mensagens caem por cascata). Só o dono pode.
+async function deleteGroup(req, res) {
+  try {
+    const userId = req.user.userId;
+    const groupId = parseInt(req.params.groupId);
+
+    const group = await pool.query('SELECT creator_id FROM groups WHERE id = $1', [groupId]);
+    if (group.rows.length === 0) {
+      return res.status(404).json({ error: 'Group not found' });
+    }
+    if (group.rows[0].creator_id !== userId) {
+      return res.status(403).json({ error: 'Only the group owner can delete the group' });
+    }
+
+    // Avisa quem estiver com o chat do grupo aberto, antes de apagar
+    const io = req.app.get('io');
+    if (io) io.to(`group_${groupId}`).emit('group_deleted', { groupId });
+
+    await pool.query('DELETE FROM groups WHERE id = $1', [groupId]);
+
+    res.json({ message: 'Group deleted' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to delete group' });
   }
 }
 
@@ -240,5 +289,5 @@ async function getGroupHistory(req, res) {
 }
 
 module.exports = {
-  createGroup, listMyGroups, getGroupMembers, inviteMember, leaveGroup, getGroupHistory
+  createGroup, listMyGroups, getGroupMembers, inviteMember, leaveGroup, deleteGroup, getGroupHistory
 };

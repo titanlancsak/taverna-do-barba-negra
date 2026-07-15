@@ -874,6 +874,55 @@ button:hover {
   cursor: pointer;
 }
 
+#members-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+#members-actions button {
+  flex: 1;
+  border: none;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+#leave-group-btn {
+  background-color: #3a2c1e;
+  color: #f5f0e6;
+}
+
+#leave-group-btn:hover {
+  background-color: #4a3a2a;
+}
+
+#delete-group-btn {
+  background-color: #5a1e1e;
+  color: #f5d6d6;
+}
+
+#delete-group-btn:hover {
+  background-color: #7a2626;
+}
+
+.conversation-delete-btn {
+  background: none;
+  border: none;
+  color: #8a7a68;
+  font-size: 15px;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 6px;
+  opacity: 0.6;
+}
+
+.conversation-delete-btn:hover {
+  background-color: #5a1e1e;
+  opacity: 1;
+}
+
 #notif-bell-wrapper {
   position: relative;
   display: inline-block;
