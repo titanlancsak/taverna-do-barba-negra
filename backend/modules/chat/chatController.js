@@ -69,6 +69,13 @@ async function getHistory(req, res) {
       [otherUserId, userId]
     );
 
+    // Abrir a conversa também limpa as notificações de mensagem desse remetente no sino
+    await pool.query(
+      `UPDATE notifications SET read_at = NOW()
+       WHERE user_id = $1 AND actor_id = $2 AND type = 'message' AND read_at IS NULL`,
+      [userId, otherUserId]
+    );
+
     res.json({ messages: result.rows.reverse(), hasMore: result.rows.length === limit });
   } catch (err) {
     console.error(err);

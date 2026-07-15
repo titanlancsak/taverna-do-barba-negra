@@ -127,6 +127,59 @@ io.on('connection', (socket) => {
           io.to(socketId).emit('new_message', message);
         });
       }
+
+      // Notifica o destinatário no sino. Falha aqui não deve quebrar o envio da mensagem.
+      try {
+        if (receiverId === userId) return; // não notifica a si mesmo
+        const senderInfo = await pool.query(
+          `SELECT CASE WHEN is_anonymous THEN 'Anonymous Pirate' ELSE COALESCE(display_name, email) END AS name FROM users WHERE id = $1`,
+          [userId]
+        );
+        const senderName = senderInfo.rows[0]?.name || 'Someone';
+        const trimmed = content && content.trim();
+        const preview = trimmed
+          ? (trimmed.length > 60 ? trimmed.slice(0, 60) + '…' : trimmed)
+          : (mediaType === 'video' ? 'sent a video 🎥' : 'sent an image 🖼️');
+        const notifMessage = trimmed ? `${senderName}: ${preview}` : `${senderName} ${preview}`;
+
+        // Agrupa por remetente: se já há uma notificação de mensagem não-lida desse usuário, atualiza em vez de empilhar
+        const updated = await pool.query(
+          `UPDATE notifications SET message = $1, created_at = NOW()
+           WHERE user_id = $2 AND actor_id = $3 AND type = 'message' AND read_at IS NULL
+           RETURNING id, created_at`,
+          [notifMessage, receiverId, userId]
+        );
+
+        let notifRow = updated.rows[0];
+        if (!notifRow) {
+          const inserted = await pool.query(
+            `INSERT INTO notifications (user_id, actor_id, type, reference_id, message)
+             VALUES ($1, $2, 'message', $3, $4) RETURNING id, created_at`,
+            [receiverId, userId, userId, notifMessage]
+          );
+          notifRow = inserted.rows[0];
+        }
+
+        const unreadForReceiver = await pool.query(
+          'SELECT COUNT(*) FROM notifications WHERE user_id = $1 AND read_at IS NULL',
+          [receiverId]
+        );
+
+        if (receiverSockets) {
+          const notifPayload = {
+            id: notifRow.id,
+            type: 'message',
+            reference_id: userId, // remetente, pra abrir a conversa ao clicar
+            message: notifMessage,
+            created_at: notifRow.created_at,
+            read_at: null,
+            unreadCount: parseInt(unreadForReceiver.rows[0].count)
+          };
+          receiverSockets.forEach(socketId => io.to(socketId).emit('new_notification', notifPayload));
+        }
+      } catch (notifErr) {
+        console.error('Failed to create message notification:', notifErr);
+      }
     } catch (err) {
       console.error(err);
       socket.emit('error_message', { error: 'Failed to send message' });

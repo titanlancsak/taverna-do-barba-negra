@@ -8,10 +8,12 @@ async function getNotifications(req, res) {
     const offset = (page - 1) * limit;
 
     const result = await pool.query(
-      `SELECT id, type, reference_id, message, read_at, created_at
-       FROM notifications
-       WHERE user_id = $1
-       ORDER BY created_at DESC
+      `SELECT n.id, n.type, n.reference_id, n.message, n.read_at, n.created_at, n.actor_id,
+              CASE WHEN u.is_anonymous THEN 'Anonymous Pirate' ELSE COALESCE(u.display_name, u.email) END AS actor_name
+       FROM notifications n
+       LEFT JOIN users u ON u.id = n.actor_id
+       WHERE n.user_id = $1
+       ORDER BY n.created_at DESC
        LIMIT $2 OFFSET $3`,
       [userId, limit, offset]
     );

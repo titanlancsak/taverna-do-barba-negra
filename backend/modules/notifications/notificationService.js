@@ -17,13 +17,19 @@ async function createNotification(io, onlineUsers, { userId, actorId, type, refe
       [userId, actorId, type, referenceId || null, message]
     );
 
+    const unread = await pool.query(
+      'SELECT COUNT(*) FROM notifications WHERE user_id = $1 AND read_at IS NULL',
+      [userId]
+    );
+
     const notification = {
       id: result.rows[0].id,
       type,
       reference_id: referenceId || null,
       message,
       created_at: result.rows[0].created_at,
-      read_at: null
+      read_at: null,
+      unreadCount: parseInt(unread.rows[0].count)
     };
 
     const userSockets = onlineUsers.get(userId);

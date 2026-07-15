@@ -66,6 +66,38 @@ function initNotifications() {
     return div.innerHTML;
   }
 
+  // Escapa pra uso seguro dentro de um atributo HTML entre aspas duplas
+  function escapeAttr(text) {
+    return String(text ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/"/g, '&quot;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  // Decide pra onde o clique numa notificação deve levar, conforme o tipo
+  function destinationFor(type, ref, actorName) {
+    const isInPages = window.location.pathname.includes('/pages/');
+    const pagePrefix = isInPages ? '' : 'pages/';
+    const rootPrefix = isInPages ? '../' : '';
+
+    switch (type) {
+      case 'like':
+      case 'comment':
+        return `${rootPrefix}index.html`; // feed na home
+      case 'friend_request':
+      case 'friend_accept':
+        return `${pagePrefix}friends.html`;
+      case 'group_invite':
+        return `${pagePrefix}groups.html`;
+      case 'message':
+        // chat.js auto-abre a conversa quando recebe userId + name
+        return `${pagePrefix}chat.html?userId=${encodeURIComponent(ref)}&name=${encodeURIComponent(actorName || '')}`;
+      default:
+        return null;
+    }
+  }
+
   function updateBadge(count) {
     if (count > 0) {
       badge.textContent = count > 9 ? '9+' : count;
@@ -90,14 +122,22 @@ function initNotifications() {
       }
 
       list.innerHTML = data.notifications.map(n => `
-        <div class="notif-item ${n.read_at ? '' : 'unread'}" data-id="${n.id}">
+        <div class="notif-item ${n.read_at ? '' : 'unread'}"
+             data-id="${n.id}"
+             data-type="${escapeAttr(n.type)}"
+             data-ref="${escapeAttr(n.reference_id ?? '')}"
+             data-actor="${escapeAttr(n.actor_name || '')}">
           <div class="notif-message">${escapeHtml(n.message)}</div>
           <div class="notif-time">${timeAgo(n.created_at)}</div>
         </div>
       `).join('');
 
       list.querySelectorAll('.notif-item').forEach(item => {
-        item.addEventListener('click', () => markAsRead(item.dataset.id, item));
+        item.addEventListener('click', async () => {
+          await markAsRead(item.dataset.id, item);
+          const dest = destinationFor(item.dataset.type, item.dataset.ref, item.dataset.actor);
+          if (dest) window.location.href = dest;
+        });
       });
     } catch (err) {
       list.innerHTML = '<p class="notif-empty">Failed to load notifications.</p>';
@@ -153,8 +193,16 @@ function initNotifications() {
 
     notifSocket.on('new_notification', (notification) => {
       playNotificationSound();
-      const currentBadge = parseInt(badge.textContent) || 0;
-      updateBadge(currentBadge + 1);
+      // Usa a contagem real vinda do servidor (correta mesmo com agrupamento de mensagens);
+      // se por algum motivo não vier, cai no incremento manual.
+      if (typeof notification.unreadCount === 'number') {
+        updateBadge(notification.unreadCount);
+      } else {
+        const currentBadge = parseInt(badge.textContent) || 0;
+        updateBadge(currentBadge + 1);
+      }
+      // Se o dropdown estiver aberto, reflete a nova notificação na lista na hora
+      if (dropdown.style.display === 'block') loadNotifications();
     });
   }
 
