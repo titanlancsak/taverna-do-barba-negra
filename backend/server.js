@@ -60,6 +60,9 @@ app.use('/api/groups', groupsRoutes);
 const notificationsRoutes = require('./modules/notifications/notificationsRoutes');
 app.use('/api/notifications', notificationsRoutes);
 
+const eventsRoutes = require('./modules/events/eventsRoutes');
+app.use('/api/events', eventsRoutes);
+
 // --- Socket.io: autenticação da conexão via token JWT ---
 io.use((socket, next) => {
   const token = socket.handshake.auth?.token;

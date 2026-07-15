@@ -1031,3 +1031,195 @@ button:hover {
   color: #8a7a68;
   font-size: 13px;
 }
+
+/* ===== Events ===== */
+#event-form-box {
+  background-color: #23180f;
+  border: 1px solid #3a2c1e;
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+#event-form-box h3 {
+  color: #d4a017;
+  margin-bottom: 12px;
+}
+
+#event-form-box input[type="text"],
+#event-form-box input[type="date"],
+#event-form-box input[type="time"],
+#event-form-box textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: #1b120a;
+  border: 1px solid #3a2c1e;
+  border-radius: 8px;
+  color: #f5f0e6;
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+}
+
+#event-form-box input::placeholder,
+#event-form-box textarea::placeholder {
+  color: #8a7a68;
+}
+
+#event-form-box input:focus,
+#event-form-box textarea:focus {
+  border-color: #d4a017;
+}
+
+#event-form-box textarea {
+  resize: vertical;
+}
+
+.event-form-row {
+  display: flex;
+  gap: 10px;
+}
+
+.event-form-row input {
+  flex: 1;
+}
+
+.event-form-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+#event-photo-input {
+  display: none;
+}
+
+#event-photo-filename {
+  font-size: 12px;
+  color: #8a7a68;
+  flex: 1;
+}
+
+#event-submit-btn {
+  background: linear-gradient(135deg, #d4a017, #b8860b);
+  color: #1b1b1b;
+  font-weight: bold;
+  border: none;
+  padding: 8px 22px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+#event-submit-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212, 160, 23, 0.35);
+}
+
+#event-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+#event-status-message {
+  font-size: 13px;
+  color: #e0703f;
+  margin-top: 8px;
+}
+
+.event-card {
+  background-color: #23180f;
+  border: 1px solid #3a2c1e;
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.event-photo {
+  width: 100%;
+  max-height: 320px;
+  object-fit: cover;
+  display: block;
+}
+
+.event-body {
+  padding: 16px;
+}
+
+.event-name {
+  font-size: 18px;
+  font-weight: bold;
+  color: #f5f0e6;
+  margin-bottom: 6px;
+}
+
+.event-when,
+.event-location {
+  font-size: 14px;
+  color: #d4a017;
+  margin-bottom: 4px;
+}
+
+.event-description {
+  font-size: 14px;
+  color: #cdbfae;
+  margin: 8px 0;
+  white-space: pre-wrap;
+}
+
+.event-meta {
+  font-size: 12px;
+  color: #8a7a68;
+  margin-bottom: 10px;
+}
+
+.event-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.event-attend-btn {
+  background: linear-gradient(135deg, #d4a017, #b8860b);
+  color: #1b1b1b;
+  font-weight: bold;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.event-attend-btn.attending {
+  background: #3a2c1e;
+  color: #f5f0e6;
+}
+
+.event-attendees {
+  font-size: 13px;
+  color: #8a7a68;
+}
+
+.event-delete-btn {
+  background: none;
+  border: none;
+  color: #8a7a68;
+  font-size: 15px;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 6px;
+  margin-left: auto;
+  opacity: 0.6;
+}
+
+.event-delete-btn:hover {
+  background-color: #5a1e1e;
+  opacity: 1;
+}

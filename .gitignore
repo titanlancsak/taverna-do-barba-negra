@@ -9,6 +9,8 @@ backend/converted/*
 frontend/assets/profile-pictures/*
 frontend/assets/chat-media/*
 frontend/assets/feed-media/*
+frontend/assets/event-media/*
 !frontend/assets/profile-pictures/.gitkeep
 !frontend/assets/chat-media/.gitkeep
 !frontend/assets/feed-media/.gitkeep
+!frontend/assets/event-media/.gitkeep

@@ -37,6 +37,11 @@ function renderAuthNav() {
     groupsLink.href = `${prefix}groups.html`;
     groupsLink.textContent = 'Groups';
 
+    const eventsLink = document.createElement('a');
+    eventsLink.className = 'auth-link';
+    eventsLink.href = `${prefix}events.html`;
+    eventsLink.textContent = 'Events';
+
     const chatLink = document.createElement('a');
     chatLink.className = 'auth-link';
     chatLink.href = `${prefix}chat.html`;
@@ -64,6 +69,7 @@ function renderAuthNav() {
     nav.appendChild(friendsLink);
     nav.appendChild(chatLink);
     nav.appendChild(groupsLink);
+    nav.appendChild(eventsLink);
     nav.appendChild(profileLink);
     nav.appendChild(userSpan);
     nav.appendChild(logoutLink);
