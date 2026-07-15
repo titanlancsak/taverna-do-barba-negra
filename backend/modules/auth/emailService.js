@@ -7,7 +7,7 @@ async function sendVerificationEmail(toEmail, token) {
   const verificationUrl = `https://blackbeardtavern.me/pages/verify-email.html?token=${token}`;
 
   await resend.emails.send({
-    from: 'Blackbeard\'s Tavern <onboarding@resend.dev>', // trocar depois pelo domínio próprio
+    from: 'Blackbeard\'s Tavern <noreply@blackbeardtavern.me>', 
     to: toEmail,
     subject: 'Confirm your email - Blackbeard\'s Tavern',
     html: `
