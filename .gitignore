@@ -6,3 +6,9 @@ backend/converted/*
 .env
 .DS_Store
 *.log
+frontend/assets/profile-pictures/*
+frontend/assets/chat-media/*
+frontend/assets/feed-media/*
+!frontend/assets/profile-pictures/.gitkeep
+!frontend/assets/chat-media/.gitkeep
+!frontend/assets/feed-media/.gitkeep
