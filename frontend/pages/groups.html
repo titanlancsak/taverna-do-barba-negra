@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Groups - Blackbeard Tavern</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/tools.css">
+</head>
+<body>
+  <header>
+    <h1>🏴‍☠️ Blackbeard Tavern 🍺</h1>
+    <nav>
+      <a href="../index.html">Home</a>
+    </nav>
+  </header>
+
+  <main class="content-list">
+    <h2>Groups</h2>
+
+    <div id="create-group-box">
+      <input type="text" id="group-name-input" placeholder="Group name" maxlength="100">
+      <div id="group-friends-checklist"></div>
+      <button id="create-group-btn">Create Group</button>
+      <p id="create-group-status"></p>
+    </div>
+
+    <h3>My Groups</h3>
+    <div id="groups-list"><p>Loading...</p></div>
+  </main>
+
+  <!-- Widget de chat flutuante (reaproveitado do chat 1-a-1) -->
+  <div id="chat-widget" style="display:none;">
+    <div id="chat-widget-header">
+      <img id="chat-widget-avatar" src="" alt="" style="display:none;">
+      <span id="chat-widget-name"></span>
+      <button id="chat-widget-members-btn" title="View members">👥</button>
+      <button id="chat-widget-close">✕</button>
+    </div>
+    <div id="chat-widget-messages"></div>
+    <div id="chat-widget-input-box">
+      <label for="chat-widget-media-input" id="chat-widget-attach-btn">📎</label>
+      <input type="file" id="chat-widget-media-input" accept="image/*,video/*">
+      <input type="text" id="chat-widget-input" placeholder="Type a message...">
+      <button id="chat-widget-send">➤</button>
+    </div>
+  </div>
+
+  <!-- Modal simples pra ver membros do grupo -->
+  <div id="members-modal" style="display:none;">
+    <div id="members-modal-content">
+      <h3>Group Members</h3>
+      <div id="members-list"></div>
+      <button id="members-modal-close">Close</button>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2026 Blackbeard Tavern</p>
+  </footer>
+
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="../js/session.js"></script>
+  <script src="../js/groups.js"></script>
+</body>
+</html>
