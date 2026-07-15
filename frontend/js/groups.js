@@ -28,7 +28,9 @@ const membersModalClose = document.getElementById('members-modal-close');
 
 let activeGroupId = null;
 
-const socket = io(API_BASE || window.location.origin, { auth: { token } });
+// Reutiliza a conexão global se já existir (ex.: criada pelas notificações), pra não abrir socket duplicado
+const socket = window.__tavernaSocket || io(API_BASE || window.location.origin, { auth: { token } });
+window.__tavernaSocket = socket;
 
 socket.on('connect_error', (err) => console.error('Socket connection error:', err.message));
 
