@@ -161,6 +161,83 @@ io.on('connection', (socket) => {
     }
   });
 
+  socket.on('join_group', async (data) => {
+    try {
+      const { groupId } = data;
+      const pool = require('./db/pool');
+
+      const membership = await pool.query(
+        'SELECT id FROM group_members WHERE group_id = $1 AND user_id = $2',
+        [groupId, userId]
+      );
+
+      if (membership.rows.length === 0) {
+        return socket.emit('error_message', { error: 'You are not a member of this group' });
+      }
+
+      socket.join(`group_${groupId}`);
+    } catch (err) {
+      console.error(err);
+      socket.emit('error_message', { error: 'Failed to join group' });
+    }
+  });
+
+  socket.on('leave_group_room', (data) => {
+    socket.leave(`group_${data.groupId}`);
+  });
+
+  socket.on('send_group_message', async (data) => {
+    try {
+      const { groupId, content, mediaUrl, mediaType } = data;
+
+      if (!groupId || ((!content || !content.trim()) && !mediaUrl)) {
+        return socket.emit('error_message', { error: 'Invalid message data' });
+      }
+
+      if (content && content.length > 2000) {
+        return socket.emit('error_message', { error: 'Message is too long' });
+      }
+
+      const pool = require('./db/pool');
+
+      const membership = await pool.query(
+        'SELECT id FROM group_members WHERE group_id = $1 AND user_id = $2',
+        [groupId, userId]
+      );
+      if (membership.rows.length === 0) {
+        return socket.emit('error_message', { error: 'You are not a member of this group' });
+      }
+
+      const userResult = await pool.query(
+        `SELECT CASE WHEN is_anonymous THEN 'Anonymous Pirate' ELSE COALESCE(display_name, email) END AS name
+         FROM users WHERE id = $1`,
+        [userId]
+      );
+
+      const result = await pool.query(
+        `INSERT INTO group_messages (group_id, sender_id, content, media_url, media_type)
+         VALUES ($1, $2, $3, $4, $5) RETURNING id, created_at`,
+        [groupId, userId, content ? content.trim() : null, mediaUrl || null, mediaType || null]
+      );
+
+      const message = {
+        id: result.rows[0].id,
+        group_id: groupId,
+        sender_id: userId,
+        sender_name: userResult.rows[0].name,
+        content: content ? content.trim() : null,
+        media_url: mediaUrl || null,
+        media_type: mediaType || null,
+        created_at: result.rows[0].created_at
+      };
+
+      io.to(`group_${groupId}`).emit('new_group_message', message);
+    } catch (err) {
+      console.error(err);
+      socket.emit('error_message', { error: 'Failed to send group message' });
+    }
+  });
+
   socket.on('disconnect', () => {
     onlineUsers.get(userId)?.delete(socket.id);
     if (onlineUsers.get(userId)?.size === 0) {
