@@ -44,6 +44,19 @@ async function sendRequestByEmail(req, res) {
       [requesterId, addresseeId, 'pending']
     );
 
+    const { createNotification } = require('../notifications/notificationService');
+    const actorName = await pool.query(
+      `SELECT CASE WHEN is_anonymous THEN 'Anonymous Pirate' ELSE COALESCE(display_name, email) END AS name FROM users WHERE id = $1`,
+      [requesterId]
+    );
+    await createNotification(req.app.get('io'), req.app.get('onlineUsers'), {
+      userId: addresseeId,
+      actorId: requesterId,
+      type: 'friend_request',
+      referenceId: null,
+      message: `${actorName.rows[0].name} sent you a friend request`
+    });
+
     res.status(201).json({ message: 'Friend request sent' });
   } catch (err) {
     console.error(err);
@@ -65,7 +78,6 @@ async function sendRequest(req, res) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Verifica se já existe alguma relação entre os dois (em qualquer direção)
     const existing = await pool.query(
       `SELECT id, status, requester_id FROM friendships
        WHERE (requester_id = $1 AND addressee_id = $2)
@@ -81,7 +93,6 @@ async function sendRequest(req, res) {
       if (rel.status === 'pending') {
         return res.status(409).json({ error: 'A friend request is already pending' });
       }
-      // Se foi 'declined' antes, permite reenviar removendo o registro antigo
       await pool.query('DELETE FROM friendships WHERE id = $1', [rel.id]);
     }
 
@@ -89,6 +100,19 @@ async function sendRequest(req, res) {
       'INSERT INTO friendships (requester_id, addressee_id, status) VALUES ($1, $2, $3)',
       [requesterId, addresseeId, 'pending']
     );
+
+    const { createNotification } = require('../notifications/notificationService');
+    const actorName = await pool.query(
+      `SELECT CASE WHEN is_anonymous THEN 'Anonymous Pirate' ELSE COALESCE(display_name, email) END AS name FROM users WHERE id = $1`,
+      [requesterId]
+    );
+    await createNotification(req.app.get('io'), req.app.get('onlineUsers'), {
+      userId: addresseeId,
+      actorId: requesterId,
+      type: 'friend_request',
+      referenceId: null,
+      message: `${actorName.rows[0].name} sent you a friend request`
+    });
 
     res.status(201).json({ message: 'Friend request sent' });
   } catch (err) {
@@ -101,7 +125,7 @@ async function respondRequest(req, res) {
   try {
     const userId = req.user.userId;
     const friendshipId = parseInt(req.params.friendshipId);
-    const { action } = req.body; // 'accept' ou 'decline'
+    const { action } = req.body;
 
     if (!['accept', 'decline'].includes(action)) {
       return res.status(400).json({ error: 'Invalid action' });
@@ -129,6 +153,21 @@ async function respondRequest(req, res) {
       'UPDATE friendships SET status = $1, updated_at = NOW() WHERE id = $2',
       [newStatus, friendshipId]
     );
+
+    if (newStatus === 'accepted') {
+      const { createNotification } = require('../notifications/notificationService');
+      const actorName = await pool.query(
+        `SELECT CASE WHEN is_anonymous THEN 'Anonymous Pirate' ELSE COALESCE(display_name, email) END AS name FROM users WHERE id = $1`,
+        [userId]
+      );
+      await createNotification(req.app.get('io'), req.app.get('onlineUsers'), {
+        userId: friendship.requester_id,
+        actorId: userId,
+        type: 'friend_accept',
+        referenceId: null,
+        message: `${actorName.rows[0].name} accepted your friend request`
+      });
+    }
 
     res.json({ message: `Friend request ${newStatus}` });
   } catch (err) {

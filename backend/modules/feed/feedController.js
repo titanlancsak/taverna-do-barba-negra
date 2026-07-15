@@ -149,6 +149,23 @@ async function toggleLike(req, res) {
       return res.json({ liked: false });
     } else {
       await pool.query('INSERT INTO likes (post_id, user_id) VALUES ($1, $2)', [postId, userId]);
+
+      const postOwner = await pool.query('SELECT user_id FROM posts WHERE id = $1', [postId]);
+      if (postOwner.rows.length > 0) {
+        const { createNotification } = require('../notifications/notificationService');
+        const actorName = await pool.query(
+          `SELECT CASE WHEN is_anonymous THEN 'Anonymous Pirate' ELSE COALESCE(display_name, email) END AS name FROM users WHERE id = $1`,
+          [userId]
+        );
+        await createNotification(req.app.get('io'), req.app.get('onlineUsers'), {
+          userId: postOwner.rows[0].user_id,
+          actorId: userId,
+          type: 'like',
+          referenceId: postId,
+          message: `${actorName.rows[0].name} liked your post`
+        });
+      }
+
       return res.json({ liked: true });
     }
   } catch (err) {
@@ -181,6 +198,22 @@ async function addComment(req, res) {
        VALUES ($1, $2, $3) RETURNING id, created_at`,
       [postId, userId, content.trim()]
     );
+
+    const postOwner = await pool.query('SELECT user_id FROM posts WHERE id = $1', [postId]);
+    if (postOwner.rows.length > 0) {
+      const { createNotification } = require('../notifications/notificationService');
+      const actorName = await pool.query(
+        `SELECT CASE WHEN is_anonymous THEN 'Anonymous Pirate' ELSE COALESCE(display_name, email) END AS name FROM users WHERE id = $1`,
+        [userId]
+      );
+      await createNotification(req.app.get('io'), req.app.get('onlineUsers'), {
+        userId: postOwner.rows[0].user_id,
+        actorId: userId,
+        type: 'comment',
+        referenceId: postId,
+        message: `${actorName.rows[0].name} commented on your post`
+      });
+    }
 
     res.status(201).json({ message: 'Comment added', comment: result.rows[0] });
   } catch (err) {
@@ -251,7 +284,6 @@ async function deletePost(req, res) {
       return res.status(403).json({ error: 'You can only delete your own posts' });
     }
 
-    // Remove o arquivo de mídia associado, se existir
     const mediaUrl = result.rows[0].media_url;
     if (mediaUrl) {
       const filePath = path.join(MEDIA_DIR, path.basename(mediaUrl));

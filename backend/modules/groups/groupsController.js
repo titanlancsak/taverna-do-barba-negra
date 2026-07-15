@@ -23,13 +23,13 @@ async function createGroup(req, res) {
       );
       const groupId = groupResult.rows[0].id;
 
-      // Adiciona o criador como owner
       await client.query(
         'INSERT INTO group_members (group_id, user_id, role) VALUES ($1, $2, $3)',
         [groupId, userId, 'owner']
       );
 
-      // Adiciona os membros convidados (se houver), só se forem amigos de verdade
+      const addedMembers = [];
+
       if (Array.isArray(memberIds) && memberIds.length > 0) {
         for (const memberId of memberIds) {
           if (memberId === userId) continue;
@@ -46,11 +46,30 @@ async function createGroup(req, res) {
               'INSERT INTO group_members (group_id, user_id, role) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING',
               [groupId, memberId, 'member']
             );
+            addedMembers.push(memberId);
           }
         }
       }
 
       await client.query('COMMIT');
+
+      if (addedMembers.length > 0) {
+        const { createNotification } = require('../notifications/notificationService');
+        const actorName = await pool.query(
+          `SELECT CASE WHEN is_anonymous THEN 'Anonymous Pirate' ELSE COALESCE(display_name, email) END AS name FROM users WHERE id = $1`,
+          [userId]
+        );
+        for (const memberId of addedMembers) {
+          await createNotification(req.app.get('io'), req.app.get('onlineUsers'), {
+            userId: memberId,
+            actorId: userId,
+            type: 'group_invite',
+            referenceId: groupId,
+            message: `${actorName.rows[0].name} added you to the group "${name.trim()}"`
+          });
+        }
+      }
+
       res.status(201).json({ message: 'Group created', group: { id: groupId, name: name.trim() } });
     } catch (err) {
       await client.query('ROLLBACK');
@@ -146,6 +165,20 @@ async function inviteMember(req, res) {
       [groupId, friendId, 'member']
     );
 
+    const groupInfo = await pool.query('SELECT name FROM groups WHERE id = $1', [groupId]);
+    const { createNotification } = require('../notifications/notificationService');
+    const actorName = await pool.query(
+      `SELECT CASE WHEN is_anonymous THEN 'Anonymous Pirate' ELSE COALESCE(display_name, email) END AS name FROM users WHERE id = $1`,
+      [userId]
+    );
+    await createNotification(req.app.get('io'), req.app.get('onlineUsers'), {
+      userId: friendId,
+      actorId: userId,
+      type: 'group_invite',
+      referenceId: groupId,
+      message: `${actorName.rows[0].name} added you to the group "${groupInfo.rows[0].name}"`
+    });
+
     res.json({ message: 'Member added to group' });
   } catch (err) {
     console.error(err);
@@ -160,7 +193,6 @@ async function leaveGroup(req, res) {
 
     await pool.query('DELETE FROM group_members WHERE group_id = $1 AND user_id = $2', [groupId, userId]);
 
-    // Se não sobrou ninguém, apaga o grupo
     const remaining = await pool.query('SELECT id FROM group_members WHERE group_id = $1', [groupId]);
     if (remaining.rows.length === 0) {
       await pool.query('DELETE FROM groups WHERE id = $1', [groupId]);
