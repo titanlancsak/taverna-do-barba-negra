@@ -84,3 +84,18 @@ function renderAuthNav() {
 }
 
 renderAuthNav();
+
+
+// Carrega o sistema de notificações (sino) se o usuário estiver logado
+if (localStorage.getItem('taverna_token')) {
+  const socketIoScript = document.createElement('script');
+  socketIoScript.src = 'https://cdn.socket.io/4.7.5/socket.io.min.js';
+  socketIoScript.onload = () => {
+    const isInPages = window.location.pathname.includes('/pages/');
+    const notifScript = document.createElement('script');
+    notifScript.src = isInPages ? 'js/notifications.js' : 'js/notifications.js';
+    notifScript.src = isInPages ? '../js/notifications.js' : 'js/notifications.js';
+    document.body.appendChild(notifScript);
+  };
+  document.body.appendChild(socketIoScript);
+}
