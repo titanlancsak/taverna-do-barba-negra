@@ -2,8 +2,8 @@
 // Sem multiplayer ainda. A arte (sprites/tileset) e a rede (Socket.io) entram nas
 // próximas fases sem precisar mudar esta base de movimento.
 
-const WORLD_W = 1600;
-const WORLD_H = 1200;
+const WORLD_W = 4000;
+const WORLD_H = 3000;
 const PLAYER_SPEED = 220;
 
 class CampusScene extends Phaser.Scene {
