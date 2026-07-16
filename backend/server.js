@@ -83,6 +83,9 @@ io.use((socket, next) => {
 // Guarda quais sockets pertencem a qual usuário (um usuário pode ter várias abas abertas)
 const onlineUsers = new Map(); // userId -> Set de socket ids
 
+// Jogadores presentes no campus virtual (chaveado por socket.id — um por conexão)
+const campusPlayers = new Map(); // socketId -> { userId, x, y }
+
 io.on('connection', (socket) => {
   const userId = socket.userId;
 
@@ -300,11 +303,55 @@ io.on('connection', (socket) => {
     }
   });
 
+  // --- Campus virtual (multiplayer) ---
+  socket.on('campus_join', (data) => {
+    const x = Number(data?.x);
+    const y = Number(data?.y);
+    const px = Number.isFinite(x) ? x : 2000;
+    const py = Number.isFinite(y) ? y : 1500;
+
+    campusPlayers.set(socket.id, { userId, x: px, y: py });
+    socket.join('campus');
+
+    // Envia ao recém-chegado a lista de quem já está no campus
+    const others = [];
+    campusPlayers.forEach((p, id) => {
+      if (id !== socket.id) others.push({ id, x: p.x, y: p.y });
+    });
+    socket.emit('campus_players', others);
+
+    // Avisa os demais que um novo jogador entrou
+    socket.to('campus').emit('campus_player_joined', { id: socket.id, x: px, y: py });
+  });
+
+  socket.on('campus_move', (data) => {
+    const p = campusPlayers.get(socket.id);
+    if (!p) return;
+    const x = Number(data?.x);
+    const y = Number(data?.y);
+    if (Number.isFinite(x)) p.x = x;
+    if (Number.isFinite(y)) p.y = y;
+    socket.to('campus').emit('campus_player_moved', { id: socket.id, x: p.x, y: p.y });
+  });
+
+  socket.on('campus_leave', () => {
+    if (campusPlayers.delete(socket.id)) {
+      socket.leave('campus');
+      socket.to('campus').emit('campus_player_left', { id: socket.id });
+    }
+  });
+
   socket.on('disconnect', () => {
     onlineUsers.get(userId)?.delete(socket.id);
     if (onlineUsers.get(userId)?.size === 0) {
       onlineUsers.delete(userId);
     }
+
+    // Remove do campus e avisa os outros jogadores
+    if (campusPlayers.delete(socket.id)) {
+      socket.to('campus').emit('campus_player_left', { id: socket.id });
+    }
+
     console.log(`User ${userId} disconnected (socket ${socket.id})`);
   });
 });

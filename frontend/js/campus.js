@@ -1,10 +1,22 @@
-// Campus Virtual — Fase 1: mundo local, personagem (círculo) andando, câmera seguindo.
-// Sem multiplayer ainda. A arte (sprites/tileset) e a rede (Socket.io) entram nas
-// próximas fases sem precisar mudar esta base de movimento.
+// Campus Virtual — Fase 2: multiplayer via Socket.io.
+// Ao entrar, você entra na "sala do campus"; sua posição é enviada ~10x/s;
+// outros jogadores aparecem, se movem em tempo real e somem ao desconectar.
+// A arte (sprites/tileset) e a identidade (nomes/cores) entram nas próximas fases.
 
 const WORLD_W = 4000;
 const WORLD_H = 3000;
 const PLAYER_SPEED = 220;
+const SEND_INTERVAL = 100; // ms (~10x por segundo)
+
+const campusToken = localStorage.getItem('taverna_token');
+if (!campusToken) {
+  window.location.href = 'login.html';
+}
+
+const CAMPUS_API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '';
+// Reutiliza a conexão global (a mesma das notificações/chat), sem abrir socket duplicado
+const campusSocket = window.__tavernaSocket || io(CAMPUS_API_BASE || window.location.origin, { auth: { token: campusToken } });
+window.__tavernaSocket = campusSocket;
 
 class CampusScene extends Phaser.Scene {
   constructor() {
@@ -12,14 +24,18 @@ class CampusScene extends Phaser.Scene {
   }
 
   preload() {
-    // Gera uma textura de círculo pro personagem (será trocada por sprite depois)
+    this.makeCircleTexture('player', 0x4fc3f7); // eu (azul)
+    this.makeCircleTexture('other', 0xff9800);  // outros (laranja) — cores por jogador vêm na Fase 3
+  }
+
+  makeCircleTexture(key, color) {
     const size = 32;
     const g = this.make.graphics({ x: 0, y: 0, add: false });
-    g.fillStyle(0x4fc3f7, 1);
+    g.fillStyle(color, 1);
     g.fillCircle(size / 2, size / 2, size / 2 - 2);
     g.lineStyle(2, 0xffffff, 1);
     g.strokeCircle(size / 2, size / 2, size / 2 - 2);
-    g.generateTexture('player', size, size);
+    g.generateTexture(key, size, size);
     g.destroy();
   }
 
@@ -30,19 +46,81 @@ class CampusScene extends Phaser.Scene {
     this.add.rectangle(WORLD_W / 2, WORLD_H / 2, WORLD_W, WORLD_H, 0x3f7a3f);
     this.add.grid(WORLD_W / 2, WORLD_H / 2, WORLD_W, WORLD_H, 64, 64, 0x000000, 0, 0x336633, 0.6);
 
-    // Personagem
+    // Meu personagem
     this.player = this.physics.add.image(WORLD_W / 2, WORLD_H / 2, 'player');
     this.player.setCollideWorldBounds(true);
 
-    // Câmera segue o personagem, com um leve amortecimento
+    // Câmera segue o personagem
     this.cameras.main.setBounds(0, 0, WORLD_W, WORLD_H);
     this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
 
     // Controles: setas + WASD
     this.cursors = this.input.keyboard.createCursorKeys();
     this.wasd = this.input.keyboard.addKeys('W,A,S,D');
-    // Impede que as setas rolem a página
     this.input.keyboard.addCapture(['UP', 'DOWN', 'LEFT', 'RIGHT', 'W', 'A', 'S', 'D']);
+
+    this.others = {}; // socketId -> sprite (com targetX/targetY pra interpolar)
+    this.lastSent = { x: Math.round(this.player.x), y: Math.round(this.player.y) };
+
+    this.setupNetwork();
+
+    // Envia a posição ~10x/s (só quando muda)
+    this.time.addEvent({ delay: SEND_INTERVAL, loop: true, callback: () => this.sendPosition() });
+  }
+
+  setupNetwork() {
+    const join = () => campusSocket.emit('campus_join', {
+      x: Math.round(this.player.x),
+      y: Math.round(this.player.y)
+    });
+
+    // Entra na sala agora (se já conectado) e também a cada reconexão
+    if (campusSocket.connected) join();
+    campusSocket.on('connect', join);
+
+    campusSocket.on('campus_players', (players) => {
+      players.forEach(p => this.addOther(p.id, p.x, p.y));
+    });
+    campusSocket.on('campus_player_joined', (p) => this.addOther(p.id, p.x, p.y));
+    campusSocket.on('campus_player_moved', (p) => {
+      const s = this.others[p.id];
+      if (s) {
+        s.targetX = p.x;
+        s.targetY = p.y;
+      } else {
+        this.addOther(p.id, p.x, p.y);
+      }
+    });
+    campusSocket.on('campus_player_left', (p) => this.removeOther(p.id));
+
+    // Ao sair da página, avisa que deixei o campus (o disconnect também cobre isso)
+    window.addEventListener('beforeunload', () => campusSocket.emit('campus_leave'));
+  }
+
+  addOther(id, x, y) {
+    if (this.others[id]) return;
+    const s = this.add.image(x, y, 'other');
+    s.targetX = x;
+    s.targetY = y;
+    this.others[id] = s;
+  }
+
+  removeOther(id) {
+    const s = this.others[id];
+    if (s) {
+      s.destroy();
+      delete this.others[id];
+    }
+  }
+
+  sendPosition() {
+    if (!this.player) return;
+    const x = Math.round(this.player.x);
+    const y = Math.round(this.player.y);
+    if (x !== this.lastSent.x || y !== this.lastSent.y) {
+      this.lastSent = { x, y };
+      campusSocket.emit('campus_move', { x, y });
+    }
   }
 
   update() {
@@ -62,8 +140,14 @@ class CampusScene extends Phaser.Scene {
     if (up) body.setVelocityY(-PLAYER_SPEED);
     else if (down) body.setVelocityY(PLAYER_SPEED);
 
-    // Normaliza pra diagonal não ficar mais rápida (não faz nada se estiver parado)
     body.velocity.normalize().scale(PLAYER_SPEED);
+
+    // Interpola a posição dos outros jogadores pra suavizar entre os updates da rede
+    for (const id in this.others) {
+      const s = this.others[id];
+      s.x = Phaser.Math.Linear(s.x, s.targetX, 0.2);
+      s.y = Phaser.Math.Linear(s.y, s.targetY, 0.2);
+    }
   }
 }
 
