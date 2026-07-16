@@ -84,7 +84,17 @@ io.use((socket, next) => {
 const onlineUsers = new Map(); // userId -> Set de socket ids
 
 // Jogadores presentes no campus virtual (chaveado por socket.id — um por conexão)
-const campusPlayers = new Map(); // socketId -> { userId, x, y }
+const campusPlayers = new Map(); // socketId -> { userId, x, y, name, color }
+
+// Paleta de cores estável por usuário (cada jogador ganha uma cor consistente)
+const CAMPUS_COLORS = [
+  0xef5350, 0xab47bc, 0x5c6bc0, 0x29b6f6, 0x26a69a, 0x66bb6a,
+  0xffca28, 0xff7043, 0x8d6e63, 0xec407a, 0x7e57c2, 0x42a5f5
+];
+function colorForUser(userId) {
+  const i = ((userId % CAMPUS_COLORS.length) + CAMPUS_COLORS.length) % CAMPUS_COLORS.length;
+  return CAMPUS_COLORS[i];
+}
 
 io.on('connection', (socket) => {
   const userId = socket.userId;
@@ -304,24 +314,42 @@ io.on('connection', (socket) => {
   });
 
   // --- Campus virtual (multiplayer) ---
-  socket.on('campus_join', (data) => {
+  socket.on('campus_join', async (data) => {
     const x = Number(data?.x);
     const y = Number(data?.y);
     const px = Number.isFinite(x) ? x : 2000;
     const py = Number.isFinite(y) ? y : 1500;
 
-    campusPlayers.set(socket.id, { userId, x: px, y: py });
+    // Nome real do usuário (respeitando anonimato) e cor estável
+    let name = '匿名の海賊';
+    try {
+      const pool = require('./db/pool');
+      const r = await pool.query(
+        `SELECT CASE WHEN is_anonymous THEN '匿名の海賊' ELSE COALESCE(display_name, email) END AS name
+         FROM users WHERE id = $1`,
+        [userId]
+      );
+      if (r.rows[0]?.name) name = r.rows[0].name;
+    } catch (err) {
+      console.error('campus_join name lookup failed:', err);
+    }
+    const color = colorForUser(userId);
+
+    campusPlayers.set(socket.id, { userId, x: px, y: py, name, color });
     socket.join('campus');
+
+    // Informa ao próprio jogador a sua identidade (nome/cor autoritativos)
+    socket.emit('campus_me', { id: socket.id, name, color });
 
     // Envia ao recém-chegado a lista de quem já está no campus
     const others = [];
     campusPlayers.forEach((p, id) => {
-      if (id !== socket.id) others.push({ id, x: p.x, y: p.y });
+      if (id !== socket.id) others.push({ id, x: p.x, y: p.y, name: p.name, color: p.color });
     });
     socket.emit('campus_players', others);
 
     // Avisa os demais que um novo jogador entrou
-    socket.to('campus').emit('campus_player_joined', { id: socket.id, x: px, y: py });
+    socket.to('campus').emit('campus_player_joined', { id: socket.id, x: px, y: py, name, color });
   });
 
   socket.on('campus_move', (data) => {
@@ -332,6 +360,14 @@ io.on('connection', (socket) => {
     if (Number.isFinite(x)) p.x = x;
     if (Number.isFinite(y)) p.y = y;
     socket.to('campus').emit('campus_player_moved', { id: socket.id, x: p.x, y: p.y });
+  });
+
+  socket.on('campus_chat', (data) => {
+    if (!campusPlayers.has(socket.id)) return;
+    let text = (data?.text || '').toString().trim();
+    if (!text) return;
+    if (text.length > 100) text = text.slice(0, 100);
+    socket.to('campus').emit('campus_chat', { id: socket.id, text });
   });
 
   socket.on('campus_leave', () => {

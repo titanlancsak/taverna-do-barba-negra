@@ -32,6 +32,27 @@
     #game-container canvas {
       display: block;
     }
+    #campus-chat {
+      background-color: #2c1e12;
+      border-top: 1px solid #3a2c1e;
+      padding: 8px;
+      display: flex;
+      justify-content: center;
+    }
+    #campus-chat-input {
+      width: 100%;
+      max-width: 480px;
+      padding: 8px 12px;
+      border-radius: 20px;
+      border: 1px solid #3a2c1e;
+      background-color: #1b120a;
+      color: #f5f0e6;
+      font-size: 14px;
+      outline: none;
+    }
+    #campus-chat-input:focus {
+      border-color: #d4a017;
+    }
   </style>
 </head>
 <body>
@@ -40,8 +61,11 @@
   </header>
 
   <main id="campus-main">
-    <p id="game-hint">矢印キーまたは WASD で移動できます。</p>
+    <p id="game-hint">矢印キーまたは WASD で移動 · Enter でチャット</p>
     <div id="game-container"></div>
+    <div id="campus-chat">
+      <input type="text" id="campus-chat-input" maxlength="100" placeholder="Enter を押してチャット…">
+    </div>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.1/dist/phaser.min.js"></script>
