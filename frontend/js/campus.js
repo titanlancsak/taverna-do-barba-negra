@@ -62,6 +62,15 @@ class CampusScene extends Phaser.Scene {
     this.others = {}; // socketId -> sprite (com targetX/targetY pra interpolar)
     this.lastSent = { x: Math.round(this.player.x), y: Math.round(this.player.y) };
 
+    // HUD de diagnóstico (fixo na tela) — mostra conexão e nº de outros jogadores
+    this.hud = this.add.text(10, 10, '', {
+      fontFamily: 'monospace',
+      fontSize: '14px',
+      color: '#ffffff',
+      backgroundColor: '#000000aa',
+      padding: { x: 8, y: 5 }
+    }).setScrollFactor(0).setDepth(1000);
+
     this.setupNetwork();
 
     // Envia a posição ~10x/s (só quando muda)
@@ -75,13 +84,22 @@ class CampusScene extends Phaser.Scene {
     });
 
     // Entra na sala agora (se já conectado) e também a cada reconexão
+    console.log('[campus] socket conectado?', campusSocket.connected, 'id:', campusSocket.id);
     if (campusSocket.connected) join();
-    campusSocket.on('connect', join);
+    campusSocket.on('connect', () => {
+      console.log('[campus] connect -> join', campusSocket.id);
+      join();
+    });
+    campusSocket.on('connect_error', (err) => console.error('[campus] connect_error:', err.message));
 
     campusSocket.on('campus_players', (players) => {
+      console.log('[campus] campus_players:', players);
       players.forEach(p => this.addOther(p.id, p.x, p.y));
     });
-    campusSocket.on('campus_player_joined', (p) => this.addOther(p.id, p.x, p.y));
+    campusSocket.on('campus_player_joined', (p) => {
+      console.log('[campus] player_joined:', p);
+      this.addOther(p.id, p.x, p.y);
+    });
     campusSocket.on('campus_player_moved', (p) => {
       const s = this.others[p.id];
       if (s) {
@@ -91,7 +109,10 @@ class CampusScene extends Phaser.Scene {
         this.addOther(p.id, p.x, p.y);
       }
     });
-    campusSocket.on('campus_player_left', (p) => this.removeOther(p.id));
+    campusSocket.on('campus_player_left', (p) => {
+      console.log('[campus] player_left:', p);
+      this.removeOther(p.id);
+    });
 
     // Ao sair da página, avisa que deixei o campus (o disconnect também cobre isso)
     window.addEventListener('beforeunload', () => campusSocket.emit('campus_leave'));
@@ -147,6 +168,11 @@ class CampusScene extends Phaser.Scene {
       const s = this.others[id];
       s.x = Phaser.Math.Linear(s.x, s.targetX, 0.2);
       s.y = Phaser.Math.Linear(s.y, s.targetY, 0.2);
+    }
+
+    if (this.hud) {
+      const conn = campusSocket.connected ? 'OK' : '未接続';
+      this.hud.setText(`接続: ${conn}  他のプレイヤー: ${Object.keys(this.others).length}`);
     }
   }
 }
