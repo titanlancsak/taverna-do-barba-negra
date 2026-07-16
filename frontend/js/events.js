@@ -36,6 +36,15 @@ photoInput.addEventListener('change', () => {
   photoFilename.textContent = photoInput.files[0] ? photoInput.files[0].name : '';
 });
 
+// Formata a data como YYYY/MM/DD enquanto digita (só números, barras automáticas)
+dateInput.addEventListener('input', () => {
+  const d = dateInput.value.replace(/\D/g, '').slice(0, 8);
+  let out = d.slice(0, 4);
+  if (d.length > 4) out += '/' + d.slice(4, 6);
+  if (d.length > 6) out += '/' + d.slice(6, 8);
+  dateInput.value = out;
+});
+
 async function loadEvents() {
   try {
     const response = await fetch(`${API_BASE}/api/events`, {
@@ -131,16 +140,21 @@ async function deleteEvent(eventId) {
 
 submitBtn.addEventListener('click', async () => {
   const name = nameInput.value.trim();
-  const date = dateInput.value;
+  const dateRaw = dateInput.value.trim();
 
   if (!name) {
     statusMessage.textContent = 'イベント名を入力してください。';
     return;
   }
-  if (!date) {
-    statusMessage.textContent = '日付を選択してください。';
+  if (!dateRaw) {
+    statusMessage.textContent = '日付を入力してください。';
     return;
   }
+  if (!/^\d{4}\/\d{2}\/\d{2}$/.test(dateRaw)) {
+    statusMessage.textContent = '日付は YYYY/MM/DD の形式で入力してください。';
+    return;
+  }
+  const date = dateRaw.replace(/\//g, '-'); // backend espera YYYY-MM-DD
 
   statusMessage.textContent = 'イベントを作成中...';
   submitBtn.disabled = true;

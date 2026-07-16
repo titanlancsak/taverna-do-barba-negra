@@ -26,6 +26,9 @@ function playNotificationSound() {
 }
 
 function initNotifications() {
+  // Evita sino duplicado se o script for carregado mais de uma vez
+  if (document.getElementById('notif-bell-wrapper')) return;
+
   // Monta o sino no cabeçalho, ao lado do menu SNS (lado esquerdo)
   const mount = document.querySelector('.nav-left') || document.querySelector('header');
   if (!mount) return;
