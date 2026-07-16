@@ -9,7 +9,7 @@ form.addEventListener('submit', async (e) => {
   const url = document.getElementById('url-input').value;
   const type = document.getElementById('type-select').value;
 
-  statusMessage.textContent = 'Downloading... this may take a while.';
+  statusMessage.textContent = 'ダウンロード中... 少し時間がかかる場合があります。';
 
   try {
     const response = await fetch(`${API_BASE}/api/download/fetch`, {
@@ -20,7 +20,7 @@ form.addEventListener('submit', async (e) => {
 
     if (!response.ok) {
       const errData = await response.json();
-      throw new Error(errData.error || 'Download failed');
+      throw new Error(errData.error || 'ダウンロードに失敗しました');
     }
 
     const blob = await response.blob();
@@ -32,9 +32,9 @@ form.addEventListener('submit', async (e) => {
     a.click();
     a.remove();
 
-    statusMessage.textContent = 'Done! Your download should start automatically.';
+    statusMessage.textContent = '完了！ダウンロードが自動的に始まります。';
   } catch (err) {
     console.error(err);
-    statusMessage.textContent = err.message || 'Something went wrong. Please try again.';
+    statusMessage.textContent = err.message || 'エラーが発生しました。もう一度お試しください。';
   }
 });

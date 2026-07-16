@@ -6,11 +6,11 @@ async function createGroup(req, res) {
     const { name, memberIds } = req.body;
 
     if (!name || !name.trim()) {
-      return res.status(400).json({ error: 'Group name is required' });
+      return res.status(400).json({ error: 'グループ名は必須です' });
     }
 
     if (name.length > 100) {
-      return res.status(400).json({ error: 'Group name is too long (max 100 characters)' });
+      return res.status(400).json({ error: 'グループ名が長すぎます（最大100文字）' });
     }
 
     const client = await pool.connect();
@@ -56,7 +56,7 @@ async function createGroup(req, res) {
       if (addedMembers.length > 0) {
         const { createNotification } = require('../notifications/notificationService');
         const actorName = await pool.query(
-          `SELECT CASE WHEN is_anonymous THEN 'Anonymous Pirate' ELSE COALESCE(display_name, email) END AS name FROM users WHERE id = $1`,
+          `SELECT CASE WHEN is_anonymous THEN '匿名の海賊' ELSE COALESCE(display_name, email) END AS name FROM users WHERE id = $1`,
           [userId]
         );
         for (const memberId of addedMembers) {
@@ -65,12 +65,12 @@ async function createGroup(req, res) {
             actorId: userId,
             type: 'group_invite',
             referenceId: groupId,
-            message: `${actorName.rows[0].name} added you to the group "${name.trim()}"`
+            message: `${actorName.rows[0].name}さんがグループ「${name.trim()}」にあなたを追加しました`
           });
         }
       }
 
-      res.status(201).json({ message: 'Group created', group: { id: groupId, name: name.trim() } });
+      res.status(201).json({ message: 'グループを作成しました', group: { id: groupId, name: name.trim() } });
     } catch (err) {
       await client.query('ROLLBACK');
       throw err;
@@ -79,7 +79,7 @@ async function createGroup(req, res) {
     }
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Failed to create group' });
+    res.status(500).json({ error: 'グループの作成に失敗しました' });
   }
 }
 
@@ -100,7 +100,7 @@ async function listMyGroups(req, res) {
     res.json({ groups: result.rows });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Failed to load groups' });
+    res.status(500).json({ error: 'グループの読み込みに失敗しました' });
   }
 }
 
@@ -114,12 +114,12 @@ async function getGroupMembers(req, res) {
       [groupId, userId]
     );
     if (membership.rows.length === 0) {
-      return res.status(403).json({ error: 'You are not a member of this group' });
+      return res.status(403).json({ error: 'このグループのメンバーではありません' });
     }
 
     const result = await pool.query(
       `SELECT u.id,
-        CASE WHEN u.is_anonymous THEN 'Anonymous Pirate' ELSE COALESCE(u.display_name, u.email) END AS display_name,
+        CASE WHEN u.is_anonymous THEN '匿名の海賊' ELSE COALESCE(u.display_name, u.email) END AS display_name,
         CASE WHEN u.is_anonymous THEN NULL ELSE u.profile_picture_url END AS profile_picture_url,
         gm.role
        FROM group_members gm
@@ -132,7 +132,7 @@ async function getGroupMembers(req, res) {
     res.json({ members: result.rows });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Failed to load group members' });
+    res.status(500).json({ error: 'グループメンバーの読み込みに失敗しました' });
   }
 }
 
@@ -147,7 +147,7 @@ async function inviteMember(req, res) {
       [groupId, userId]
     );
     if (membership.rows.length === 0) {
-      return res.status(403).json({ error: 'You are not a member of this group' });
+      return res.status(403).json({ error: 'このグループのメンバーではありません' });
     }
 
     const isFriend = await pool.query(
@@ -157,7 +157,7 @@ async function inviteMember(req, res) {
       [userId, friendId]
     );
     if (isFriend.rows.length === 0) {
-      return res.status(400).json({ error: 'You can only invite friends to the group' });
+      return res.status(400).json({ error: 'グループに招待できるのはフレンドのみです' });
     }
 
     await pool.query(
@@ -168,7 +168,7 @@ async function inviteMember(req, res) {
     const groupInfo = await pool.query('SELECT name FROM groups WHERE id = $1', [groupId]);
     const { createNotification } = require('../notifications/notificationService');
     const actorName = await pool.query(
-      `SELECT CASE WHEN is_anonymous THEN 'Anonymous Pirate' ELSE COALESCE(display_name, email) END AS name FROM users WHERE id = $1`,
+      `SELECT CASE WHEN is_anonymous THEN '匿名の海賊' ELSE COALESCE(display_name, email) END AS name FROM users WHERE id = $1`,
       [userId]
     );
     await createNotification(req.app.get('io'), req.app.get('onlineUsers'), {
@@ -176,13 +176,13 @@ async function inviteMember(req, res) {
       actorId: userId,
       type: 'group_invite',
       referenceId: groupId,
-      message: `${actorName.rows[0].name} added you to the group "${groupInfo.rows[0].name}"`
+      message: `${actorName.rows[0].name}さんがグループ「${groupInfo.rows[0].name}」にあなたを追加しました`
     });
 
-    res.json({ message: 'Member added to group' });
+    res.json({ message: 'メンバーをグループに追加しました' });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Failed to invite member' });
+    res.status(500).json({ error: 'メンバーの招待に失敗しました' });
   }
 }
 
@@ -196,7 +196,7 @@ async function leaveGroup(req, res) {
       [groupId, userId]
     );
     if (membership.rows.length === 0) {
-      return res.status(400).json({ error: 'You are not a member of this group' });
+      return res.status(400).json({ error: 'このグループのメンバーではありません' });
     }
     const wasOwner = membership.rows[0].role === 'owner';
 
@@ -220,10 +220,10 @@ async function leaveGroup(req, res) {
       await pool.query('UPDATE groups SET creator_id = $1 WHERE id = $2', [newOwnerId, groupId]);
     }
 
-    res.json({ message: 'Left the group' });
+    res.json({ message: 'グループを退出しました' });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Failed to leave group' });
+    res.status(500).json({ error: 'グループの退出に失敗しました' });
   }
 }
 
@@ -235,10 +235,10 @@ async function deleteGroup(req, res) {
 
     const group = await pool.query('SELECT creator_id FROM groups WHERE id = $1', [groupId]);
     if (group.rows.length === 0) {
-      return res.status(404).json({ error: 'Group not found' });
+      return res.status(404).json({ error: 'グループが見つかりません' });
     }
     if (group.rows[0].creator_id !== userId) {
-      return res.status(403).json({ error: 'Only the group owner can delete the group' });
+      return res.status(403).json({ error: 'グループを削除できるのはオーナーのみです' });
     }
 
     // Avisa quem estiver com o chat do grupo aberto, antes de apagar
@@ -247,10 +247,10 @@ async function deleteGroup(req, res) {
 
     await pool.query('DELETE FROM groups WHERE id = $1', [groupId]);
 
-    res.json({ message: 'Group deleted' });
+    res.json({ message: 'グループを削除しました' });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Failed to delete group' });
+    res.status(500).json({ error: 'グループの削除に失敗しました' });
   }
 }
 
@@ -267,12 +267,12 @@ async function getGroupHistory(req, res) {
       [groupId, userId]
     );
     if (membership.rows.length === 0) {
-      return res.status(403).json({ error: 'You are not a member of this group' });
+      return res.status(403).json({ error: 'このグループのメンバーではありません' });
     }
 
     const result = await pool.query(
       `SELECT gm.id, gm.sender_id, gm.content, gm.media_url, gm.media_type, gm.created_at,
-        CASE WHEN u.is_anonymous THEN 'Anonymous Pirate' ELSE COALESCE(u.display_name, u.email) END AS sender_name
+        CASE WHEN u.is_anonymous THEN '匿名の海賊' ELSE COALESCE(u.display_name, u.email) END AS sender_name
        FROM group_messages gm
        JOIN users u ON u.id = gm.sender_id
        WHERE gm.group_id = $1
@@ -284,7 +284,7 @@ async function getGroupHistory(req, res) {
     res.json({ messages: result.rows.reverse(), hasMore: result.rows.length === limit });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Failed to load group messages' });
+    res.status(500).json({ error: 'グループメッセージの読み込みに失敗しました' });
   }
 }
 

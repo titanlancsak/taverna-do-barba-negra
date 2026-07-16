@@ -10,7 +10,7 @@ async function loadTracks() {
     const tracks = await response.json();
 
     if (!tracks.length) {
-      trackList.innerHTML = '<li>No tracks available yet.</li>';
+      trackList.innerHTML = '<li>まだ曲がありません。</li>';
       return;
     }
 
@@ -27,7 +27,7 @@ async function loadTracks() {
       trackList.appendChild(li);
     });
   } catch (err) {
-    trackList.innerHTML = '<li>Could not load tracks.</li>';
+    trackList.innerHTML = '<li>曲を読み込めませんでした。</li>';
     console.error(err);
   }
 }

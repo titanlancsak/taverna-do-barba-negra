@@ -3,41 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Events - Blackbeard Tavern</title>
+  <title>イベント - Blackbeard Tavern</title>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/tools.css">
 </head>
 <body>
   <header>
     <h1>🏴‍☠️ Blackbeard Tavern 🍺</h1>
-    <nav>
-      <a href="../index.html">Home</a>
-    </nav>
   </header>
 
   <main class="content-list">
-    <h2>Events</h2>
+    <h2>イベント</h2>
 
     <div id="event-form-box">
-      <h3>Create an event</h3>
-      <input type="text" id="event-name-input" placeholder="Event name" maxlength="150">
+      <h3>イベントを作成</h3>
+      <input type="text" id="event-name-input" placeholder="イベント名" maxlength="150">
       <div class="event-form-row">
         <input type="date" id="event-date-input">
         <input type="time" id="event-time-input">
       </div>
-      <input type="text" id="event-location-input" placeholder="Location" maxlength="200">
-      <textarea id="event-description-input" placeholder="Description" maxlength="2000" rows="3"></textarea>
+      <input type="text" id="event-location-input" placeholder="場所" maxlength="200">
+      <textarea id="event-description-input" placeholder="説明" maxlength="2000" rows="3"></textarea>
       <div class="event-form-actions">
-        <label for="event-photo-input" class="file-label">📷 Add photo</label>
+        <label for="event-photo-input" class="file-label">📷 写真を追加</label>
         <input type="file" id="event-photo-input" accept="image/*">
         <span id="event-photo-filename"></span>
-        <button id="event-submit-btn">Create Event</button>
+        <button id="event-submit-btn">イベントを作成</button>
       </div>
       <p id="event-status-message"></p>
     </div>
 
     <div id="events-list">
-      <p>Loading events...</p>
+      <p>イベントを読み込み中...</p>
     </div>
   </main>
 

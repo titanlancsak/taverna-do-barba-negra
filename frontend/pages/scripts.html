@@ -3,61 +3,51 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Useful Scripts - Blackbeard Tavern</title>
+  <title>便利なスクリプト - Blackbeard Tavern</title>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/tools.css">
 </head>
 <body>
   <header>
     <h1>🏴‍☠️ Blackbeard Tavern 🍺</h1>
-    <nav>
-      <a href="../index.html">Home</a>
-      <a href="image-converter.html">Image Converter</a>
-      <a href="video-downloader.html">Video/Audio Downloader</a>
-      <a href="audio-converter.html">Audio Converter</a>
-      <a href="music-player.html">Music Player</a>
-      <a href="free-books.html">Free Books</a>
-      <a href="linux-distros.html">Linux Distros</a>
-      <a href="scripts.html">Useful Scripts</a>
-    </nav>
   </header>
 
   <main class="content-list">
-    <h2>Useful Automation Scripts</h2>
-    <p>Copy and paste these into your terminal. Always read a script before running it.</p>
+    <h2>便利な自動化スクリプト</h2>
+    <p>ターミナルにコピー＆ペーストして使ってください。実行する前に必ずスクリプトを読みましょう。</p>
 
     <div class="script-card">
-      <h3>System update (Rocky/RHEL-based)</h3>
+      <h3>システム更新（Rocky／RHEL系）</h3>
       <pre><code>sudo dnf update -y && sudo dnf autoremove -y</code></pre>
-      <button class="copy-btn">Copy</button>
+      <button class="copy-btn">コピー</button>
     </div>
 
     <div class="script-card">
-      <h3>Find largest files on disk</h3>
+      <h3>ディスク上の大きなファイルを探す</h3>
       <pre><code>du -ah / 2>/dev/null | sort -rh | head -20</code></pre>
-      <button class="copy-btn">Copy</button>
+      <button class="copy-btn">コピー</button>
     </div>
 
     <div class="script-card">
-      <h3>Check open ports</h3>
+      <h3>開いているポートを確認</h3>
       <pre><code>sudo ss -tulpn</code></pre>
-      <button class="copy-btn">Copy</button>
+      <button class="copy-btn">コピー</button>
     </div>
 
     <div class="script-card">
-      <h3>Backup a folder with timestamp</h3>
+      <h3>タイムスタンプ付きでフォルダをバックアップ</h3>
       <pre><code>tar -czf backup_$(date +%Y%m%d_%H%M%S).tar.gz /path/to/folder</code></pre>
-      <button class="copy-btn">Copy</button>
+      <button class="copy-btn">コピー</button>
     </div>
 
     <div class="script-card">
-      <h3>Monitor system resources live</h3>
+      <h3>システムリソースをリアルタイム監視</h3>
       <pre><code>htop</code></pre>
-      <button class="copy-btn">Copy</button>
+      <button class="copy-btn">コピー</button>
     </div>
 
     <div class="script-card">
-      <h3>Auto-organize Downloads folder by file type</h3>
+      <h3>ダウンロードフォルダをファイル種別で自動整理</h3>
       <pre><code>mkdir -p ~/Downloads/{Images,Videos,Audio,Documents,Archives,Scripts}
 cd ~/Downloads
 for f in *; do
@@ -72,11 +62,11 @@ for f in *; do
   esac
 done
 echo "Downloads folder organized!"</code></pre>
-      <button class="copy-btn">Copy</button>
+      <button class="copy-btn">コピー</button>
     </div>
 
     <div class="script-card">
-      <h3>Watch a folder and auto-sort new files (live)</h3>
+      <h3>フォルダを監視して新しいファイルを自動仕分け（リアルタイム）</h3>
       <pre><code>sudo dnf install inotify-tools -y
 mkdir -p ~/Downloads/{Images,Videos,Audio,Documents,Archives}
 inotifywait -m -e create --format '%f' ~/Downloads | while read FILE; do
@@ -88,39 +78,39 @@ inotifywait -m -e create --format '%f' ~/Downloads | while read FILE; do
     *.zip|*.tar|*.gz) mv ~/Downloads/"$FILE" ~/Downloads/Archives/ ;;
   esac
 done</code></pre>
-      <button class="copy-btn">Copy</button>
+      <button class="copy-btn">コピー</button>
     </div>
 
     <div class="script-card">
-      <h3>Delete files older than 30 days in a folder</h3>
+      <h3>フォルダ内の30日より古いファイルを削除</h3>
       <pre><code>find /path/to/folder -type f -mtime +30 -delete</code></pre>
-      <button class="copy-btn">Copy</button>
+      <button class="copy-btn">コピー</button>
     </div>
 
     <div class="script-card">
-      <h3>Check disk space usage summary</h3>
+      <h3>ディスク使用量の概要を確認</h3>
       <pre><code>df -h --total | grep total</code></pre>
-      <button class="copy-btn">Copy</button>
+      <button class="copy-btn">コピー</button>
     </div>
 
     <div class="script-card">
-      <h3>List all running services</h3>
+      <h3>実行中のサービスを一覧表示</h3>
       <pre><code>systemctl list-units --type=service --state=running</code></pre>
-      <button class="copy-btn">Copy</button>
+      <button class="copy-btn">コピー</button>
     </div>
 
     <div class="script-card">
-      <h3>Create a swap file (useful for low-RAM VMs)</h3>
+      <h3>スワップファイルを作成（低メモリのVMに便利）</h3>
       <pre><code>sudo fallocate -l 2G /swapfile
 sudo chmod 600 /swapfile
 sudo mkswap /swapfile
 sudo swapon /swapfile
 echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab</code></pre>
-      <button class="copy-btn">Copy</button>
+      <button class="copy-btn">コピー</button>
     </div>
 
     <div class="script-card">
-      <h3>Compress all images in a folder (requires ImageMagick)</h3>
+      <h3>フォルダ内の全画像を圧縮（ImageMagickが必要）</h3>
       <pre><code>sudo dnf install ImageMagick -y
 cd /path/to/folder
 mkdir -p compressed
@@ -129,21 +119,21 @@ for f in *.jpg *.jpeg *.png; do
   convert "$f" -quality 75 -resize 1920x1920\> "compressed/$f"
 done
 echo "Images compressed into ./compressed"</code></pre>
-      <button class="copy-btn">Copy</button>
+      <button class="copy-btn">コピー</button>
     </div>
 
     <div class="script-card">
-      <h3>Find and kill a process using a specific port</h3>
+      <h3>特定のポートを使うプロセスを見つけて終了</h3>
       <pre><code>sudo lsof -i :PORT_NUMBER
 # then run:
 sudo kill -9 PID</code></pre>
-      <button class="copy-btn">Copy</button>
+      <button class="copy-btn">コピー</button>
     </div>
 
     <div class="script-card">
-      <h3>Auto-renew SSL certificates (Certbot cron check)</h3>
+      <h3>SSL証明書の自動更新（Certbotのcron確認）</h3>
       <pre><code>sudo certbot renew --dry-run</code></pre>
-      <button class="copy-btn">Copy</button>
+      <button class="copy-btn">コピー</button>
     </div>
 
   </main>

@@ -13,25 +13,25 @@ async function createEvent(req, res) {
     const { name, date, time, location, description } = req.body;
 
     if (!name || !name.trim()) {
-      return res.status(400).json({ error: 'Event name is required' });
+      return res.status(400).json({ error: 'イベント名は必須です' });
     }
     if (name.length > 150) {
-      return res.status(400).json({ error: 'Event name is too long (max 150 characters)' });
+      return res.status(400).json({ error: 'イベント名が長すぎます（最大150文字）' });
     }
     if (!date) {
-      return res.status(400).json({ error: 'Event date is required' });
+      return res.status(400).json({ error: 'イベントの日付は必須です' });
     }
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
-      return res.status(400).json({ error: 'Invalid date format' });
+      return res.status(400).json({ error: '日付の形式が無効です' });
     }
     if (time && !/^\d{2}:\d{2}$/.test(time)) {
-      return res.status(400).json({ error: 'Invalid time format' });
+      return res.status(400).json({ error: '時刻の形式が無効です' });
     }
     if (location && location.length > 200) {
-      return res.status(400).json({ error: 'Location is too long (max 200 characters)' });
+      return res.status(400).json({ error: '場所が長すぎます（最大200文字）' });
     }
     if (description && description.length > 2000) {
-      return res.status(400).json({ error: 'Description is too long (max 2000 characters)' });
+      return res.status(400).json({ error: '説明が長すぎます（最大2000文字）' });
     }
 
     let photoUrl = null;
@@ -42,7 +42,7 @@ async function createEvent(req, res) {
 
       if (!mimetype.startsWith('image/')) {
         fs.unlinkSync(inputPath);
-        return res.status(400).json({ error: 'Event photo must be an image' });
+        return res.status(400).json({ error: 'イベントの写真は画像である必要があります' });
       }
 
       let metadata;
@@ -50,13 +50,13 @@ async function createEvent(req, res) {
         metadata = await sharp(inputPath).metadata();
       } catch {
         fs.unlinkSync(inputPath);
-        return res.status(400).json({ error: 'Invalid image file' });
+        return res.status(400).json({ error: '無効な画像ファイルです' });
       }
 
       const allowedFormats = ['jpeg', 'png', 'webp', 'gif'];
       if (!allowedFormats.includes(metadata.format)) {
         fs.unlinkSync(inputPath);
-        return res.status(400).json({ error: 'Unsupported image format' });
+        return res.status(400).json({ error: '対応していない画像形式です' });
       }
 
       const filename = `${crypto.randomBytes(16).toString('hex')}.webp`;
@@ -85,10 +85,10 @@ async function createEvent(req, res) {
       ]
     );
 
-    res.status(201).json({ message: 'Event created', event: { id: result.rows[0].id } });
+    res.status(201).json({ message: 'イベントを作成しました', event: { id: result.rows[0].id } });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: err.message || 'Failed to create event' });
+    res.status(500).json({ error: err.message || 'イベントの作成に失敗しました' });
   }
 }
 
@@ -103,7 +103,7 @@ async function listEvents(req, res) {
               TO_CHAR(e.event_time, 'HH24:MI') AS event_time,
               e.location, e.description, e.photo_url,
               e.creator_id,
-              CASE WHEN u.is_anonymous THEN 'Anonymous Pirate' ELSE COALESCE(u.display_name, u.email) END AS creator_name,
+              CASE WHEN u.is_anonymous THEN '匿名の海賊' ELSE COALESCE(u.display_name, u.email) END AS creator_name,
               (SELECT COUNT(*) FROM event_attendees WHERE event_id = e.id) AS attendee_count,
               EXISTS(SELECT 1 FROM event_attendees WHERE event_id = e.id AND user_id = $1) AS attending
        FROM events e
@@ -116,7 +116,7 @@ async function listEvents(req, res) {
     res.json({ events: result.rows });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Failed to load events' });
+    res.status(500).json({ error: 'イベントの読み込みに失敗しました' });
   }
 }
 
@@ -128,7 +128,7 @@ async function attendEvent(req, res) {
 
     const event = await pool.query('SELECT id FROM events WHERE id = $1', [eventId]);
     if (event.rows.length === 0) {
-      return res.status(404).json({ error: 'Event not found' });
+      return res.status(404).json({ error: 'イベントが見つかりません' });
     }
 
     await pool.query(
@@ -140,7 +140,7 @@ async function attendEvent(req, res) {
     res.json({ attending: true, attendeeCount: parseInt(count.rows[0].count) });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Failed to confirm attendance' });
+    res.status(500).json({ error: '参加の確定に失敗しました' });
   }
 }
 
@@ -156,7 +156,7 @@ async function cancelAttendance(req, res) {
     res.json({ attending: false, attendeeCount: parseInt(count.rows[0].count) });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Failed to cancel attendance' });
+    res.status(500).json({ error: '参加の取り消しに失敗しました' });
   }
 }
 
@@ -168,17 +168,17 @@ async function deleteEvent(req, res) {
 
     const event = await pool.query('SELECT creator_id FROM events WHERE id = $1', [eventId]);
     if (event.rows.length === 0) {
-      return res.status(404).json({ error: 'Event not found' });
+      return res.status(404).json({ error: 'イベントが見つかりません' });
     }
     if (event.rows[0].creator_id !== userId) {
-      return res.status(403).json({ error: 'Only the event creator can delete it' });
+      return res.status(403).json({ error: 'イベントを削除できるのは作成者のみです' });
     }
 
     await pool.query('DELETE FROM events WHERE id = $1', [eventId]);
-    res.json({ message: 'Event deleted' });
+    res.json({ message: 'イベントを削除しました' });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Failed to delete event' });
+    res.status(500).json({ error: 'イベントの削除に失敗しました' });
   }
 }
 

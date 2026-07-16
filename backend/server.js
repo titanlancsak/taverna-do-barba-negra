@@ -68,7 +68,7 @@ io.use((socket, next) => {
   const token = socket.handshake.auth?.token;
 
   if (!token) {
-    return next(new Error('Authentication required'));
+    return next(new Error('認証が必要です'));
   }
 
   try {
@@ -76,7 +76,7 @@ io.use((socket, next) => {
     socket.userId = decoded.userId;
     next();
   } catch (err) {
-    next(new Error('Invalid or expired token'));
+    next(new Error('トークンが無効または期限切れです'));
   }
 });
 
@@ -98,11 +98,11 @@ io.on('connection', (socket) => {
       const { receiverId, content, mediaUrl, mediaType } = data;
 
       if (!receiverId || (!content || !content.trim()) && !mediaUrl) {
-        return socket.emit('error_message', { error: 'Invalid message data' });
+        return socket.emit('error_message', { error: 'メッセージのデータが無効です' });
       }
 
       if (content && content.length > 2000) {
-        return socket.emit('error_message', { error: 'Message is too long' });
+        return socket.emit('error_message', { error: 'メッセージが長すぎます' });
       }
 
       const pool = require('./db/pool');
@@ -135,14 +135,14 @@ io.on('connection', (socket) => {
       try {
         if (receiverId === userId) return; // não notifica a si mesmo
         const senderInfo = await pool.query(
-          `SELECT CASE WHEN is_anonymous THEN 'Anonymous Pirate' ELSE COALESCE(display_name, email) END AS name FROM users WHERE id = $1`,
+          `SELECT CASE WHEN is_anonymous THEN '匿名の海賊' ELSE COALESCE(display_name, email) END AS name FROM users WHERE id = $1`,
           [userId]
         );
-        const senderName = senderInfo.rows[0]?.name || 'Someone';
+        const senderName = senderInfo.rows[0]?.name || '誰か';
         const trimmed = content && content.trim();
         const preview = trimmed
           ? (trimmed.length > 60 ? trimmed.slice(0, 60) + '…' : trimmed)
-          : (mediaType === 'video' ? 'sent a video 🎥' : 'sent an image 🖼️');
+          : (mediaType === 'video' ? '動画を送信しました 🎥' : '画像を送信しました 🖼️');
         const notifMessage = trimmed ? `${senderName}: ${preview}` : `${senderName} ${preview}`;
 
         // Agrupa por remetente: se já há uma notificação de mensagem não-lida desse usuário, atualiza em vez de empilhar
@@ -185,7 +185,7 @@ io.on('connection', (socket) => {
       }
     } catch (err) {
       console.error(err);
-      socket.emit('error_message', { error: 'Failed to send message' });
+      socket.emit('error_message', { error: 'メッセージの送信に失敗しました' });
     }
   });
 
@@ -197,13 +197,13 @@ io.on('connection', (socket) => {
       const result = await pool.query('SELECT sender_id, receiver_id FROM messages WHERE id = $1', [messageId]);
 
       if (result.rows.length === 0) {
-        return socket.emit('error_message', { error: 'Message not found' });
+        return socket.emit('error_message', { error: 'メッセージが見つかりません' });
       }
 
       const msg = result.rows[0];
 
       if (msg.sender_id !== userId) {
-        return socket.emit('error_message', { error: 'You can only delete your own messages' });
+        return socket.emit('error_message', { error: '自分のメッセージのみ削除できます' });
       }
 
       await pool.query('DELETE FROM messages WHERE id = $1', [messageId]);
@@ -219,7 +219,7 @@ io.on('connection', (socket) => {
       }
     } catch (err) {
       console.error(err);
-      socket.emit('error_message', { error: 'Failed to delete message' });
+      socket.emit('error_message', { error: 'メッセージの削除に失敗しました' });
     }
   });
 
@@ -234,13 +234,13 @@ io.on('connection', (socket) => {
       );
 
       if (membership.rows.length === 0) {
-        return socket.emit('error_message', { error: 'You are not a member of this group' });
+        return socket.emit('error_message', { error: 'このグループのメンバーではありません' });
       }
 
       socket.join(`group_${groupId}`);
     } catch (err) {
       console.error(err);
-      socket.emit('error_message', { error: 'Failed to join group' });
+      socket.emit('error_message', { error: 'グループへの参加に失敗しました' });
     }
   });
 
@@ -253,11 +253,11 @@ io.on('connection', (socket) => {
       const { groupId, content, mediaUrl, mediaType } = data;
 
       if (!groupId || ((!content || !content.trim()) && !mediaUrl)) {
-        return socket.emit('error_message', { error: 'Invalid message data' });
+        return socket.emit('error_message', { error: 'メッセージのデータが無効です' });
       }
 
       if (content && content.length > 2000) {
-        return socket.emit('error_message', { error: 'Message is too long' });
+        return socket.emit('error_message', { error: 'メッセージが長すぎます' });
       }
 
       const pool = require('./db/pool');
@@ -267,11 +267,11 @@ io.on('connection', (socket) => {
         [groupId, userId]
       );
       if (membership.rows.length === 0) {
-        return socket.emit('error_message', { error: 'You are not a member of this group' });
+        return socket.emit('error_message', { error: 'このグループのメンバーではありません' });
       }
 
       const userResult = await pool.query(
-        `SELECT CASE WHEN is_anonymous THEN 'Anonymous Pirate' ELSE COALESCE(display_name, email) END AS name
+        `SELECT CASE WHEN is_anonymous THEN '匿名の海賊' ELSE COALESCE(display_name, email) END AS name
          FROM users WHERE id = $1`,
         [userId]
       );
@@ -296,7 +296,7 @@ io.on('connection', (socket) => {
       io.to(`group_${groupId}`).emit('new_group_message', message);
     } catch (err) {
       console.error(err);
-      socket.emit('error_message', { error: 'Failed to send group message' });
+      socket.emit('error_message', { error: 'グループメッセージの送信に失敗しました' });
     }
   });
 

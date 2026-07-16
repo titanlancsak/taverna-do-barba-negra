@@ -3,39 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Video/Audio Downloader - Blackbeard Tavern</title>
+  <title>動画・音声ダウンローダー - Blackbeard Tavern</title>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/tools.css">
 </head>
 <body>
   <header>
     <h1>🏴‍☠️ Blackbeard Tavern 🍺</h1>
-    <nav>
-      <a href="../index.html">Home</a>
-      <a href="image-converter.html">Image Converter</a>
-      <a href="video-downloader.html">Video/Audio Downloader</a>
-      <a href="audio-converter.html">Audio Converter</a>
-      <a href="music-player.html">Music Player</a>
-      <a href="free-books.html">Free Books</a>
-      <a href="linux-distros.html">Linux Distros</a>
-      <a href="scripts.html">Useful Scripts</a>
-    </nav>
   </header>
 
   <main>
-    <h2>Video/Audio Downloader</h2>
-    <p>Paste a link and download it as video (MP4) or audio (MP3).</p>
+    <h2>動画・音声ダウンローダー</h2>
+    <p>リンクを貼り付けて、動画（MP4）または音声（MP3）としてダウンロードします。</p>
 
     <form id="download-form">
       <input type="url" id="url-input" placeholder="https://..." required>
 
-      <label for="type-select">Download as:</label>
+      <label for="type-select">ダウンロード形式:</label>
       <select id="type-select">
-        <option value="video">Video (MP4)</option>
-        <option value="audio">Audio (MP3)</option>
+        <option value="video">動画 (MP4)</option>
+        <option value="audio">音声 (MP3)</option>
       </select>
 
-      <button type="submit">Download</button>
+      <button type="submit">ダウンロード</button>
     </form>
 
     <p id="status-message"></p>

@@ -10,36 +10,27 @@
 <body>
   <header>
     <h1>🏴‍☠️ Blackbeard Tavern 🍺</h1>
-    <nav>
-      <a href="pages/image-converter.html">Image Converter</a>
-      <a href="pages/video-downloader.html">Video/Audio Downloader</a>
-      <a href="pages/audio-converter.html">Audio Converter</a>
-      <a href="pages/music-player.html">Music Player</a>
-      <a href="pages/free-books.html">Free Books</a>
-      <a href="pages/linux-distros.html">Linux Distros</a>
-      <a href="pages/scripts.html">Useful Scripts</a>
-    </nav>
   </header>
 
   <main>
-    <p>Welcome to Blackbeard Tavern — your all-in-one toolbox.</p>
+    <p>Blackbeard Tavern へようこそ — オールインワンのツールボックスです。</p>
 
     <section id="feed-section">
-      <h2>Community Feed</h2>
+      <h2>コミュニティフィード</h2>
 
       <div id="post-form-box">
-        <textarea id="post-content-input" placeholder="What's on your mind, pirate?" maxlength="1000" rows="1"></textarea>
+        <textarea id="post-content-input" placeholder="いま何を考えていますか、海賊さん？" maxlength="1000" rows="1"></textarea>
         <div class="post-form-actions">
-          <label for="post-media-input" class="file-label">📎 Attach media</label>
+          <label for="post-media-input" class="file-label">📎 メディアを添付</label>
           <input type="file" id="post-media-input" accept="image/*,video/*">
           <span id="post-media-filename"></span>
-          <button id="post-submit-btn">Post</button>
+          <button id="post-submit-btn">投稿</button>
         </div>
         <p id="post-status-message"></p>
       </div>
 
       <div id="posts-container">
-        <p>Loading feed...</p>
+        <p>フィードを読み込み中...</p>
       </div>
     </section>
   </main>

@@ -25,7 +25,7 @@ async function loadPendingRequests() {
     const data = await response.json();
 
     if (!data.requests.length) {
-      pendingList.innerHTML = '<p>No pending requests.</p>';
+      pendingList.innerHTML = '<p>保留中のリクエストはありません。</p>';
       return;
     }
 
@@ -36,8 +36,8 @@ async function loadPendingRequests() {
           <div class="request-name">${escapeHtml(r.display_name)}</div>
         </div>
         <div class="request-actions">
-          <button class="accept-btn" data-id="${r.friendship_id}" data-action="accept">Accept</button>
-          <button class="decline-btn" data-id="${r.friendship_id}" data-action="decline">Decline</button>
+          <button class="accept-btn" data-id="${r.friendship_id}" data-action="accept">承認</button>
+          <button class="decline-btn" data-id="${r.friendship_id}" data-action="decline">拒否</button>
         </div>
       </div>
     `).join('');
@@ -46,7 +46,7 @@ async function loadPendingRequests() {
       btn.addEventListener('click', () => respondToRequest(btn.dataset.id, btn.dataset.action));
     });
   } catch (err) {
-    pendingList.innerHTML = '<p>Failed to load requests.</p>';
+    pendingList.innerHTML = '<p>リクエストの読み込みに失敗しました。</p>';
   }
 }
 
@@ -75,7 +75,7 @@ async function loadFriends() {
     const data = await response.json();
 
     if (!data.friends.length) {
-      friendsList.innerHTML = '<p>You have no friends yet. Add someone above!</p>';
+      friendsList.innerHTML = '<p>まだフレンドがいません。上から追加しましょう！</p>';
       return;
     }
 
@@ -86,8 +86,8 @@ async function loadFriends() {
           <div class="friend-name">${escapeHtml(f.display_name)}</div>
           ${f.course ? `<div class="friend-course">${escapeHtml(f.course)}</div>` : ''}
         </div>
-        <button class="chat-with-friend-btn" data-id="${f.id}" data-name="${escapeHtml(f.display_name)}">Chat</button>
-        <button class="remove-friend-btn" data-id="${f.id}">Remove</button>
+        <button class="chat-with-friend-btn" data-id="${f.id}" data-name="${escapeHtml(f.display_name)}">チャット</button>
+        <button class="remove-friend-btn" data-id="${f.id}">削除</button>
       </div>
     `).join('');
 
@@ -101,12 +101,12 @@ async function loadFriends() {
       });
     });
   } catch (err) {
-    friendsList.innerHTML = '<p>Failed to load friends.</p>';
+    friendsList.innerHTML = '<p>フレンドの読み込みに失敗しました。</p>';
   }
 }
 
 async function removeFriend(userId) {
-  if (!confirm('Remove this friend?')) return;
+  if (!confirm('このフレンドを削除しますか？')) return;
 
   try {
     await fetch(`${API_BASE}/api/friends/${userId}`, {
@@ -123,7 +123,7 @@ addFriendBtn.addEventListener('click', async () => {
   const email = addFriendEmail.value.trim();
   if (!email) return;
 
-  addFriendStatus.textContent = 'Sending request...';
+  addFriendStatus.textContent = 'リクエストを送信中...';
 
   try {
     const response = await fetch(`${API_BASE}/api/friends/request-by-email`, {
@@ -137,9 +137,9 @@ addFriendBtn.addEventListener('click', async () => {
 
     const data = await response.json();
 
-    if (!response.ok) throw new Error(data.error || 'Failed to send request');
+    if (!response.ok) throw new Error(data.error || 'リクエストの送信に失敗しました');
 
-    addFriendStatus.textContent = 'Friend request sent!';
+    addFriendStatus.textContent = 'フレンドリクエストを送信しました！';
     addFriendEmail.value = '';
   } catch (err) {
     addFriendStatus.textContent = err.message;

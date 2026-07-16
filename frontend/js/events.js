@@ -23,14 +23,13 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const JP_WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土'];
 
-// Formata "YYYY-MM-DD" sem depender de parsing com fuso horário
+// Formata "YYYY-MM-DD" no estilo japonês, sem depender de parsing com fuso horário
 function formatEventDate(dateStr) {
   const [y, m, d] = dateStr.split('-').map(Number);
   const dt = new Date(y, m - 1, d);
-  return `${WEEKDAYS[dt.getDay()]}, ${MONTHS[m - 1]} ${d}, ${y}`;
+  return `${y}年${m}月${d}日（${JP_WEEKDAYS[dt.getDay()]}）`;
 }
 
 photoInput.addEventListener('change', () => {
@@ -45,7 +44,7 @@ async function loadEvents() {
     const data = await response.json();
 
     if (!data.events.length) {
-      eventsList.innerHTML = '<p>No upcoming events. Be the first to create one!</p>';
+      eventsList.innerHTML = '<p>今後のイベントはありません。最初のイベントを作成しましょう！</p>';
       return;
     }
 
@@ -58,7 +57,7 @@ async function loadEvents() {
       btn.addEventListener('click', () => deleteEvent(parseInt(btn.dataset.id)));
     });
   } catch (err) {
-    eventsList.innerHTML = '<p>Failed to load events.</p>';
+    eventsList.innerHTML = '<p>イベントの読み込みに失敗しました。</p>';
   }
 }
 
@@ -77,13 +76,13 @@ function renderEventCard(e) {
         <div class="event-when">📅 ${escapeHtml(when)}</div>
         ${e.location ? `<div class="event-location">📍 ${escapeHtml(e.location)}</div>` : ''}
         ${e.description ? `<div class="event-description">${escapeHtml(e.description)}</div>` : ''}
-        <div class="event-meta">Created by ${escapeHtml(e.creator_name)}</div>
+        <div class="event-meta">作成者: ${escapeHtml(e.creator_name)}</div>
         <div class="event-actions">
           <button class="event-attend-btn ${e.attending ? 'attending' : ''}" data-id="${e.id}" data-attending="${e.attending}">
-            ${e.attending ? '✓ Going (cancel)' : 'Confirm presence'}
+            ${e.attending ? '✓ 参加中（取消）' : '参加する'}
           </button>
-          <span class="event-attendees">${e.attendee_count} going</span>
-          ${isCreator ? `<button class="event-delete-btn" data-id="${e.id}" title="Delete event">🗑</button>` : ''}
+          <span class="event-attendees">${e.attendee_count}人参加</span>
+          ${isCreator ? `<button class="event-delete-btn" data-id="${e.id}" title="イベントを削除">🗑</button>` : ''}
         </div>
       </div>
     </div>
@@ -97,7 +96,7 @@ async function toggleAttendance(eventId, currentlyAttending) {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     const data = await response.json();
-    if (!response.ok) throw new Error(data.error || 'Failed to update attendance');
+    if (!response.ok) throw new Error(data.error || '参加状況の更新に失敗しました');
 
     // Atualiza só o card afetado, sem recarregar a lista toda
     const card = eventsList.querySelector(`.event-card[data-id="${eventId}"]`);
@@ -106,15 +105,15 @@ async function toggleAttendance(eventId, currentlyAttending) {
     const count = card.querySelector('.event-attendees');
     btn.dataset.attending = data.attending;
     btn.classList.toggle('attending', data.attending);
-    btn.textContent = data.attending ? '✓ Going (cancel)' : 'Confirm presence';
-    count.textContent = `${data.attendeeCount} going`;
+    btn.textContent = data.attending ? '✓ 参加中（取消）' : '参加する';
+    count.textContent = `${data.attendeeCount}人参加`;
   } catch (err) {
     alert(err.message);
   }
 }
 
 async function deleteEvent(eventId) {
-  if (!confirm('Delete this event? This cannot be undone.')) return;
+  if (!confirm('このイベントを削除しますか？元に戻せません。')) return;
 
   try {
     const response = await fetch(`${API_BASE}/api/events/${eventId}`, {
@@ -122,7 +121,7 @@ async function deleteEvent(eventId) {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     const data = await response.json();
-    if (!response.ok) throw new Error(data.error || 'Failed to delete event');
+    if (!response.ok) throw new Error(data.error || 'イベントの削除に失敗しました');
 
     loadEvents();
   } catch (err) {
@@ -135,15 +134,15 @@ submitBtn.addEventListener('click', async () => {
   const date = dateInput.value;
 
   if (!name) {
-    statusMessage.textContent = 'Please enter an event name.';
+    statusMessage.textContent = 'イベント名を入力してください。';
     return;
   }
   if (!date) {
-    statusMessage.textContent = 'Please pick a date.';
+    statusMessage.textContent = '日付を選択してください。';
     return;
   }
 
-  statusMessage.textContent = 'Creating event...';
+  statusMessage.textContent = 'イベントを作成中...';
   submitBtn.disabled = true;
 
   const formData = new FormData();
@@ -161,7 +160,7 @@ submitBtn.addEventListener('click', async () => {
       body: formData
     });
     const data = await response.json();
-    if (!response.ok) throw new Error(data.error || 'Failed to create event');
+    if (!response.ok) throw new Error(data.error || 'イベントの作成に失敗しました');
 
     nameInput.value = '';
     dateInput.value = '';
@@ -170,7 +169,7 @@ submitBtn.addEventListener('click', async () => {
     descriptionInput.value = '';
     photoInput.value = '';
     photoFilename.textContent = '';
-    statusMessage.textContent = 'Event created!';
+    statusMessage.textContent = 'イベントを作成しました！';
     loadEvents();
   } catch (err) {
     statusMessage.textContent = err.message;

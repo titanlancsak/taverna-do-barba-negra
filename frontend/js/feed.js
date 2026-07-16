@@ -21,13 +21,13 @@ postMediaInput.addEventListener('change', () => {
 
 function timeAgo(dateString) {
   const seconds = Math.floor((new Date() - new Date(dateString)) / 1000);
-  if (seconds < 60) return 'just now';
+  if (seconds < 60) return 'たった今';
   const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes}m ago`;
+  if (minutes < 60) return `${minutes}分前`;
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h ago`;
+  if (hours < 24) return `${hours}時間前`;
   const days = Math.floor(hours / 24);
-  return `${days}d ago`;
+  return `${days}日前`;
 }
 
 function escapeHtml(text) {
@@ -41,7 +41,7 @@ function renderPost(post) {
   const mediaHtml = post.media_url
     ? (post.media_type === 'video'
         ? `<video class="post-media" src="..${post.media_url}" controls></video>`
-        : `<img class="post-media" src="..${post.media_url}" alt="Post media">`)
+        : `<img class="post-media" src="..${post.media_url}" alt="投稿メディア">`)
     : '';
 
   return `
@@ -60,18 +60,18 @@ function renderPost(post) {
           ❤️ <span class="like-count">${post.like_count}</span>
         </button>
         <button class="comment-toggle-btn" data-post-id="${post.id}">
-          💬 ${post.comment_count} Comments
+          💬 ${post.comment_count} コメント
         </button>
-        ${currentUser && currentUser.id === post.author_id ? `<button class="post-delete-btn" data-post-id="${post.id}">🗑 Delete</button>` : ''}
+        ${currentUser && currentUser.id === post.author_id ? `<button class="post-delete-btn" data-post-id="${post.id}">🗑 削除</button>` : ''}
       </div>
       <div class="comments-box" data-post-id="${post.id}">
         <div class="comments-list"></div>
         ${token ? `
           <div class="comment-form">
-            <input type="text" class="comment-input" placeholder="Write a comment..." maxlength="500">
-            <button class="comment-submit-btn" data-post-id="${post.id}">Send</button>
+            <input type="text" class="comment-input" placeholder="コメントを書く..." maxlength="500">
+            <button class="comment-submit-btn" data-post-id="${post.id}">送信</button>
           </div>
-        ` : '<p><a href="pages/login.html">Log in</a> to comment.</p>'}
+        ` : '<p>コメントするには<a href="pages/login.html">ログイン</a>してください。</p>'}
       </div>
     </div>
   `;
@@ -91,7 +91,7 @@ async function loadFeed() {
     hasMorePosts = data.hasMore;
 
     if (!data.posts.length) {
-      postsContainer.innerHTML = '<p>No posts yet. Be the first to post!</p>';
+      postsContainer.innerHTML = '<p>まだ投稿がありません。最初の投稿をしましょう！</p>';
       return;
     }
 
@@ -100,7 +100,7 @@ async function loadFeed() {
     setupInfiniteScroll();
   } catch (err) {
     console.error(err);
-    postsContainer.innerHTML = '<p>Failed to load feed.</p>';
+    postsContainer.innerHTML = '<p>フィードの読み込みに失敗しました。</p>';
   }
 }
 
@@ -111,7 +111,7 @@ async function loadMorePosts() {
 
   const loadingIndicator = document.createElement('p');
   loadingIndicator.id = 'loading-more-indicator';
-  loadingIndicator.textContent = 'Loading more posts...';
+  loadingIndicator.textContent = 'さらに投稿を読み込み中...';
   postsContainer.appendChild(loadingIndicator);
 
   try {
@@ -164,7 +164,7 @@ function attachPostListeners() {
 }
 
 async function handleDeletePost(postId) {
-  if (!confirm('Delete this post? This cannot be undone.')) return;
+  if (!confirm('この投稿を削除しますか？元に戻せません。')) return;
 
   try {
     const response = await fetch(`${API_BASE}/api/feed/posts/${postId}`, {
@@ -172,7 +172,7 @@ async function handleDeletePost(postId) {
       headers: { 'Authorization': `Bearer ${token}` }
     });
 
-    if (!response.ok) throw new Error('Failed to delete post');
+    if (!response.ok) throw new Error('投稿の削除に失敗しました');
 
     document.querySelector(`.post-card[data-post-id="${postId}"]`).remove();
   } catch (err) {
@@ -226,14 +226,14 @@ async function toggleComments(postId) {
 async function loadComments(postId) {
   const box = document.querySelector(`.comments-box[data-post-id="${postId}"]`);
   const list = box.querySelector('.comments-list');
-  list.innerHTML = '<p>Loading comments...</p>';
+  list.innerHTML = '<p>コメントを読み込み中...</p>';
 
   try {
     const response = await fetch(`${API_BASE}/api/feed/posts/${postId}/comments`);
     const data = await response.json();
 
     if (!data.comments.length) {
-      list.innerHTML = '<p>No comments yet.</p>';
+      list.innerHTML = '<p>まだコメントがありません。</p>';
       return;
     }
 
@@ -248,12 +248,12 @@ async function loadComments(postId) {
       btn.addEventListener('click', () => handleDeleteComment(btn.dataset.commentId, btn.dataset.postId));
     });
   } catch (err) {
-    list.innerHTML = '<p>Failed to load comments.</p>';
+    list.innerHTML = '<p>コメントの読み込みに失敗しました。</p>';
   }
 }
 
 async function handleDeleteComment(commentId, postId) {
-  if (!confirm('Delete this comment?')) return;
+  if (!confirm('このコメントを削除しますか？')) return;
 
   try {
     const response = await fetch(`${API_BASE}/api/feed/comments/${commentId}`, {
@@ -261,14 +261,14 @@ async function handleDeleteComment(commentId, postId) {
       headers: { 'Authorization': `Bearer ${token}` }
     });
 
-    if (!response.ok) throw new Error('Failed to delete comment');
+    if (!response.ok) throw new Error('コメントの削除に失敗しました');
 
     await loadComments(postId);
 
     const card = document.querySelector(`.post-card[data-post-id="${postId}"]`);
     const toggleBtn = card.querySelector('.comment-toggle-btn');
     const currentCount = parseInt(toggleBtn.textContent.match(/\d+/)[0]);
-    toggleBtn.textContent = `💬 ${Math.max(0, currentCount - 1)} Comments`;
+    toggleBtn.textContent = `💬 ${Math.max(0, currentCount - 1)} コメント`;
   } catch (err) {
     console.error(err);
   }
@@ -291,7 +291,7 @@ async function submitComment(postId) {
       body: JSON.stringify({ content })
     });
 
-    if (!response.ok) throw new Error('Failed to post comment');
+    if (!response.ok) throw new Error('コメントの投稿に失敗しました');
 
     input.value = '';
     await loadComments(postId);
@@ -299,7 +299,7 @@ async function submitComment(postId) {
     const card = document.querySelector(`.post-card[data-post-id="${postId}"]`);
     const toggleBtn = card.querySelector('.comment-toggle-btn');
     const currentCount = parseInt(toggleBtn.textContent.match(/\d+/)[0]);
-    toggleBtn.textContent = `💬 ${currentCount + 1} Comments`;
+    toggleBtn.textContent = `💬 ${currentCount + 1} コメント`;
   } catch (err) {
     console.error(err);
   }
@@ -315,11 +315,11 @@ postSubmitBtn.addEventListener('click', async () => {
   const mediaFile = postMediaInput.files[0];
 
   if (!content && !mediaFile) {
-    postStatusMessage.textContent = 'Write something or attach media first.';
+    postStatusMessage.textContent = '文章を書くかメディアを添付してください。';
     return;
   }
 
-  postStatusMessage.textContent = 'Posting...';
+  postStatusMessage.textContent = '投稿中...';
   postSubmitBtn.disabled = true;
 
   const formData = new FormData();
@@ -335,7 +335,7 @@ postSubmitBtn.addEventListener('click', async () => {
 
     const data = await response.json();
 
-    if (!response.ok) throw new Error(data.error || 'Failed to post');
+    if (!response.ok) throw new Error(data.error || '投稿に失敗しました');
 
     postContentInput.value = '';
     postMediaInput.value = '';

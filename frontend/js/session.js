@@ -13,83 +13,126 @@ function logout() {
   window.location.reload();
 }
 
-function renderAuthNav() {
-  const nav = document.querySelector('header nav');
-  if (!nav) return;
+// Monta o cabeçalho: menu "SNS" à esquerda, título no centro, menu "ツール" (ferramentas) à direita.
+function buildNav() {
+  const header = document.querySelector('header');
+  if (!header) return;
 
-  // Remove links antigos de auth se existirem, pra não duplicar
-  nav.querySelectorAll('.auth-link').forEach(el => el.remove());
+  const isInPages = window.location.pathname.includes('/pages/');
+  const prefix = isInPages ? '' : 'pages/';   // caminho para páginas em /pages/
+  const rootPrefix = isInPages ? '../' : '';   // caminho para a home
+
+  // Remove qualquer nav antigo (links hardcoded no HTML) e evita duplicar em recarga
+  header.querySelectorAll('nav, .nav-side').forEach(n => n.remove());
 
   const token = getToken();
   const user = getUser();
 
-  const isInPages = window.location.pathname.includes('/pages/');
-  const prefix = isInPages ? '' : 'pages/';
+  // Ferramentas (menu da direita) — sempre disponíveis
+  const tools = [
+    ['画像コンバーター', `${prefix}image-converter.html`],
+    ['動画・音声ダウンローダー', `${prefix}video-downloader.html`],
+    ['音声コンバーター', `${prefix}audio-converter.html`],
+    ['音楽プレーヤー', `${prefix}music-player.html`],
+    ['無料の本', `${prefix}free-books.html`],
+    ['Linuxディストロ', `${prefix}linux-distros.html`],
+    ['便利なスクリプト', `${prefix}scripts.html`]
+  ];
+
+  // SNS (menu da esquerda) — depende de estar logado
+  const snsItems = token && user
+    ? [
+        ['ホーム', `${rootPrefix}index.html`],
+        ['フレンド', `${prefix}friends.html`],
+        ['チャット', `${prefix}chat.html`],
+        ['グループ', `${prefix}groups.html`],
+        ['イベント', `${prefix}events.html`],
+        ['マイプロフィール', `${prefix}profile.html`]
+      ]
+    : [
+        ['ホーム', `${rootPrefix}index.html`],
+        ['ログイン', `${prefix}login.html`],
+        ['新規登録', `${prefix}register.html`]
+      ];
+
+  function buildPanel(items) {
+    const panel = document.createElement('div');
+    panel.className = 'nav-panel';
+    items.forEach(([label, href]) => {
+      const a = document.createElement('a');
+      a.href = href;
+      a.textContent = label;
+      panel.appendChild(a);
+    });
+    return panel;
+  }
+
+  // ----- Lado esquerdo: SNS -----
+  const left = document.createElement('div');
+  left.className = 'nav-side nav-left';
+
+  const snsBtn = document.createElement('button');
+  snsBtn.className = 'nav-menu-btn';
+  snsBtn.textContent = 'SNS ▾';
+
+  const snsPanel = buildPanel(snsItems);
 
   if (token && user) {
-    const friendsLink = document.createElement('a');
-    friendsLink.className = 'auth-link';
-    friendsLink.href = `${prefix}friends.html`;
-    friendsLink.textContent = 'Friends';
-
-    const groupsLink = document.createElement('a');
-    groupsLink.className = 'auth-link';
-    groupsLink.href = `${prefix}groups.html`;
-    groupsLink.textContent = 'Groups';
-
-    const eventsLink = document.createElement('a');
-    eventsLink.className = 'auth-link';
-    eventsLink.href = `${prefix}events.html`;
-    eventsLink.textContent = 'Events';
-
-    const chatLink = document.createElement('a');
-    chatLink.className = 'auth-link';
-    chatLink.href = `${prefix}chat.html`;
-    chatLink.textContent = 'Chat';
-
-    const profileLink = document.createElement('a');
-    profileLink.className = 'auth-link';
-    profileLink.href = `${prefix}profile.html`;
-    profileLink.textContent = 'My Profile';
-
-    const userSpan = document.createElement('span');
-    userSpan.className = 'auth-link';
-    userSpan.textContent = `👤 ${user.email}`;
-    userSpan.style.marginLeft = '10px';
+    const acct = document.createElement('span');
+    acct.className = 'nav-account';
+    acct.textContent = `👤 ${user.email}`;
+    snsPanel.appendChild(acct);
 
     const logoutLink = document.createElement('a');
-    logoutLink.className = 'auth-link';
     logoutLink.href = '#';
-    logoutLink.textContent = 'Logout';
+    logoutLink.textContent = 'ログアウト';
     logoutLink.addEventListener('click', (e) => {
       e.preventDefault();
       logout();
     });
-
-    nav.appendChild(friendsLink);
-    nav.appendChild(chatLink);
-    nav.appendChild(groupsLink);
-    nav.appendChild(eventsLink);
-    nav.appendChild(profileLink);
-    nav.appendChild(userSpan);
-    nav.appendChild(logoutLink);
-  } else {
-    const loginLink = document.createElement('a');
-    loginLink.className = 'auth-link';
-    loginLink.href = `${prefix}login.html`;
-    loginLink.textContent = 'Log In';
-
-    const registerLink = document.createElement('a');
-    registerLink.className = 'auth-link';
-    registerLink.href = `${prefix}register.html`;
-    registerLink.textContent = 'Sign Up';
-
-    nav.appendChild(loginLink);
-    nav.appendChild(registerLink);
+    snsPanel.appendChild(logoutLink);
   }
+
+  left.appendChild(snsBtn);
+  left.appendChild(snsPanel);
+
+  // ----- Lado direito: Ferramentas -----
+  const right = document.createElement('div');
+  right.className = 'nav-side nav-right';
+
+  const toolsBtn = document.createElement('button');
+  toolsBtn.className = 'nav-menu-btn';
+  toolsBtn.textContent = 'ツール ▾';
+
+  const toolsPanel = buildPanel(tools);
+
+  right.appendChild(toolsBtn);
+  right.appendChild(toolsPanel);
+
+  // Insere: esquerda antes do título, direita depois
+  const h1 = header.querySelector('h1');
+  if (h1) header.insertBefore(left, h1);
+  else header.prepend(left);
+  header.appendChild(right);
+
+  // Abrir/fechar os menus
+  function toggle(panel, other) {
+    return (e) => {
+      e.stopPropagation();
+      other.classList.remove('open');
+      panel.classList.toggle('open');
+    };
+  }
+  snsBtn.addEventListener('click', toggle(snsPanel, toolsPanel));
+  toolsBtn.addEventListener('click', toggle(toolsPanel, snsPanel));
+  [snsPanel, toolsPanel].forEach(p => p.addEventListener('click', (e) => e.stopPropagation()));
+  document.addEventListener('click', () => {
+    snsPanel.classList.remove('open');
+    toolsPanel.classList.remove('open');
+  });
 }
 
-renderAuthNav();
+buildNav();
 
 
 // Carrega o sistema de notificações (sino) se o usuário estiver logado

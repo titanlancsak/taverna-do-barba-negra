@@ -8,7 +8,7 @@ async function verify() {
   const token = params.get('token');
 
   if (!token) {
-    statusMessage.textContent = 'Missing verification token.';
+    statusMessage.textContent = '認証トークンがありません。';
     return;
   }
 
@@ -17,7 +17,7 @@ async function verify() {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.error || 'Verification failed');
+      throw new Error(data.error || '認証に失敗しました');
     }
 
     statusMessage.textContent = data.message;

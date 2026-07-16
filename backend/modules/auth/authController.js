@@ -18,16 +18,16 @@ async function register(req, res) {
     const { email, password } = req.body;
 
     if (!isValidSchoolEmail(email)) {
-      return res.status(400).json({ error: `Only ${ALLOWED_EMAIL_DOMAIN} emails are allowed` });
+      return res.status(400).json({ error: `${ALLOWED_EMAIL_DOMAIN} のメールのみ利用できます` });
     }
 
     if (!password || password.length < 8) {
-      return res.status(400).json({ error: 'Password must be at least 8 characters' });
+      return res.status(400).json({ error: 'パスワードは8文字以上である必要があります' });
     }
 
     const existing = await pool.query('SELECT id FROM users WHERE email = $1', [email.toLowerCase()]);
     if (existing.rows.length > 0) {
-      return res.status(409).json({ error: 'An account with this email already exists' });
+      return res.status(409).json({ error: 'このメールアドレスのアカウントは既に存在します' });
     }
 
     const passwordHash = await bcrypt.hash(password, 12);
@@ -42,10 +42,10 @@ async function register(req, res) {
 
     await sendVerificationEmail(email, verificationToken);
 
-    res.status(201).json({ message: 'Account created. Please check your email to verify your account.' });
+    res.status(201).json({ message: 'アカウントを作成しました。メールを確認してアカウントを認証してください。' });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Registration failed' });
+    res.status(500).json({ error: '登録に失敗しました' });
   }
 }
 
@@ -54,7 +54,7 @@ async function verifyEmail(req, res) {
     const { token } = req.query;
 
     if (!token) {
-      return res.status(400).json({ error: 'Missing verification token' });
+      return res.status(400).json({ error: '認証トークンがありません' });
     }
 
     const result = await pool.query(
@@ -63,13 +63,13 @@ async function verifyEmail(req, res) {
     );
 
     if (result.rows.length === 0) {
-      return res.status(400).json({ error: 'Invalid verification token' });
+      return res.status(400).json({ error: '認証トークンが無効です' });
     }
 
     const user = result.rows[0];
 
     if (new Date() > new Date(user.verification_token_expires)) {
-      return res.status(400).json({ error: 'Verification token has expired' });
+      return res.status(400).json({ error: '認証トークンの有効期限が切れています' });
     }
 
     await pool.query(
@@ -77,10 +77,10 @@ async function verifyEmail(req, res) {
       [user.id]
     );
 
-    res.json({ message: 'Email verified successfully! You can now log in.' });
+    res.json({ message: 'メール認証が完了しました！ログインできます。' });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Verification failed' });
+    res.status(500).json({ error: '認証に失敗しました' });
   }
 }
 
@@ -89,24 +89,24 @@ async function login(req, res) {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password are required' });
+      return res.status(400).json({ error: 'メールアドレスとパスワードは必須です' });
     }
 
     const result = await pool.query('SELECT * FROM users WHERE email = $1', [email.toLowerCase()]);
 
     if (result.rows.length === 0) {
-      return res.status(401).json({ error: 'Invalid email or password' });
+      return res.status(401).json({ error: 'メールアドレスまたはパスワードが正しくありません' });
     }
 
     const user = result.rows[0];
 
     if (!user.email_verified) {
-      return res.status(403).json({ error: 'Please verify your email before logging in' });
+      return res.status(403).json({ error: 'ログインする前にメールを認証してください' });
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password_hash);
     if (!passwordMatch) {
-      return res.status(401).json({ error: 'Invalid email or password' });
+      return res.status(401).json({ error: 'メールアドレスまたはパスワードが正しくありません' });
     }
 
     const token = jwt.sign(
@@ -116,7 +116,7 @@ async function login(req, res) {
     );
 
     res.json({
-      message: 'Login successful',
+      message: 'ログインしました',
       token,
       user: {
         id: user.id,
@@ -126,7 +126,7 @@ async function login(req, res) {
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Login failed' });
+    res.status(500).json({ error: 'ログインに失敗しました' });
   }
 }
 
@@ -138,13 +138,13 @@ async function getMe(req, res) {
     );
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(404).json({ error: 'ユーザーが見つかりません' });
     }
 
     res.json({ user: result.rows[0] });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Failed to fetch user data' });
+    res.status(500).json({ error: 'ユーザーデータの取得に失敗しました' });
   }
 }
 

@@ -10,7 +10,7 @@ form.addEventListener('submit', async (e) => {
   const format = document.getElementById('format-select').value;
 
   if (!fileInput.files.length) {
-    statusMessage.textContent = 'Please select an image first.';
+    statusMessage.textContent = 'まず画像を選択してください。';
     return;
   }
 
@@ -18,7 +18,7 @@ form.addEventListener('submit', async (e) => {
   formData.append('image', fileInput.files[0]);
   formData.append('format', format);
 
-  statusMessage.textContent = 'Converting...';
+  statusMessage.textContent = '変換中...';
 
   try {
     const response = await fetch(`${API_BASE}/api/image/convert`, {
@@ -27,7 +27,7 @@ form.addEventListener('submit', async (e) => {
     });
 
     if (!response.ok) {
-      throw new Error('Conversion failed');
+      throw new Error('変換に失敗しました');
     }
 
     const blob = await response.blob();
@@ -39,9 +39,9 @@ form.addEventListener('submit', async (e) => {
     a.click();
     a.remove();
 
-    statusMessage.textContent = 'Done! Your download should start automatically.';
+    statusMessage.textContent = '完了！ダウンロードが自動的に始まります。';
   } catch (err) {
     console.error(err);
-    statusMessage.textContent = 'Something went wrong. Please try again.';
+    statusMessage.textContent = 'エラーが発生しました。もう一度お試しください。';
   }
 });

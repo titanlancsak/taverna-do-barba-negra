@@ -9,12 +9,12 @@ async function sendVerificationEmail(toEmail, token) {
   await resend.emails.send({
     from: 'Blackbeard Tavern <noreply@blackbeardtavern.me>', 
     to: toEmail,
-    subject: 'Confirm your email - Blackbeard Tavern',
+    subject: 'メールを認証してください - Blackbeard Tavern',
     html: `
-      <h2>Welcome to Blackbeard Tavern! 🏴‍☠️</h2>
-      <p>Click the link below to confirm your email and activate your account:</p>
+      <h2>Blackbeard Tavern へようこそ！🏴‍☠️</h2>
+      <p>下のリンクをクリックしてメールを認証し、アカウントを有効化してください：</p>
       <a href="${verificationUrl}">${verificationUrl}</a>
-      <p>This link expires in 24 hours.</p>
+      <p>このリンクは24時間で期限切れになります。</p>
     `
   });
 }

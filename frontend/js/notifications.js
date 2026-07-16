@@ -26,8 +26,9 @@ function playNotificationSound() {
 }
 
 function initNotifications() {
-  const nav = document.querySelector('header nav');
-  if (!nav) return;
+  // Monta o sino no cabeçalho, ao lado do menu SNS (lado esquerdo)
+  const mount = document.querySelector('.nav-left') || document.querySelector('header');
+  if (!mount) return;
 
   const bellWrapper = document.createElement('div');
   bellWrapper.id = 'notif-bell-wrapper';
@@ -35,13 +36,13 @@ function initNotifications() {
     <button id="notif-bell-btn">🔔<span id="notif-badge" style="display:none;">0</span></button>
     <div id="notif-dropdown" style="display:none;">
       <div id="notif-dropdown-header">
-        <span>Notifications</span>
-        <button id="notif-mark-all-read">Mark all read</button>
+        <span>通知</span>
+        <button id="notif-mark-all-read">すべて既読にする</button>
       </div>
       <div id="notif-list"></div>
     </div>
   `;
-  nav.appendChild(bellWrapper);
+  mount.appendChild(bellWrapper);
 
   const bellBtn = document.getElementById('notif-bell-btn');
   const dropdown = document.getElementById('notif-dropdown');
@@ -51,13 +52,13 @@ function initNotifications() {
 
   function timeAgo(dateString) {
     const seconds = Math.floor((new Date() - new Date(dateString)) / 1000);
-    if (seconds < 60) return 'just now';
+    if (seconds < 60) return 'たった今';
     const minutes = Math.floor(seconds / 60);
-    if (minutes < 60) return `${minutes}m ago`;
+    if (minutes < 60) return `${minutes}分前`;
     const hours = Math.floor(minutes / 60);
-    if (hours < 24) return `${hours}h ago`;
+    if (hours < 24) return `${hours}時間前`;
     const days = Math.floor(hours / 24);
-    return `${days}d ago`;
+    return `${days}日前`;
   }
 
   function escapeHtml(text) {
@@ -117,7 +118,7 @@ function initNotifications() {
       updateBadge(data.unreadCount);
 
       if (!data.notifications.length) {
-        list.innerHTML = '<p class="notif-empty">No notifications yet.</p>';
+        list.innerHTML = '<p class="notif-empty">通知はまだありません。</p>';
         return;
       }
 
@@ -140,7 +141,7 @@ function initNotifications() {
         });
       });
     } catch (err) {
-      list.innerHTML = '<p class="notif-empty">Failed to load notifications.</p>';
+      list.innerHTML = '<p class="notif-empty">通知の読み込みに失敗しました。</p>';
     }
   }
 

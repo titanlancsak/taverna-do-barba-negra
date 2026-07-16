@@ -38,7 +38,7 @@ async function loadProfile() {
     }
   } catch (err) {
     console.error(err);
-    statusMessage.textContent = 'Failed to load profile.';
+    statusMessage.textContent = 'プロフィールの読み込みに失敗しました。';
   }
 }
 
@@ -50,7 +50,7 @@ form.addEventListener('submit', async (e) => {
   const course = document.getElementById('course-input').value;
   const gender = document.getElementById('gender-select').value;
 
-  statusMessage.textContent = 'Saving...';
+  statusMessage.textContent = '保存中...';
 
   try {
     const response = await fetch(`${API_BASE}/api/profile`, {
@@ -65,10 +65,10 @@ form.addEventListener('submit', async (e) => {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.error || 'Failed to save profile');
+      throw new Error(data.error || 'プロフィールの保存に失敗しました');
     }
 
-    statusMessage.textContent = 'Profile saved!';
+    statusMessage.textContent = 'プロフィールを保存しました！';
   } catch (err) {
     statusMessage.textContent = err.message;
   }
@@ -76,14 +76,14 @@ form.addEventListener('submit', async (e) => {
 
 uploadBtn.addEventListener('click', async () => {
   if (!pictureInput.files.length) {
-    statusMessage.textContent = 'Please choose an image first.';
+    statusMessage.textContent = 'まず画像を選択してください。';
     return;
   }
 
   const formData = new FormData();
   formData.append('picture', pictureInput.files[0]);
 
-  statusMessage.textContent = 'Uploading picture...';
+  statusMessage.textContent = '写真をアップロード中...';
 
   try {
     const response = await fetch(`${API_BASE}/api/profile/picture`, {
@@ -95,11 +95,11 @@ uploadBtn.addEventListener('click', async () => {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.error || 'Failed to upload picture');
+      throw new Error(data.error || '写真のアップロードに失敗しました');
     }
 
     profilePreview.src = `..${data.profilePictureUrl}`;
-    statusMessage.textContent = 'Profile picture updated!';
+    statusMessage.textContent = 'プロフィール写真を更新しました！';
   } catch (err) {
     statusMessage.textContent = err.message;
   }

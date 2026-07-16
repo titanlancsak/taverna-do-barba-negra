@@ -3,49 +3,45 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Profile - Blackbeard Tavern</title>
+  <title>マイプロフィール - Blackbeard Tavern</title>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/tools.css">
 </head>
 <body>
   <header>
     <h1>🏴‍☠️ Blackbeard Tavern 🍺</h1>
-    <nav>
-      <a href="../index.html">Home</a>
-      <a href="profile.html">My Profile</a>
-    </nav>
   </header>
 
   <main>
-    <h2>My Profile</h2>
+    <h2>マイプロフィール</h2>
 
     <div id="profile-picture-section">
-      <img id="profile-preview" src="../assets/profile-pictures/default.png" alt="Profile picture" width="120" height="120" style="border-radius: 50%; object-fit: cover;">
+      <img id="profile-preview" src="../assets/profile-pictures/default.png" alt="プロフィール写真" width="120" height="120" style="border-radius: 50%; object-fit: cover;">
       <input type="file" id="picture-input" accept="image/png, image/jpeg, image/webp">
-      <button id="upload-picture-btn">Upload Picture</button>
+      <button id="upload-picture-btn">写真をアップロード</button>
     </div>
 
     <form id="profile-form">
-      <label for="display-name-input">Display Name</label>
-      <input type="text" id="display-name-input" maxlength="50" placeholder="How others will see you">
+      <label for="display-name-input">表示名</label>
+      <input type="text" id="display-name-input" maxlength="50" placeholder="他のユーザーに表示される名前">
 
       <label>
         <input type="checkbox" id="anonymous-checkbox">
-        Stay anonymous (hide my name from other users)
+        匿名のままにする（他のユーザーに名前を表示しない）
       </label>
 
-      <label for="course-input">Course</label>
-      <input type="text" id="course-input" maxlength="100" placeholder="e.g. Information Technology">
+      <label for="course-input">コース</label>
+      <input type="text" id="course-input" maxlength="100" placeholder="例：情報技術">
 
-      <label for="gender-select">Gender</label>
+      <label for="gender-select">性別</label>
       <select id="gender-select">
-        <option value="">Prefer not to say</option>
-        <option value="Male">Male</option>
-        <option value="Female">Female</option>
-        <option value="Other">Other</option>
+        <option value="">回答しない</option>
+        <option value="Male">男性</option>
+        <option value="Female">女性</option>
+        <option value="Other">その他</option>
       </select>
 
-      <button type="submit">Save Profile</button>
+      <button type="submit">プロフィールを保存</button>
     </form>
 
     <p id="status-message"></p>
@@ -55,6 +51,7 @@
     <p>&copy; 2026 Blackbeard Tavern</p>
   </footer>
 
+  <script src="../js/session.js"></script>
   <script src="../js/profile.js"></script>
 </body>
 </html>

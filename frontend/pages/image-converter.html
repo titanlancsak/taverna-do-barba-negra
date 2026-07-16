@@ -3,40 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Image Converter - Blackbeard Tavern</title>
+  <title>画像コンバーター - Blackbeard Tavern</title>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/tools.css">
 </head>
 <body>
   <header>
     <h1>🏴‍☠️ Blackbeard Tavern 🍺</h1>
-    <nav>
-      <a href="../index.html">Home</a>
-      <a href="image-converter.html">Image Converter</a>
-      <a href="video-downloader.html">Video/Audio Downloader</a>
-      <a href="audio-converter.html">Audio Converter</a>
-      <a href="music-player.html">Music Player</a>
-      <a href="free-books.html">Free Books</a>
-      <a href="linux-distros.html">Linux Distros</a>
-      <a href="scripts.html">Useful Scripts</a>
-    </nav>
   </header>
 
   <main>
-    <h2>Image Format Converter</h2>
-    <p>Upload an image and convert it between PNG, JPEG, and GIF.</p>
+    <h2>画像フォーマットコンバーター</h2>
+    <p>画像をアップロードして PNG・JPEG・GIF 間で変換します。</p>
 
     <form id="convert-form">
       <input type="file" id="image-input" accept="image/*" required>
 
-      <label for="format-select">Convert to:</label>
+      <label for="format-select">変換先:</label>
       <select id="format-select">
         <option value="png">PNG</option>
         <option value="jpeg">JPEG</option>
         <option value="gif">GIF</option>
       </select>
 
-      <button type="submit">Convert</button>
+      <button type="submit">変換</button>
     </form>
 
     <p id="status-message"></p>

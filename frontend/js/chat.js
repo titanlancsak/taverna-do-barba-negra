@@ -53,7 +53,7 @@ async function loadConversations() {
     const data = await response.json();
 
     if (!data.conversations.length) {
-      conversationsList.innerHTML = '<p>No conversations yet. Go to your Friends list and tap Chat!</p>';
+      conversationsList.innerHTML = '<p>会話がまだありません。フレンド一覧から「チャット」を押しましょう！</p>';
       return;
     }
 
@@ -62,10 +62,10 @@ async function loadConversations() {
         <img class="conversation-pic" src="${c.profile_picture_url ? '..' + c.profile_picture_url : '../assets/default-avatar.svg'}" alt="">
         <div class="conversation-info">
           <div class="conversation-name">${escapeHtml(c.display_name)}</div>
-          <div class="conversation-preview">${c.last_message ? escapeHtml(c.last_message) : '📎 Media'}</div>
+          <div class="conversation-preview">${c.last_message ? escapeHtml(c.last_message) : '📎 メディア'}</div>
         </div>
         ${c.unread_count > 0 ? `<span class="unread-badge">${c.unread_count}</span>` : ''}
-        <button class="conversation-delete-btn" data-id="${c.other_user_id}" data-name="${escapeHtml(c.display_name)}" title="Delete conversation">🗑</button>
+        <button class="conversation-delete-btn" data-id="${c.other_user_id}" data-name="${escapeHtml(c.display_name)}" title="会話を削除">🗑</button>
       </div>
     `).join('');
 
@@ -80,7 +80,7 @@ async function loadConversations() {
       });
     });
   } catch (err) {
-    conversationsList.innerHTML = '<p>Failed to load conversations.</p>';
+    conversationsList.innerHTML = '<p>会話の読み込みに失敗しました。</p>';
   }
 }
 
@@ -90,7 +90,7 @@ async function openWidget(userId, userName, userPic) {
   chatWidgetAvatar.src = userPic ? '..' + userPic : '../assets/default-avatar.svg';
   chatWidget.style.display = 'flex';
   chatWidgetAvatar.onerror = () => { chatWidgetAvatar.src = '../assets/default-avatar.svg'; };
-  chatWidgetMessages.innerHTML = '<p class="widget-empty-state">Loading...</p>';
+  chatWidgetMessages.innerHTML = '<p class="widget-empty-state">読み込み中...</p>';
 
   try {
     const response = await fetch(`${API_BASE}/api/chat/history/${userId}`, {
@@ -100,13 +100,13 @@ async function openWidget(userId, userName, userPic) {
 
     chatWidgetMessages.innerHTML = '';
     if (!data.messages.length) {
-      chatWidgetMessages.innerHTML = '<p class="widget-empty-state">Say hi! 👋</p>';
+      chatWidgetMessages.innerHTML = '<p class="widget-empty-state">あいさつしよう！👋</p>';
     } else {
       data.messages.forEach(appendWidgetMessage);
     }
     scrollWidgetToBottom();
   } catch (err) {
-    chatWidgetMessages.innerHTML = '<p>Failed to load messages.</p>';
+    chatWidgetMessages.innerHTML = '<p>メッセージの読み込みに失敗しました。</p>';
   }
 
   loadConversations();
@@ -152,7 +152,7 @@ chatWidgetClose.addEventListener('click', () => {
 });
 
 async function deleteConversation(otherUserId, otherUserName) {
-  if (!confirm(`Delete your entire chat with ${otherUserName}? This removes the history for both of you and can't be undone.`)) {
+  if (!confirm(`${otherUserName} とのチャットをすべて削除しますか？両方の履歴が消え、元に戻せません。`)) {
     return;
   }
 
@@ -162,7 +162,7 @@ async function deleteConversation(otherUserId, otherUserName) {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     const data = await response.json();
-    if (!response.ok) throw new Error(data.error || 'Failed to delete conversation');
+    if (!response.ok) throw new Error(data.error || '会話の削除に失敗しました');
 
     if (activeChatUserId === otherUserId) {
       chatWidget.style.display = 'none';
@@ -212,7 +212,7 @@ chatWidgetMediaInput.addEventListener('change', async () => {
 
     const data = await response.json();
 
-    if (!response.ok) throw new Error(data.error || 'Upload failed');
+    if (!response.ok) throw new Error(data.error || 'アップロードに失敗しました');
 
     socket.emit('send_message', {
       receiverId: activeChatUserId,

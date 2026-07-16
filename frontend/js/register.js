@@ -9,7 +9,7 @@ form.addEventListener('submit', async (e) => {
   const email = document.getElementById('email-input').value;
   const password = document.getElementById('password-input').value;
 
-  statusMessage.textContent = 'Creating account...';
+  statusMessage.textContent = 'アカウントを作成中...';
 
   try {
     const response = await fetch(`${API_BASE}/api/auth/register`, {
@@ -21,7 +21,7 @@ form.addEventListener('submit', async (e) => {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.error || 'Registration failed');
+      throw new Error(data.error || '登録に失敗しました');
     }
 
     statusMessage.textContent = data.message;

@@ -58,7 +58,7 @@ async function loadFriendsChecklist() {
     const data = await response.json();
 
     if (!data.friends.length) {
-      groupFriendsChecklist.innerHTML = '<p style="font-size:12px;color:#8a7a68;">Add some friends first to invite them to groups.</p>';
+      groupFriendsChecklist.innerHTML = '<p style="font-size:12px;color:#8a7a68;">グループに招待するには、まずフレンドを追加してください。</p>';
       return;
     }
 
@@ -75,13 +75,13 @@ async function loadFriendsChecklist() {
 createGroupBtn.addEventListener('click', async () => {
   const name = groupNameInput.value.trim();
   if (!name) {
-    createGroupStatus.textContent = 'Please enter a group name.';
+    createGroupStatus.textContent = 'グループ名を入力してください。';
     return;
   }
 
   const memberIds = Array.from(groupFriendsChecklist.querySelectorAll('input:checked')).map(cb => parseInt(cb.value));
 
-  createGroupStatus.textContent = 'Creating group...';
+  createGroupStatus.textContent = 'グループを作成中...';
 
   try {
     const response = await fetch(`${API_BASE}/api/groups`, {
@@ -95,11 +95,11 @@ createGroupBtn.addEventListener('click', async () => {
 
     const data = await response.json();
 
-    if (!response.ok) throw new Error(data.error || 'Failed to create group');
+    if (!response.ok) throw new Error(data.error || 'グループの作成に失敗しました');
 
     groupNameInput.value = '';
     groupFriendsChecklist.querySelectorAll('input:checked').forEach(cb => cb.checked = false);
-    createGroupStatus.textContent = 'Group created!';
+    createGroupStatus.textContent = 'グループを作成しました！';
     await loadGroups();
   } catch (err) {
     createGroupStatus.textContent = err.message;
@@ -114,7 +114,7 @@ async function loadGroups() {
     const data = await response.json();
 
     if (!data.groups.length) {
-      groupsList.innerHTML = '<p>You are not in any groups yet.</p>';
+      groupsList.innerHTML = '<p>まだどのグループにも参加していません。</p>';
       return;
     }
 
@@ -123,7 +123,7 @@ async function loadGroups() {
         <div class="group-icon">${escapeHtml(g.name.charAt(0).toUpperCase())}</div>
         <div class="group-info">
           <div class="group-name">${escapeHtml(g.name)}</div>
-          <div class="group-meta">${g.member_count} member${g.member_count == 1 ? '' : 's'}</div>
+          <div class="group-meta">${g.member_count}人のメンバー</div>
         </div>
       </div>
     `).join('');
@@ -132,7 +132,7 @@ async function loadGroups() {
       card.addEventListener('click', () => openGroupChat(parseInt(card.dataset.id), card.dataset.name));
     });
   } catch (err) {
-    groupsList.innerHTML = '<p>Failed to load groups.</p>';
+    groupsList.innerHTML = '<p>グループの読み込みに失敗しました。</p>';
   }
 }
 
@@ -145,7 +145,7 @@ async function openGroupChat(groupId, groupName) {
   chatWidgetName.textContent = groupName;
   chatWidgetAvatar.style.display = 'none';
   chatWidget.style.display = 'flex';
-  chatWidgetMessages.innerHTML = '<p class="widget-empty-state">Loading...</p>';
+  chatWidgetMessages.innerHTML = '<p class="widget-empty-state">読み込み中...</p>';
 
   socket.emit('join_group', { groupId });
 
@@ -157,13 +157,13 @@ async function openGroupChat(groupId, groupName) {
 
     chatWidgetMessages.innerHTML = '';
     if (!data.messages.length) {
-      chatWidgetMessages.innerHTML = '<p class="widget-empty-state">No messages yet. Say hi! 👋</p>';
+      chatWidgetMessages.innerHTML = '<p class="widget-empty-state">まだメッセージがありません。あいさつしよう！👋</p>';
     } else {
       data.messages.forEach(appendGroupMessage);
     }
     scrollWidgetToBottom();
   } catch (err) {
-    chatWidgetMessages.innerHTML = '<p>Failed to load messages.</p>';
+    chatWidgetMessages.innerHTML = '<p>メッセージの読み込みに失敗しました。</p>';
   }
 }
 
@@ -225,7 +225,7 @@ chatWidgetMediaInput.addEventListener('change', async () => {
     });
 
     const data = await response.json();
-    if (!response.ok) throw new Error(data.error || 'Upload failed');
+    if (!response.ok) throw new Error(data.error || 'アップロードに失敗しました');
 
     socket.emit('send_group_message', {
       groupId: activeGroupId,
@@ -243,7 +243,7 @@ chatWidgetMembersBtn.addEventListener('click', async () => {
   if (!activeGroupId) return;
 
   membersModal.style.display = 'flex';
-  membersList.innerHTML = '<p>Loading...</p>';
+  membersList.innerHTML = '<p>読み込み中...</p>';
 
   try {
     const response = await fetch(`${API_BASE}/api/groups/${activeGroupId}/members`, {
@@ -255,7 +255,7 @@ chatWidgetMembersBtn.addEventListener('click', async () => {
       <div class="member-item">
         <img class="member-pic" src="${m.profile_picture_url ? '..' + m.profile_picture_url : '../assets/default-avatar.svg'}" alt="">
         ${escapeHtml(m.display_name)}
-        ${m.role === 'owner' ? '<span class="member-role">OWNER</span>' : ''}
+        ${m.role === 'owner' ? '<span class="member-role">オーナー</span>' : ''}
       </div>
     `).join('');
 
@@ -263,8 +263,8 @@ chatWidgetMembersBtn.addEventListener('click', async () => {
     const me = data.members.find(m => m.id === currentUser.id);
     const isOwner = me && me.role === 'owner';
     membersActions.innerHTML = `
-      <button id="leave-group-btn">Leave group</button>
-      ${isOwner ? '<button id="delete-group-btn">Delete group</button>' : ''}
+      <button id="leave-group-btn">グループを退出</button>
+      ${isOwner ? '<button id="delete-group-btn">グループを削除</button>' : ''}
     `;
 
     document.getElementById('leave-group-btn').addEventListener('click', () => leaveGroup(activeGroupId));
@@ -272,12 +272,12 @@ chatWidgetMembersBtn.addEventListener('click', async () => {
       document.getElementById('delete-group-btn').addEventListener('click', () => deleteGroup(activeGroupId));
     }
   } catch (err) {
-    membersList.innerHTML = '<p>Failed to load members.</p>';
+    membersList.innerHTML = '<p>メンバーの読み込みに失敗しました。</p>';
   }
 });
 
 async function leaveGroup(groupId) {
-  if (!confirm('Leave this group? You will need to be re-invited to join again.')) return;
+  if (!confirm('このグループを退出しますか？再度参加するには招待が必要です。')) return;
 
   try {
     const response = await fetch(`${API_BASE}/api/groups/${groupId}/leave`, {
@@ -285,7 +285,7 @@ async function leaveGroup(groupId) {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     const data = await response.json();
-    if (!response.ok) throw new Error(data.error || 'Failed to leave group');
+    if (!response.ok) throw new Error(data.error || 'グループの退出に失敗しました');
 
     afterGroupRemoved(groupId);
   } catch (err) {
@@ -294,7 +294,7 @@ async function leaveGroup(groupId) {
 }
 
 async function deleteGroup(groupId) {
-  if (!confirm('Delete this group for everyone? All messages will be lost and this cannot be undone.')) return;
+  if (!confirm('このグループを全員のために削除しますか？すべてのメッセージが失われ、元に戻せません。')) return;
 
   try {
     const response = await fetch(`${API_BASE}/api/groups/${groupId}`, {
@@ -302,7 +302,7 @@ async function deleteGroup(groupId) {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     const data = await response.json();
-    if (!response.ok) throw new Error(data.error || 'Failed to delete group');
+    if (!response.ok) throw new Error(data.error || 'グループの削除に失敗しました');
 
     afterGroupRemoved(groupId);
   } catch (err) {

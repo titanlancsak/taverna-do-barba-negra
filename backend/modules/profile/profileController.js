@@ -12,11 +12,11 @@ async function updateProfile(req, res) {
     const userId = req.user.userId;
 
     if (displayName && displayName.length > 50) {
-      return res.status(400).json({ error: 'Display name too long (max 50 characters)' });
+      return res.status(400).json({ error: '表示名が長すぎます（最大50文字）' });
     }
 
     if (course && course.length > 100) {
-      return res.status(400).json({ error: 'Course name too long' });
+      return res.status(400).json({ error: 'コース名が長すぎます' });
     }
 
     await pool.query(
@@ -26,17 +26,17 @@ async function updateProfile(req, res) {
       [displayName || null, !!isAnonymous, course || null, gender || null, userId]
     );
 
-    res.json({ message: 'Profile updated successfully' });
+    res.json({ message: 'プロフィールを更新しました' });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Failed to update profile' });
+    res.status(500).json({ error: 'プロフィールの更新に失敗しました' });
   }
 }
 
 async function uploadProfilePicture(req, res) {
   try {
     if (!req.file) {
-      return res.status(400).json({ error: 'No image uploaded' });
+      return res.status(400).json({ error: '画像がアップロードされていません' });
     }
 
     const userId = req.user.userId;
@@ -48,13 +48,13 @@ async function uploadProfilePicture(req, res) {
       metadata = await sharp(inputPath).metadata();
     } catch (err) {
       fs.unlinkSync(inputPath);
-      return res.status(400).json({ error: 'File is not a valid image' });
+      return res.status(400).json({ error: '有効な画像ファイルではありません' });
     }
 
     const allowedFormats = ['jpeg', 'png', 'webp'];
     if (!allowedFormats.includes(metadata.format)) {
       fs.unlinkSync(inputPath);
-      return res.status(400).json({ error: 'Only JPEG, PNG, or WEBP images are allowed' });
+      return res.status(400).json({ error: 'JPEG・PNG・WEBP の画像のみ許可されています' });
     }
 
     // Gera nome de arquivo aleatório e reprocessa a imagem (remove metadados, redimensiona, recomprime)
@@ -81,10 +81,10 @@ async function uploadProfilePicture(req, res) {
     const publicUrl = `/assets/profile-pictures/${filename}`;
     await pool.query('UPDATE users SET profile_picture_url = $1, updated_at = NOW() WHERE id = $2', [publicUrl, userId]);
 
-    res.json({ message: 'Profile picture updated', profilePictureUrl: publicUrl });
+    res.json({ message: 'プロフィール写真を更新しました', profilePictureUrl: publicUrl });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Failed to upload profile picture' });
+    res.status(500).json({ error: 'プロフィール写真のアップロードに失敗しました' });
   }
 }
 

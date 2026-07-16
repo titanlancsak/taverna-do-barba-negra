@@ -8,7 +8,7 @@ const router = express.Router();
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 10,
-  message: { error: 'Too many attempts. Please try again later.' }
+  message: { error: '試行回数が多すぎます。しばらくしてからもう一度お試しください。' }
 });
 
 router.post('/register', authLimiter, register);

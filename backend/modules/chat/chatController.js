@@ -15,7 +15,7 @@ async function getConversations(req, res) {
     const result = await pool.query(
       `SELECT DISTINCT ON (other_user_id)
         other_user_id,
-        CASE WHEN u.is_anonymous THEN 'Anonymous Pirate' ELSE COALESCE(u.display_name, u.email) END AS display_name,
+        CASE WHEN u.is_anonymous THEN '匿名の海賊' ELSE COALESCE(u.display_name, u.email) END AS display_name,
         CASE WHEN u.is_anonymous THEN NULL ELSE u.profile_picture_url END AS profile_picture_url,
         last_message,
         last_message_at,
@@ -40,7 +40,7 @@ async function getConversations(req, res) {
     res.json({ conversations: result.rows });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Failed to load conversations' });
+    res.status(500).json({ error: '会話の読み込みに失敗しました' });
   }
 }
 
@@ -79,14 +79,14 @@ async function getHistory(req, res) {
     res.json({ messages: result.rows.reverse(), hasMore: result.rows.length === limit });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Failed to load message history' });
+    res.status(500).json({ error: 'メッセージ履歴の読み込みに失敗しました' });
   }
 }
 
 async function uploadMedia(req, res) {
   try {
     if (!req.file) {
-      return res.status(400).json({ error: 'No file uploaded' });
+      return res.status(400).json({ error: 'ファイルがアップロードされていません' });
     }
 
     const inputPath = req.file.path;
@@ -99,13 +99,13 @@ async function uploadMedia(req, res) {
         metadata = await sharp(inputPath).metadata();
       } catch {
         fs.unlinkSync(inputPath);
-        return res.status(400).json({ error: 'Invalid image file' });
+        return res.status(400).json({ error: '無効な画像ファイルです' });
       }
 
       const allowedFormats = ['jpeg', 'png', 'webp', 'gif'];
       if (!allowedFormats.includes(metadata.format)) {
         fs.unlinkSync(inputPath);
-        return res.status(400).json({ error: 'Unsupported image format' });
+        return res.status(400).json({ error: '対応していない画像形式です' });
       }
 
       const filename = `${crypto.randomBytes(16).toString('hex')}.webp`;
@@ -138,7 +138,7 @@ async function uploadMedia(req, res) {
           resolve();
         });
       }).catch(() => {
-        throw new Error('Invalid or unsupported video file');
+        throw new Error('無効または対応していない動画ファイルです');
       });
 
       mediaUrl = `/assets/chat-media/${filename}`;
@@ -146,13 +146,13 @@ async function uploadMedia(req, res) {
 
     } else {
       fs.unlinkSync(inputPath);
-      return res.status(400).json({ error: 'Only image or video files are allowed' });
+      return res.status(400).json({ error: '画像または動画ファイルのみ許可されています' });
     }
 
     res.json({ mediaUrl, mediaType });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: err.message || 'Failed to upload media' });
+    res.status(500).json({ error: err.message || 'メディアのアップロードに失敗しました' });
   }
 }
 
@@ -163,7 +163,7 @@ async function deleteConversation(req, res) {
     const otherUserId = parseInt(req.params.userId);
 
     if (!otherUserId || otherUserId === userId) {
-      return res.status(400).json({ error: 'Invalid conversation' });
+      return res.status(400).json({ error: '無効な会話です' });
     }
 
     await pool.query(
@@ -196,10 +196,10 @@ async function deleteConversation(req, res) {
       });
     }
 
-    res.json({ message: 'Conversation deleted' });
+    res.json({ message: '会話を削除しました' });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Failed to delete conversation' });
+    res.status(500).json({ error: '会話の削除に失敗しました' });
   }
 }
 

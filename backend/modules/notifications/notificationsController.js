@@ -9,7 +9,7 @@ async function getNotifications(req, res) {
 
     const result = await pool.query(
       `SELECT n.id, n.type, n.reference_id, n.message, n.read_at, n.created_at, n.actor_id,
-              CASE WHEN u.is_anonymous THEN 'Anonymous Pirate' ELSE COALESCE(u.display_name, u.email) END AS actor_name
+              CASE WHEN u.is_anonymous THEN '匿名の海賊' ELSE COALESCE(u.display_name, u.email) END AS actor_name
        FROM notifications n
        LEFT JOIN users u ON u.id = n.actor_id
        WHERE n.user_id = $1
@@ -29,7 +29,7 @@ async function getNotifications(req, res) {
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Failed to load notifications' });
+    res.status(500).json({ error: '通知の読み込みに失敗しました' });
   }
 }
 
@@ -43,10 +43,10 @@ async function markAsRead(req, res) {
       [notificationId, userId]
     );
 
-    res.json({ message: 'Marked as read' });
+    res.json({ message: '既読にしました' });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Failed to mark as read' });
+    res.status(500).json({ error: '既読にできませんでした' });
   }
 }
 
@@ -59,10 +59,10 @@ async function markAllAsRead(req, res) {
       [userId]
     );
 
-    res.json({ message: 'All marked as read' });
+    res.json({ message: 'すべて既読にしました' });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Failed to mark all as read' });
+    res.status(500).json({ error: 'すべて既読にできませんでした' });
   }
 }
 
