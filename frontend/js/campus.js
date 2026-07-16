@@ -1,12 +1,11 @@
-// Campus Virtual — Fase 3: identidade e social.
-// Nome real flutuando sobre o personagem, cor diferente por jogador (tint),
-// e balões de chat rápido. Continua sobre a base de rede da Fase 2.
+// Campus Virtual — Fase 4: polish.
+// Mapa montado a partir da grade ASCII (campus-map.js), com colisões reais,
+// animação de caminhada (bob) e música ambiente opcional. A rede, os nomes,
+// as cores e os balões de chat vêm das fases 2 e 3.
 
-const WORLD_W = 4000;
-const WORLD_H = 3000;
 const PLAYER_SPEED = 220;
 const SEND_INTERVAL = 100;  // ms (~10x por segundo)
-const BUBBLE_MS = 4000;     // quanto tempo o balão de chat fica visível
+const BUBBLE_MS = 4000;     // tempo que o balão de chat fica visível
 
 const campusToken = localStorage.getItem('taverna_token');
 if (!campusToken) {
@@ -36,21 +35,20 @@ class CampusScene extends Phaser.Scene {
   }
 
   create() {
-    this.physics.world.setBounds(0, 0, WORLD_W, WORLD_H);
+    this.walkT = 0;
+    this.buildWorld();
 
-    // Gramado + grade (a arte de verdade entra na Fase 4)
-    this.add.rectangle(WORLD_W / 2, WORLD_H / 2, WORLD_W, WORLD_H, 0x3f7a3f);
-    this.add.grid(WORLD_W / 2, WORLD_H / 2, WORLD_W, WORLD_H, 64, 64, 0x000000, 0, 0x336633, 0.6);
+    this.physics.world.setBounds(0, 0, this.worldW, this.worldH);
 
     // Meu personagem
-    this.player = this.physics.add.image(WORLD_W / 2, WORLD_H / 2, 'dot');
+    this.player = this.physics.add.image(this.spawnPoint.x, this.spawnPoint.y, 'dot');
     this.player.setCollideWorldBounds(true);
+    this.physics.add.collider(this.player, this.solids);
 
-    this.cameras.main.setBounds(0, 0, WORLD_W, WORLD_H);
+    this.cameras.main.setBounds(0, 0, this.worldW, this.worldH);
     this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
 
-    // Controles: setas + WASD. Só as setas são capturadas (pra não rolar a página);
-    // WASD não é capturado pra poder digitar no chat sem problema.
+    // Controles: setas + WASD. Só as setas são capturadas (pra não rolar a página).
     this.cursors = this.input.keyboard.createCursorKeys();
     this.wasd = this.input.keyboard.addKeys('W,A,S,D');
     this.input.keyboard.addCapture(['UP', 'DOWN', 'LEFT', 'RIGHT']);
@@ -62,8 +60,82 @@ class CampusScene extends Phaser.Scene {
     this.setupChatInput();
     this.setupNetwork();
 
-    // Envia a posição ~10x/s (só quando muda)
     this.time.addEvent({ delay: SEND_INTERVAL, loop: true, callback: () => this.sendPosition() });
+  }
+
+  // ---- Monta o mundo a partir da grade ASCII ----
+  buildWorld() {
+    const rows = CAMPUS_MAP.replace(/^\n+|\n+$/g, '').split('\n');
+    const cols = Math.max(...rows.map(r => r.length));
+    this.map = rows.map(r => r.padEnd(cols, '.'));
+    const T = CAMPUS_TILE;
+    this.worldW = cols * T;
+    this.worldH = this.map.length * T;
+
+    // Fundo de gramado
+    this.add.rectangle(this.worldW / 2, this.worldH / 2, this.worldW, this.worldH, 0x3f7a3f).setDepth(-10);
+
+    const paths = this.add.graphics().setDepth(-9);
+    const water = this.add.graphics().setDepth(-9);
+    const buildings = this.add.graphics().setDepth(-8);
+    const trees = this.add.graphics().setDepth(-7);
+
+    this.solids = this.physics.add.staticGroup();
+    let spawn = null;
+
+    for (let y = 0; y < this.map.length; y++) {
+      for (let x = 0; x < cols; x++) {
+        const ch = this.map[y][x];
+        const wx = x * T;
+        const wy = y * T;
+        const cx = wx + T / 2;
+        const cy = wy + T / 2;
+
+        if (ch === 'P' || ch === '@') {
+          paths.fillStyle(0xb99a6b, 1);
+          paths.fillRect(wx, wy, T, T);
+          if (ch === '@') spawn = { x: cx, y: cy };
+        } else if (ch === '#') {
+          buildings.fillStyle(0x8d8478, 1);
+          buildings.fillRect(wx, wy, T, T);
+          buildings.lineStyle(1, 0x5b544a, 1);
+          buildings.strokeRect(wx, wy, T, T);
+          this.addSolid(cx, cy, T, T);
+        } else if (ch === 'T') {
+          trees.fillStyle(0x5d4037, 1);
+          trees.fillRect(cx - 4, cy, 8, T / 2);       // tronco
+          trees.fillStyle(0x2e7d32, 1);
+          trees.fillCircle(cx, cy - 4, T * 0.42);      // copa
+          this.addSolid(cx, cy, T * 0.7, T * 0.7);
+        } else if (ch === '~') {
+          water.fillStyle(0x4a90d9, 1);
+          water.fillRect(wx, wy, T, T);
+          this.addSolid(cx, cy, T, T);
+        }
+        // '.' = gramado (já coberto pelo fundo)
+      }
+    }
+
+    this.spawnPoint = spawn || { x: this.worldW / 2, y: this.worldH / 2 };
+
+    // Nomes dos prédios
+    if (typeof CAMPUS_LABELS !== 'undefined') {
+      CAMPUS_LABELS.forEach(l => {
+        this.add.text(l.x * T + T / 2, l.y * T + T / 2, l.text, {
+          fontFamily: 'sans-serif',
+          fontSize: '14px',
+          color: '#ffffff',
+          backgroundColor: '#00000099',
+          padding: { x: 5, y: 3 }
+        }).setOrigin(0.5).setDepth(5);
+      });
+    }
+  }
+
+  addSolid(cx, cy, w, h) {
+    const zone = this.add.zone(cx, cy, w, h);
+    this.physics.add.existing(zone, true);
+    this.solids.add(zone);
   }
 
   createLabel(name) {
@@ -81,7 +153,6 @@ class CampusScene extends Phaser.Scene {
     this.chatFocused = false;
     if (!this.chatInput) return;
 
-    // Enquanto digita, congela o movimento e desliga o teclado do Phaser
     this.chatInput.addEventListener('focus', () => {
       this.chatFocused = true;
       this.input.keyboard.enabled = false;
@@ -91,19 +162,18 @@ class CampusScene extends Phaser.Scene {
       this.input.keyboard.enabled = true;
     });
     this.chatInput.addEventListener('keydown', (e) => {
-      e.stopPropagation(); // não deixa o Enter re-focar via listener do documento
+      e.stopPropagation();
       if (e.key === 'Enter') {
         const text = this.chatInput.value.trim();
         if (text) {
           campusSocket.emit('campus_chat', { text });
-          this.showBubble(this.me, text); // mostra meu próprio balão na hora
+          this.showBubble(this.me, text);
         }
         this.chatInput.value = '';
         this.chatInput.blur();
       }
     });
 
-    // Enter fora do input abre o chat
     this.onDocKeydown = (e) => {
       if (e.key === 'Enter' && document.activeElement !== this.chatInput) {
         this.chatInput.focus();
@@ -123,7 +193,6 @@ class CampusScene extends Phaser.Scene {
     campusSocket.on('connect', join);
     campusSocket.on('connect_error', (err) => console.error('[campus] connect_error:', err.message));
 
-    // Minha identidade autoritativa (nome + cor)
     campusSocket.on('campus_me', (info) => {
       this.myId = info.id;
       this.player.setTint(info.color);
@@ -192,6 +261,17 @@ class CampusScene extends Phaser.Scene {
     entry.bubbleUntil = this.time.now + BUBBLE_MS;
   }
 
+  applyWalk(sprite, moving) {
+    if (moving) {
+      const s = Math.sin(this.walkT) * 0.08;
+      sprite.scaleX = 1 + s;
+      sprite.scaleY = 1 - s;
+    } else {
+      sprite.scaleX = 1;
+      sprite.scaleY = 1;
+    }
+  }
+
   updateEntry(e) {
     const s = e.sprite;
     e.label.setPosition(s.x, s.y - 22);
@@ -211,13 +291,12 @@ class CampusScene extends Phaser.Scene {
     }
   }
 
-  update() {
+  update(time, delta) {
     if (!this.player) return;
 
     const body = this.player.body;
     body.setVelocity(0);
 
-    // Não anda enquanto está digitando no chat
     if (!this.chatFocused) {
       const left = this.cursors.left.isDown || this.wasd.A.isDown;
       const right = this.cursors.right.isDown || this.wasd.D.isDown;
@@ -233,14 +312,17 @@ class CampusScene extends Phaser.Scene {
       body.velocity.normalize().scale(PLAYER_SPEED);
     }
 
-    // Meu nome/balão acompanham meu personagem
+    // Animação de caminhada (bob) — baseada no movimento
+    this.walkT += delta * 0.015;
+    this.applyWalk(this.player, body.velocity.lengthSq() > 1);
     this.updateEntry(this.me);
 
-    // Interpola e atualiza rótulos/balões dos outros
     for (const id in this.others) {
       const e = this.others[id];
+      const moving = Math.abs(e.sprite.x - e.targetX) > 0.5 || Math.abs(e.sprite.y - e.targetY) > 0.5;
       e.sprite.x = Phaser.Math.Linear(e.sprite.x, e.targetX, 0.2);
       e.sprite.y = Phaser.Math.Linear(e.sprite.y, e.targetY, 0.2);
+      this.applyWalk(e.sprite, moving);
       this.updateEntry(e);
     }
   }
@@ -262,3 +344,38 @@ const config = {
 };
 
 new Phaser.Game(config);
+
+// Música ambiente (opcional) — começa no 1º clique (navegadores bloqueiam autoplay)
+(function setupMusic() {
+  const btn = document.getElementById('campus-music-btn');
+  if (!btn) return;
+
+  const audio = new Audio();
+  audio.loop = true;
+  audio.volume = 0.4;
+  let loaded = false;
+
+  btn.addEventListener('click', async () => {
+    try {
+      if (!loaded) {
+        const res = await fetch(`${CAMPUS_API_BASE}/api/music/list`);
+        const tracks = await res.json();
+        if (!tracks.length) {
+          btn.textContent = '🚫';
+          return;
+        }
+        audio.src = `../assets/music/${tracks[0].file}`;
+        loaded = true;
+      }
+      if (audio.paused) {
+        await audio.play();
+        btn.textContent = '🔊';
+      } else {
+        audio.pause();
+        btn.textContent = '🎵';
+      }
+    } catch (err) {
+      console.error('[campus] music error:', err);
+    }
+  });
+})();
