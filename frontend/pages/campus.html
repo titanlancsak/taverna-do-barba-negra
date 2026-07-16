@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>キャンパス - Blackbeard Tavern</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/tools.css">
+  <style>
+    #campus-main {
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    #game-hint {
+      color: #8a7a68;
+      font-size: 13px;
+      padding: 8px;
+      text-align: center;
+    }
+    #game-container {
+      flex: 1;
+      width: 100%;
+      min-height: 380px;
+      background-color: #2d572d;
+    }
+    #game-container canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🏴‍☠️ Blackbeard Tavern 🍺</h1>
+  </header>
+
+  <main id="campus-main">
+    <p id="game-hint">矢印キーまたは WASD で移動できます。</p>
+    <div id="game-container"></div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.1/dist/phaser.min.js"></script>
+  <script src="../js/session.js"></script>
+  <script src="../js/campus.js"></script>
+</body>
+</html>

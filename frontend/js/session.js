@@ -47,6 +47,7 @@ function buildNav() {
         ['チャット', `${prefix}chat.html`],
         ['グループ', `${prefix}groups.html`],
         ['イベント', `${prefix}events.html`],
+        ['キャンパス', `${prefix}campus.html`],
         ['マイプロフィール', `${prefix}profile.html`]
       ]
     : [
