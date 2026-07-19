@@ -33,10 +33,19 @@ function initNotifications() {
   const mount = document.querySelector('.nav-left') || document.querySelector('header');
   if (!mount) return;
 
+  // Caminho das imagens do sino (muda conforme a página está em /pages/ ou na raiz)
+  const isInPages = window.location.pathname.includes('/pages/');
+  const iconBase = isInPages ? '../assets/icons/' : 'assets/icons/';
+  const BELL_EMPTY = `${iconBase}bell-empty.svg`;   // sem notificação
+  const BELL_ALERT = `${iconBase}bell-alert.svg`;   // tem notificação (com exclamação)
+
   const bellWrapper = document.createElement('div');
   bellWrapper.id = 'notif-bell-wrapper';
   bellWrapper.innerHTML = `
-    <button id="notif-bell-btn">🔔<span id="notif-badge" style="display:none;">0</span></button>
+    <button id="notif-bell-btn">
+      <img id="notif-bell-icon" src="${BELL_EMPTY}" alt="通知">
+      <span id="notif-badge" style="display:none;">0</span>
+    </button>
     <div id="notif-dropdown" style="display:none;">
       <div id="notif-dropdown-header">
         <span>通知</span>
@@ -103,11 +112,14 @@ function initNotifications() {
   }
 
   function updateBadge(count) {
+    const icon = document.getElementById('notif-bell-icon');
     if (count > 0) {
       badge.textContent = count > 9 ? '9+' : count;
       badge.style.display = 'flex';
+      if (icon) icon.src = BELL_ALERT;   // sino com exclamação
     } else {
       badge.style.display = 'none';
+      if (icon) icon.src = BELL_EMPTY;   // sino vazio
     }
   }
 
