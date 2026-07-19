@@ -136,8 +136,9 @@ function buildNav() {
 buildNav();
 
 
-// Fundo de vídeo (taverna) em loop, no site todo, atrás de tudo e escurecido pelo CSS
+// Fundo de vídeo (taverna) em loop — só na página de perfil, atrás de tudo e escurecido pelo CSS
 function addSiteBackground() {
+  if (!window.location.pathname.includes('profile.html')) return; // só no perfil
   if (document.getElementById('site-bg')) return;
   const isInPages = window.location.pathname.includes('/pages/');
   const src = (isInPages ? '../' : '') + 'assets/img/tavern-bg.mp4';
