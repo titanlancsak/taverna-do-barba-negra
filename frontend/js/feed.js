@@ -1,5 +1,9 @@
 const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '';
 
+// Ícones do coração (feed fica na home/raiz)
+const HEART_EMPTY = 'assets/icons/heart-empty.svg';  // não curtido (cinza)
+const HEART_LIKED = 'assets/icons/heart-liked.svg';  // curtido (dourado)
+
 const token = localStorage.getItem('taverna_token');
 const currentUser = JSON.parse(localStorage.getItem('taverna_user') || 'null');
 
@@ -57,7 +61,8 @@ function renderPost(post) {
       ${mediaHtml}
       <div class="post-actions">
         <button class="like-btn ${post.liked_by_me ? 'liked' : ''}" data-post-id="${post.id}">
-          ❤️ <span class="like-count">${post.like_count}</span>
+          <img class="like-icon" src="${post.liked_by_me ? HEART_LIKED : HEART_EMPTY}" alt="いいね">
+          <span class="like-count">${post.like_count}</span>
         </button>
         <button class="comment-toggle-btn" data-post-id="${post.id}">
           💬 ${post.comment_count} コメント
@@ -196,13 +201,16 @@ async function handleLike(btn) {
     const data = await response.json();
 
     const countSpan = btn.querySelector('.like-count');
+    const icon = btn.querySelector('.like-icon');
     let count = parseInt(countSpan.textContent);
 
     if (data.liked) {
       btn.classList.add('liked');
+      if (icon) icon.src = HEART_LIKED;
       countSpan.textContent = count + 1;
     } else {
       btn.classList.remove('liked');
+      if (icon) icon.src = HEART_EMPTY;
       countSpan.textContent = count - 1;
     }
   } catch (err) {

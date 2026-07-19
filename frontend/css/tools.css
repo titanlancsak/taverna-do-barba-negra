@@ -282,6 +282,16 @@ button:hover {
   color: #e0703f;
   font-weight: bold;
 }
+.like-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.like-icon {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
 
 .comments-box {
   margin-top: 10px;
