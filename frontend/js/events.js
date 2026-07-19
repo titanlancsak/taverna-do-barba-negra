@@ -25,6 +25,9 @@ function escapeHtml(text) {
 
 const JP_WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土'];
 
+// Ícone de lixeira (inline, herda a cor do botão via currentColor)
+const DELETE_ICON = '<svg class="delete-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17,4V5H15V4H9V5H7V4A2,2,0,0,1,9,2h6A2,2,0,0,1,17,4Z"/><path d="M20,6H4A1,1,0,0,0,4,8H5V20a2,2,0,0,0,2,2H17a2,2,0,0,0,2-2V8h1a1,1,0,0,0,0-2Z"/></svg>';
+
 // Formata "YYYY-MM-DD" no estilo japonês, sem depender de parsing com fuso horário
 function formatEventDate(dateStr) {
   const [y, m, d] = dateStr.split('-').map(Number);
@@ -91,7 +94,7 @@ function renderEventCard(e) {
             ${e.attending ? '✓ 参加中（取消）' : '参加する'}
           </button>
           <span class="event-attendees">${e.attendee_count}人参加</span>
-          ${isCreator ? `<button class="event-delete-btn" data-id="${e.id}" title="イベントを削除">🗑</button>` : ''}
+          ${isCreator ? `<button class="event-delete-btn" data-id="${e.id}" title="イベントを削除">${DELETE_ICON}</button>` : ''}
         </div>
       </div>
     </div>

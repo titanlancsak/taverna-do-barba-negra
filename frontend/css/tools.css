@@ -381,6 +381,16 @@ button:hover {
 .post-delete-btn {
   margin-left: auto;
   color: #8a7a68 !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.delete-icon {
+  width: 15px;
+  height: 15px;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .post-delete-btn:hover {

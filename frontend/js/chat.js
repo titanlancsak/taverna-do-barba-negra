@@ -18,6 +18,9 @@ const chatWidgetMediaInput = document.getElementById('chat-widget-media-input');
 
 let activeChatUserId = null;
 
+// Ícone de lixeira (inline, herda a cor do botão via currentColor)
+const DELETE_ICON = '<svg class="delete-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17,4V5H15V4H9V5H7V4A2,2,0,0,1,9,2h6A2,2,0,0,1,17,4Z"/><path d="M20,6H4A1,1,0,0,0,4,8H5V20a2,2,0,0,0,2,2H17a2,2,0,0,0,2-2V8h1a1,1,0,0,0,0-2Z"/></svg>';
+
 // Reutiliza a conexão global se já existir (ex.: criada pelas notificações), pra não abrir socket duplicado
 const socket = window.__tavernaSocket || io(API_BASE || window.location.origin, { auth: { token } });
 window.__tavernaSocket = socket;
@@ -65,7 +68,7 @@ async function loadConversations() {
           <div class="conversation-preview">${c.last_message ? escapeHtml(c.last_message) : '📎 メディア'}</div>
         </div>
         ${c.unread_count > 0 ? `<span class="unread-badge">${c.unread_count}</span>` : ''}
-        <button class="conversation-delete-btn" data-id="${c.other_user_id}" data-name="${escapeHtml(c.display_name)}" title="会話を削除">🗑</button>
+        <button class="conversation-delete-btn" data-id="${c.other_user_id}" data-name="${escapeHtml(c.display_name)}" title="会話を削除">${DELETE_ICON}</button>
       </div>
     `).join('');
 
