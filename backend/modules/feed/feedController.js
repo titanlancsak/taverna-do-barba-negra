@@ -116,7 +116,8 @@ async function getFeed(req, res) {
         CASE WHEN u.is_anonymous THEN NULL ELSE u.profile_picture_url END AS author_picture,
         COUNT(DISTINCT l.id) AS like_count,
         COUNT(DISTINCT c.id) AS comment_count,
-        BOOL_OR(l.user_id = $1) AS liked_by_me
+        BOOL_OR(l.user_id = $1) AS liked_by_me,
+        BOOL_OR(c.user_id = $1) AS commented_by_me
       FROM posts p
       JOIN users u ON u.id = p.user_id
       LEFT JOIN likes l ON l.post_id = p.id

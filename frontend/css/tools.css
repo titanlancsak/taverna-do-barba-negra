@@ -292,6 +292,16 @@ button:hover {
   height: 18px;
   display: block;
 }
+.comment-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.comment-icon {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
 
 .comments-box {
   margin-top: 10px;

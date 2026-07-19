@@ -1,8 +1,10 @@
 const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '';
 
-// Ícones do coração (feed fica na home/raiz)
-const HEART_EMPTY = 'assets/icons/heart-empty.svg';  // não curtido (cinza)
-const HEART_LIKED = 'assets/icons/heart-liked.svg';  // curtido (dourado)
+// Ícones (feed fica na home/raiz)
+const HEART_EMPTY = 'assets/icons/heart-empty.svg';    // não curtido (cinza)
+const HEART_LIKED = 'assets/icons/heart-liked.svg';    // curtido (dourado)
+const COMMENT_EMPTY = 'assets/icons/comment-empty.svg'; // não comentou (cinza)
+const COMMENT_DONE = 'assets/icons/comment-done.svg';   // comentou (amarelo)
 
 const token = localStorage.getItem('taverna_token');
 const currentUser = JSON.parse(localStorage.getItem('taverna_user') || 'null');
@@ -65,7 +67,8 @@ function renderPost(post) {
           <span class="like-count">${post.like_count}</span>
         </button>
         <button class="comment-toggle-btn" data-post-id="${post.id}">
-          💬 ${post.comment_count} コメント
+          <img class="comment-icon" src="${post.commented_by_me ? COMMENT_DONE : COMMENT_EMPTY}" alt="コメント">
+          <span class="comment-count">${post.comment_count}</span> コメント
         </button>
         ${currentUser && currentUser.id === post.author_id ? `<button class="post-delete-btn" data-post-id="${post.id}">🗑 削除</button>` : ''}
       </div>
@@ -274,9 +277,8 @@ async function handleDeleteComment(commentId, postId) {
     await loadComments(postId);
 
     const card = document.querySelector(`.post-card[data-post-id="${postId}"]`);
-    const toggleBtn = card.querySelector('.comment-toggle-btn');
-    const currentCount = parseInt(toggleBtn.textContent.match(/\d+/)[0]);
-    toggleBtn.textContent = `💬 ${Math.max(0, currentCount - 1)} コメント`;
+    const countSpan = card.querySelector('.comment-toggle-btn .comment-count');
+    countSpan.textContent = Math.max(0, parseInt(countSpan.textContent) - 1);
   } catch (err) {
     console.error(err);
   }
@@ -306,8 +308,10 @@ async function submitComment(postId) {
 
     const card = document.querySelector(`.post-card[data-post-id="${postId}"]`);
     const toggleBtn = card.querySelector('.comment-toggle-btn');
-    const currentCount = parseInt(toggleBtn.textContent.match(/\d+/)[0]);
-    toggleBtn.textContent = `💬 ${currentCount + 1} コメント`;
+    const countSpan = toggleBtn.querySelector('.comment-count');
+    countSpan.textContent = parseInt(countSpan.textContent) + 1;
+    const icon = toggleBtn.querySelector('.comment-icon');
+    if (icon) icon.src = COMMENT_DONE; // eu comentei -> ícone preenchido
   } catch (err) {
     console.error(err);
   }
