@@ -279,6 +279,13 @@ async function handleDeleteComment(commentId, postId) {
     const card = document.querySelector(`.post-card[data-post-id="${postId}"]`);
     const countSpan = card.querySelector('.comment-toggle-btn .comment-count');
     countSpan.textContent = Math.max(0, parseInt(countSpan.textContent) - 1);
+
+    // Se não sobrou nenhum comentário meu neste post, volta o ícone pra "não comentou"
+    const myRemaining = card.querySelectorAll('.comments-list .comment-delete-btn').length;
+    if (myRemaining === 0) {
+      const icon = card.querySelector('.comment-toggle-btn .comment-icon');
+      if (icon) icon.src = COMMENT_EMPTY;
+    }
   } catch (err) {
     console.error(err);
   }
