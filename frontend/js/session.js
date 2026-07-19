@@ -136,6 +136,28 @@ function buildNav() {
 buildNav();
 
 
+// Fundo de vídeo (taverna) em loop, no site todo, atrás de tudo e escurecido pelo CSS
+function addSiteBackground() {
+  if (document.getElementById('site-bg')) return;
+  const isInPages = window.location.pathname.includes('/pages/');
+  const src = (isInPages ? '../' : '') + 'assets/img/tavern-bg.mp4';
+
+  const bg = document.createElement('div');
+  bg.id = 'site-bg';
+
+  const video = document.createElement('video');
+  video.autoplay = true;
+  video.muted = true;         // obrigatório pro autoplay não ser bloqueado
+  video.loop = true;
+  video.setAttribute('playsinline', ''); // iOS não abre em tela cheia
+  video.src = src;
+
+  bg.appendChild(video);
+  document.body.prepend(bg);
+}
+addSiteBackground();
+
+
 // Carrega o sistema de notificações (sino) se o usuário estiver logado
 if (localStorage.getItem('taverna_token')) {
   const isInPages = window.location.pathname.includes('/pages/');
