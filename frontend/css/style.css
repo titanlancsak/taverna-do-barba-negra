@@ -19,11 +19,12 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  position: relative; /* vira referência pro fundo cobrir a página toda */
 }
 
-/* Fundo de vídeo (taverna) no site todo */
+/* Fundo de vídeo (taverna) no site todo — cobre a altura toda e rola com a página */
 #site-bg {
-  position: fixed;
+  position: absolute;
   inset: 0;
   z-index: -1;
   overflow: hidden;
@@ -40,7 +41,7 @@ body {
   content: '';
   position: absolute;
   inset: 0;
-  background: rgba(15, 10, 6, 0.82); /* escurece pra ficar apagado e legível */
+  background: rgba(15, 10, 6, 0.68); /* menos escuro que antes */
 }
 
 main {
