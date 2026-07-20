@@ -191,7 +191,25 @@ body {
 .intro-tech-row:nth-child(6) { transition-delay: 0.30s; }
 .intro-tech-row:nth-child(7) { transition-delay: 0.36s; }
 
+/* ===== Onda de cor por letra nos títulos (amarelo -> branco, uma por uma) ===== */
+.char {
+  display: inline-block;
+  white-space: pre;   /* preserva espaços entre as letras */
+  color: #f5f0e6;
+}
+
+.chars-in .char {
+  animation: charFlash 0.55s ease forwards;
+}
+
+@keyframes charFlash {
+  0% { color: #f5f0e6; }
+  45% { color: #d4a017; } /* amarelo */
+  100% { color: #f5f0e6; } /* branco */
+}
+
 @media (prefers-reduced-motion: reduce) {
   .reveal { opacity: 1; transform: none; transition: none; }
+  .chars-in .char { animation: none; }
   html { scroll-behavior: auto; }
 }

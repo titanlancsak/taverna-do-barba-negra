@@ -22,3 +22,39 @@ revealEls.forEach((el) => observer.observe(el));
 document.querySelectorAll('.intro-enter-btn').forEach((btn) => {
   btn.addEventListener('click', () => sessionStorage.setItem('introSeen', '1'));
 });
+
+// ===== Onda de cor por letra nos títulos =====
+// Divide em "grafemas" (mantém emojis inteiros como 🏴‍☠️) e envolve cada um num <span>.
+function splitGraphemes(str) {
+  if (typeof Intl !== 'undefined' && Intl.Segmenter) {
+    return Array.from(new Intl.Segmenter('ja', { granularity: 'grapheme' }).segment(str), (s) => s.segment);
+  }
+  return Array.from(str);
+}
+
+const titleEls = document.querySelectorAll('.intro-block h2, .intro-hero-content h1');
+
+titleEls.forEach((el) => {
+  const chars = splitGraphemes(el.textContent);
+  el.textContent = '';
+  chars.forEach((ch, i) => {
+    const span = document.createElement('span');
+    span.className = 'char';
+    span.textContent = ch;
+    span.style.animationDelay = (i * 0.05) + 's'; // uma letra por vez
+    el.appendChild(span);
+  });
+});
+
+const charObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    // remove e re-adiciona pra a animação tocar de novo a cada vez que entra na tela
+    entry.target.classList.remove('chars-in');
+    if (entry.isIntersecting) {
+      void entry.target.offsetWidth; // força o navegador a reiniciar a animação
+      entry.target.classList.add('chars-in');
+    }
+  });
+}, { threshold: 0.4 });
+
+titleEls.forEach((el) => charObserver.observe(el));
