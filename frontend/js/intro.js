@@ -17,3 +17,8 @@ const observer = new IntersectionObserver((entries) => {
 });
 
 revealEls.forEach((el) => observer.observe(el));
+
+// Ao clicar em "entrar", marca a sessão pra o index não redirecionar de volta pra intro
+document.querySelectorAll('.intro-enter-btn').forEach((btn) => {
+  btn.addEventListener('click', () => sessionStorage.setItem('introSeen', '1'));
+});

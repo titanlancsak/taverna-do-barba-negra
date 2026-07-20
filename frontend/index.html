@@ -3,6 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Sem conta: mostra a intro a cada nova sessão. Logado: vai direto pro site. -->
+  <script>
+    (function () {
+      var token = localStorage.getItem('taverna_token');
+      if (!token && !sessionStorage.getItem('introSeen')) {
+        window.location.replace('intro.html');
+      }
+    })();
+  </script>
   <title>Blackbeard Tavern</title>
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/tools.css">

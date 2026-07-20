@@ -48,7 +48,8 @@ function buildNav() {
         ['グループ', `${prefix}groups.html`],
         ['イベント', `${prefix}events.html`],
         ['キャンパス', `${prefix}campus.html`],
-        ['マイプロフィール', `${prefix}profile.html`]
+        ['マイプロフィール', `${prefix}profile.html`],
+        ['サイト紹介', `${rootPrefix}intro.html`]
       ]
     : [
         ['ホーム', `${rootPrefix}index.html`],
