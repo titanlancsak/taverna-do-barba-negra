@@ -196,7 +196,7 @@ body {
   display: inline-block;
   white-space: pre;   /* preserva espaços entre as letras */
   color: #f5f0e6;
-  transition: color 0.15s ease;
+  transition: color 0.3s ease;
 }
 
 /* Passar o mouse por cima da letra muda a cor */
