@@ -32,19 +32,33 @@ function splitGraphemes(str) {
   return Array.from(str);
 }
 
-const titleEls = document.querySelectorAll('.intro-block h2, .intro-hero-content h1');
+// Aplica o efeito nos títulos, parágrafos, tagline e cards
+const waveEls = document.querySelectorAll(
+  '.intro-hero-content h1, .intro-tagline, .intro-block h2, .intro-block p, .intro-card'
+);
 
-titleEls.forEach((el) => {
-  const chars = splitGraphemes(el.textContent);
+// Envolve cada letra num <span>, percorrendo os nós filhos pra preservar <br> etc.
+function wrapChars(el) {
+  const nodes = Array.from(el.childNodes);
   el.textContent = '';
-  chars.forEach((ch, i) => {
-    const span = document.createElement('span');
-    span.className = 'char';
-    span.textContent = ch;
-    span.style.animationDelay = (i * 0.05) + 's'; // uma letra por vez
-    el.appendChild(span);
+  let i = 0;
+  nodes.forEach((node) => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      splitGraphemes(node.textContent).forEach((ch) => {
+        const span = document.createElement('span');
+        span.className = 'char';
+        span.textContent = ch;
+        span.style.animationDelay = (i * 0.05) + 's'; // uma letra por vez
+        el.appendChild(span);
+        i++;
+      });
+    } else {
+      el.appendChild(node); // mantém <br> e outros elementos
+    }
   });
-});
+}
+
+waveEls.forEach(wrapChars);
 
 const charObserver = new IntersectionObserver((entries) => {
   entries.forEach((entry) => {
@@ -55,6 +69,6 @@ const charObserver = new IntersectionObserver((entries) => {
       entry.target.classList.add('chars-in');
     }
   });
-}, { threshold: 0.4 });
+}, { threshold: 0.25 });
 
-titleEls.forEach((el) => charObserver.observe(el));
+waveEls.forEach((el) => charObserver.observe(el));
