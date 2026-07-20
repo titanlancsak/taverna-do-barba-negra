@@ -196,10 +196,16 @@ body {
   display: inline-block;
   white-space: pre;   /* preserva espaços entre as letras */
   color: #f5f0e6;
+  transition: color 0.15s ease;
+}
+
+/* Passar o mouse por cima da letra muda a cor */
+.char:hover {
+  color: #ffcf40;
 }
 
 .chars-in .char {
-  animation: charFlash 0.55s ease forwards;
+  animation: charFlash 0.55s ease; /* sem "forwards" pra o hover funcionar depois da onda */
 }
 
 @keyframes charFlash {
