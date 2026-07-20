@@ -1,0 +1,197 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: #1b1b1b;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #1b1b1b;
+  color: #f5f0e6;
+  overflow-x: hidden;
+}
+
+/* ===== HERO ===== */
+.intro-hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow: hidden;
+}
+
+.intro-hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -2;
+}
+
+.intro-hero::after {
+  /* overlay escuro pra legibilidade */
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 10, 6, 0.72);
+  z-index: -1;
+}
+
+.intro-hero-content {
+  padding: 24px;
+  max-width: 800px;
+}
+
+.intro-hero-content h1 {
+  font-size: clamp(28px, 6vw, 56px);
+  color: #f5f0e6;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.6);
+  margin-bottom: 16px;
+}
+
+.intro-tagline {
+  font-size: clamp(14px, 2.5vw, 20px);
+  color: #d8cbb4;
+  margin-bottom: 32px;
+}
+
+.intro-enter-btn {
+  display: inline-block;
+  background: linear-gradient(135deg, #d4a017, #b8860b);
+  color: #1b1b1b;
+  font-weight: bold;
+  font-size: 16px;
+  text-decoration: none;
+  padding: 14px 40px;
+  border-radius: 30px;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.intro-enter-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(212, 160, 23, 0.4);
+}
+
+.intro-scroll-cue {
+  margin-top: 48px;
+  font-size: 13px;
+  color: #b8a894;
+  animation: introBounce 1.8s ease-in-out infinite;
+}
+
+@keyframes introBounce {
+  0%, 100% { transform: translateY(0); opacity: 0.7; }
+  50% { transform: translateY(8px); opacity: 1; }
+}
+
+/* ===== SEÇÕES ===== */
+.intro-section {
+  min-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 24px;
+}
+
+.intro-block {
+  width: 100%;
+  max-width: 900px;
+  text-align: center;
+}
+
+.intro-block h2 {
+  font-size: clamp(24px, 4vw, 40px);
+  color: #d4a017;
+  margin-bottom: 24px;
+}
+
+.intro-block p {
+  font-size: clamp(15px, 2.2vw, 20px);
+  line-height: 1.8;
+  color: #e6ddce;
+}
+
+.intro-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.intro-card {
+  background-color: rgba(35, 24, 15, 0.85);
+  border: 1px solid #3a2c1e;
+  border-radius: 12px;
+  padding: 22px 16px;
+  font-size: 15px;
+  font-weight: bold;
+  color: #f5f0e6;
+}
+
+/* Tabela de tecnologias */
+.intro-tech {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+  text-align: left;
+}
+
+.intro-tech-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  align-items: baseline;
+  background-color: rgba(35, 24, 15, 0.85);
+  border: 1px solid #3a2c1e;
+  border-radius: 12px;
+  padding: 16px 20px;
+  font-size: 15px;
+  color: #e6ddce;
+}
+
+.intro-tech-label {
+  min-width: 140px;
+  font-weight: bold;
+  color: #d4a017;
+}
+
+/* ===== REVEAL AO ROLAR (reverte ao subir) ===== */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.reveal.in-view {
+  opacity: 1;
+  transform: none;
+}
+
+/* Efeito escalonado nos itens de grade/lista */
+.intro-grid .reveal:nth-child(2) { transition-delay: 0.08s; }
+.intro-grid .reveal:nth-child(3) { transition-delay: 0.16s; }
+.intro-grid .reveal:nth-child(4) { transition-delay: 0.24s; }
+.intro-grid .reveal:nth-child(5) { transition-delay: 0.32s; }
+.intro-grid .reveal:nth-child(6) { transition-delay: 0.40s; }
+.intro-grid .reveal:nth-child(7) { transition-delay: 0.48s; }
+
+.intro-tech-row:nth-child(2) { transition-delay: 0.06s; }
+.intro-tech-row:nth-child(3) { transition-delay: 0.12s; }
+.intro-tech-row:nth-child(4) { transition-delay: 0.18s; }
+.intro-tech-row:nth-child(5) { transition-delay: 0.24s; }
+.intro-tech-row:nth-child(6) { transition-delay: 0.30s; }
+.intro-tech-row:nth-child(7) { transition-delay: 0.36s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+  html { scroll-behavior: auto; }
+}
