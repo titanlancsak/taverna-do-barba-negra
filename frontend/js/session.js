@@ -37,7 +37,8 @@ function buildNav() {
     ['無料の本', `${prefix}free-books.html`],
     ['Linuxディストロ', `${prefix}linux-distros.html`],
     ['便利なスクリプト', `${prefix}scripts.html`],
-    ['Linuxラボ', `${prefix}linux-lab.html`]
+    ['Linuxラボ', `${prefix}linux-lab.html`],
+    ['Ciscoラボ', `${prefix}cisco-lab.html`]
   ];
 
   // SNS (menu da esquerda) — depende de estar logado

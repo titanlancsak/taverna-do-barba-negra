@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ciscoラボ - Blackbeard Tavern</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/tools.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.min.css">
+  <style>
+    #cl-main { max-width: none; padding: 30px 40px; }
+    #cl-wrap { max-width: 1100px; margin: 0 auto; }
+    #cl-terminal {
+      background-color: #000;
+      border: 1px solid #3a2c1e;
+      border-radius: 8px;
+      padding: 8px;
+      height: 560px;
+    }
+    #cl-toolbar { display: flex; align-items: center; gap: 12px; margin: 12px 0; }
+    #cl-note {
+      font-size: 13px; color: #b8a894; margin-top: 18px; line-height: 1.7;
+      max-width: 900px; background-color: #23180f; border: 1px solid #3a2c1e;
+      border-radius: 10px; padding: 16px 18px;
+    }
+    #cl-note strong { color: #f5f0e6; }
+    #cl-note code { background-color: #2c1e12; color: #d4a017; padding: 1px 6px; border-radius: 4px; font-family: monospace; }
+    #cl-note p { margin-bottom: 8px; }
+    #cl-note p:last-child { margin-bottom: 0; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1></h1>
+  </header>
+
+  <main id="cl-main">
+    <div id="cl-wrap">
+      <h2>Ciscoラボ</h2>
+      <p>Cisco IOS のコマンドを練習できるシミュレーターです。ルーター／スイッチ／L3スイッチのコマンドを試せます。</p>
+
+      <div id="cl-toolbar">
+        <button id="cl-restart">リセット</button>
+        <span id="cl-status"></span>
+      </div>
+
+      <div id="cl-terminal"></div>
+
+      <div id="cl-note">
+        <p><strong>これは IOS のシミュレーターです（本物の IOS ではありません）。</strong>コマンドの構文を練習するためのもので、実際のルーティングやパケットの送受信は行いません。</p>
+        <p>対応：モード移動（<code>enable</code>, <code>configure terminal</code>, <code>interface</code>, <code>line</code>, <code>router</code>, <code>vlan</code>, <code>ip dhcp pool</code>, ACL）、<code>hostname</code>・パスワード・<code>username</code>・<code>ip domain-name</code>・<code>crypto key generate rsa</code>・<code>ip ssh</code>・<code>telnet/ssh</code>、静的ルート、PAT、DHCPサーバー、router-on-a-stick、ACL、<code>show running-config</code> など。</p>
+        <p>ヒント：<code>?</code> でその場所で使えるコマンドの一覧、<code>show running-config</code> で設定を確認できます。ページを閉じる・<strong>リセット</strong>で初期化されます。</p>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Blackbeard Tavern</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.min.js"></script>
+  <script src="../js/session.js"></script>
+  <script src="../js/cisco-lab.js"></script>
+</body>
+</html>
