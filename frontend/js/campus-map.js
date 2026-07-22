@@ -55,6 +55,11 @@ PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 // Pra um prédio específico, adicione "scale: X" na linha dele (sobrepõe o global).
 const CAMPUS_BUILDING_SCALE = 5;
 
+// Área de colisão dos prédios — fração do tamanho do sprite, posicionada na BASE.
+//   1 = colide o prédio todo, 0.5 = metade, 0.3 = bem pequena...
+// Pra um prédio específico, adicione "collideFactor: X" na linha dele.
+const CAMPUS_COLLIDE_FACTOR = 0.5;
+
 // Prédios (sprites do Piskel), 128x96 cada
 const CAMPUS_BUILDINGS = [
   { file: 'lecture-a.png', name: '講義棟A', x: 120, y: 60 },

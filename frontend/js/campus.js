@@ -169,13 +169,18 @@ class CampusScene extends Phaser.Scene {
     if (typeof CAMPUS_BUILDINGS === 'undefined') return;
     const BW = 128, BH = 96;
     const gscale = (typeof CAMPUS_BUILDING_SCALE !== 'undefined') ? CAMPUS_BUILDING_SCALE : 1;
+    const gcollide = (typeof CAMPUS_COLLIDE_FACTOR !== 'undefined') ? CAMPUS_COLLIDE_FACTOR : 0.5;
     CAMPUS_BUILDINGS.forEach(b => {
       const key = 'bld_' + b.file;
       if (!this.textures.exists(key)) return; // imagem não carregou
       const s = b.scale || gscale;
       const W = BW * s, H = BH * s;
       this.add.image(b.x, b.y, key).setOrigin(0, 0).setScale(s).setDepth(b.y + H);
-      if (b.collide !== false) this.addSolid(b.x + W / 2, b.y + H / 2, W, H);
+      if (b.collide !== false) {
+        const cf = (b.collideFactor != null) ? b.collideFactor : gcollide;
+        const cw = W * cf, chh = H * cf;
+        this.addSolid(b.x + W / 2, b.y + H - chh / 2, cw, chh); // colisão na base
+      }
       if (b.name) {
         this.add.text(b.x + W / 2, b.y - 4, b.name, {
           fontFamily: 'sans-serif',
