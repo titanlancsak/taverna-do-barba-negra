@@ -14,3 +14,7 @@ frontend/assets/event-media/*
 !frontend/assets/chat-media/.gitkeep
 !frontend/assets/feed-media/.gitkeep
 !frontend/assets/event-media/.gitkeep
+
+# Binários do laboratório v86 (grandes; baixados manualmente)
+frontend/assets/v86/*
+!frontend/assets/v86/README.txt

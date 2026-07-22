@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Linuxラボ - Blackbeard Tavern</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/tools.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.min.css">
+  <style>
+    #lab-wrap { max-width: 900px; margin: 0 auto; }
+    #lab-terminal {
+      width: 100%;
+      height: 460px;
+      background-color: #000;
+      border: 1px solid #3a2c1e;
+      border-radius: 8px;
+      overflow: hidden;
+      padding: 6px;
+    }
+    #lab-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 12px 0;
+    }
+    #lab-status { font-size: 13px; color: #8a7a68; }
+    #lab-note { font-size: 13px; color: #8a7a68; margin-top: 12px; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1></h1>
+  </header>
+
+  <main>
+    <div id="lab-wrap">
+      <h2>Linuxラボ</h2>
+      <p>ブラウザ上で動く使い捨ての Linux 環境です。コマンドを自由に試せます。ページを閉じるとすべて消えます。</p>
+
+      <div id="lab-toolbar">
+        <button id="lab-restart">再起動</button>
+        <span id="lab-status"></span>
+      </div>
+
+      <div id="lab-terminal"></div>
+
+      <p id="lab-note">
+        ※ すべてあなたのブラウザ内で動くため、サーバーには何も残りません。<br>
+        初回はイメージの読み込みに少し時間がかかります。
+      </p>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Blackbeard Tavern</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.min.js"></script>
+  <script src="../assets/v86/libv86.js"></script>
+  <script src="../js/session.js"></script>
+  <script src="../js/linux-lab.js"></script>
+</body>
+</html>
