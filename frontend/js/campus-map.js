@@ -58,7 +58,7 @@ const CAMPUS_BUILDING_SCALE = 5;
 // Área de colisão dos prédios — fração do tamanho do sprite, posicionada na BASE.
 //   1 = colide o prédio todo, 0.5 = metade, 0.3 = bem pequena...
 // Pra um prédio específico, adicione "collideFactor: X" na linha dele.
-const CAMPUS_COLLIDE_FACTOR = 0.5;
+const CAMPUS_COLLIDE_FACTOR = 0.3;
 
 // Prédios (sprites do Piskel), 128x96 cada
 const CAMPUS_BUILDINGS = [
@@ -75,5 +75,5 @@ const CAMPUS_BUILDINGS = [
   { file: 'iot-smart-house.png', name: 'IoT・スマートハウス実習棟', x: 300, y: 1500 },
 ];
 
-// Rótulos extras de terreno (opcional) — posição em TILES (x=coluna, y=linha, scale=x)
+// Rótulos extras de terreno (opcional) — posição em TILES (x=coluna, y=linha, scale=x, collideFactor=x)
 const CAMPUS_LABELS = [];
