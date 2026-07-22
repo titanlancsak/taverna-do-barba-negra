@@ -167,11 +167,14 @@ class CampusScene extends Phaser.Scene {
   // Coloca os prédios (imagens) com colisão, ordenação 2.5D e nome flutuante
   placeBuildings() {
     if (typeof CAMPUS_BUILDINGS === 'undefined') return;
-    const W = 128, H = 96;
+    const BW = 128, BH = 96;
+    const gscale = (typeof CAMPUS_BUILDING_SCALE !== 'undefined') ? CAMPUS_BUILDING_SCALE : 1;
     CAMPUS_BUILDINGS.forEach(b => {
       const key = 'bld_' + b.file;
       if (!this.textures.exists(key)) return; // imagem não carregou
-      this.add.image(b.x, b.y, key).setOrigin(0, 0).setDepth(b.y + H);
+      const s = b.scale || gscale;
+      const W = BW * s, H = BH * s;
+      this.add.image(b.x, b.y, key).setOrigin(0, 0).setScale(s).setDepth(b.y + H);
       if (b.collide !== false) this.addSolid(b.x + W / 2, b.y + H / 2, W, H);
       if (b.name) {
         this.add.text(b.x + W / 2, b.y - 4, b.name, {
@@ -443,6 +446,7 @@ const config = {
   type: Phaser.AUTO,
   parent: 'game-container',
   backgroundColor: '#2d572d',
+  pixelArt: true, // mantém os sprites nítidos ao ampliar (sem borrão)
   physics: {
     default: 'arcade',
     arcade: { debug: false }

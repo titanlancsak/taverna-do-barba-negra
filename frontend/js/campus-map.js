@@ -50,6 +50,11 @@ PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 ........P...............P...............P.........
 `;
 
+// Escala dos prédios — aumenta/diminui TODOS de uma vez.
+//   1 = tamanho original (128x96), 2 = dobro, 3 = triplo...
+// Pra um prédio específico, adicione "scale: X" na linha dele (sobrepõe o global).
+const CAMPUS_BUILDING_SCALE = 2;
+
 // Prédios (sprites do Piskel), 128x96 cada
 const CAMPUS_BUILDINGS = [
   { file: 'lecture-a.png', name: '講義棟A', x: 120, y: 60 },
