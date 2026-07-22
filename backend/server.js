@@ -63,8 +63,11 @@ app.use('/api/notifications', notificationsRoutes);
 const eventsRoutes = require('./modules/events/eventsRoutes');
 app.use('/api/events', eventsRoutes);
 
+const adminRoutes = require('./modules/admin/adminRoutes');
+app.use('/api/admin', adminRoutes);
+
 // --- Socket.io: autenticação da conexão via token JWT ---
-io.use((socket, next) => {
+io.use(async (socket, next) => {
   const token = socket.handshake.auth?.token;
 
   if (!token) {
@@ -73,6 +76,14 @@ io.use((socket, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Bloqueia usuários banidos também no tempo real
+    const pool = require('./db/pool');
+    const result = await pool.query('SELECT is_banned FROM users WHERE id = $1', [decoded.userId]);
+    if (result.rows.length === 0 || result.rows[0].is_banned) {
+      return next(new Error('このアカウントは停止されています'));
+    }
+
     socket.userId = decoded.userId;
     next();
   } catch (err) {

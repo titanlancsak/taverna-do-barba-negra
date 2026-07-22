@@ -109,6 +109,10 @@ async function login(req, res) {
       return res.status(401).json({ error: 'メールアドレスまたはパスワードが正しくありません' });
     }
 
+    if (user.is_banned) {
+      return res.status(403).json({ error: 'このアカウントは停止されています' });
+    }
+
     const token = jwt.sign(
       { userId: user.id, email: user.email },
       process.env.JWT_SECRET,

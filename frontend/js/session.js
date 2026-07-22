@@ -57,6 +57,11 @@ function buildNav() {
         ['新規登録', `${prefix}register.html`]
       ];
 
+  // Link do painel de admin, só pra conta admin
+  if (token && user && (user.email || '').toLowerCase() === 'g024c1025@g.neec.ac.jp') {
+    snsItems.push(['管理', `${prefix}admin.html`]);
+  }
+
   function buildPanel(items) {
     const panel = document.createElement('div');
     panel.className = 'nav-panel';
