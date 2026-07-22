@@ -3,6 +3,7 @@ const sharp = require('sharp');
 const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
+const { isAdminEmail } = require('../../config/admins');
 
 const MEDIA_DIR = path.join(__dirname, '..', '..', '..', 'frontend', 'assets', 'event-media');
 
@@ -170,7 +171,7 @@ async function deleteEvent(req, res) {
     if (event.rows.length === 0) {
       return res.status(404).json({ error: 'イベントが見つかりません' });
     }
-    if (event.rows[0].creator_id !== userId) {
+    if (event.rows[0].creator_id !== userId && !isAdminEmail(req.user.email)) {
       return res.status(403).json({ error: 'イベントを削除できるのは作成者のみです' });
     }
 

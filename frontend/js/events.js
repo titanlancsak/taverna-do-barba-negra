@@ -2,6 +2,10 @@ const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:30
 const token = localStorage.getItem('taverna_token');
 const currentUser = JSON.parse(localStorage.getItem('taverna_user') || 'null');
 
+// Admin pode deletar qualquer evento (o backend é quem valida de verdade)
+const ADMIN_EMAIL = 'g024c1025@g.neec.ac.jp';
+const IS_ADMIN = !!currentUser && (currentUser.email || '').toLowerCase() === ADMIN_EMAIL;
+
 if (!token) {
   window.location.href = 'login.html';
 }
@@ -94,7 +98,7 @@ function renderEventCard(e) {
             ${e.attending ? '✓ 参加中（取消）' : '参加する'}
           </button>
           <span class="event-attendees">${e.attendee_count}人参加</span>
-          ${isCreator ? `<button class="event-delete-btn" data-id="${e.id}" title="イベントを削除">${DELETE_ICON}</button>` : ''}
+          ${(isCreator || IS_ADMIN) ? `<button class="event-delete-btn" data-id="${e.id}" title="イベントを削除">${DELETE_ICON}</button>` : ''}
         </div>
       </div>
     </div>

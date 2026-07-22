@@ -4,6 +4,7 @@ const { execFile } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
+const { isAdminEmail } = require('../../config/admins');
 
 const MEDIA_DIR = path.join(__dirname, '..', '..', '..', 'frontend', 'assets', 'feed-media');
 
@@ -257,7 +258,7 @@ async function deleteComment(req, res) {
       return res.status(404).json({ error: 'コメントが見つかりません' });
     }
 
-    if (result.rows[0].user_id !== userId) {
+    if (result.rows[0].user_id !== userId && !isAdminEmail(req.user.email)) {
       return res.status(403).json({ error: '自分のコメントのみ削除できます' });
     }
 
@@ -281,7 +282,7 @@ async function deletePost(req, res) {
       return res.status(404).json({ error: '投稿が見つかりません' });
     }
 
-    if (result.rows[0].user_id !== userId) {
+    if (result.rows[0].user_id !== userId && !isAdminEmail(req.user.email)) {
       return res.status(403).json({ error: '自分の投稿のみ削除できます' });
     }
 

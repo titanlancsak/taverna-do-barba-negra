@@ -11,6 +11,10 @@ const DELETE_ICON = '<svg class="delete-icon" viewBox="0 0 24 24" fill="currentC
 const token = localStorage.getItem('taverna_token');
 const currentUser = JSON.parse(localStorage.getItem('taverna_user') || 'null');
 
+// Admin pode deletar qualquer post/comentário (o backend é quem valida de verdade)
+const ADMIN_EMAIL = 'g024c1025@g.neec.ac.jp';
+const IS_ADMIN = !!currentUser && (currentUser.email || '').toLowerCase() === ADMIN_EMAIL;
+
 const postsContainer = document.getElementById('posts-container');
 const postContentInput = document.getElementById('post-content-input');
 const postMediaInput = document.getElementById('post-media-input');
@@ -72,7 +76,7 @@ function renderPost(post) {
           <img class="comment-icon" src="${post.commented_by_me ? COMMENT_DONE : COMMENT_EMPTY}" alt="コメント">
           <span class="comment-count">${post.comment_count}</span> コメント
         </button>
-        ${currentUser && currentUser.id === post.author_id ? `<button class="post-delete-btn" data-post-id="${post.id}">${DELETE_ICON} 削除</button>` : ''}
+        ${currentUser && (currentUser.id === post.author_id || IS_ADMIN) ? `<button class="post-delete-btn" data-post-id="${post.id}">${DELETE_ICON} 削除</button>` : ''}
       </div>
       <div class="comments-box" data-post-id="${post.id}">
         <div class="comments-list"></div>
@@ -253,7 +257,7 @@ async function loadComments(postId) {
     list.innerHTML = data.comments.map(c => `
       <div class="comment-item" data-comment-id="${c.id}">
         <span class="comment-author">${escapeHtml(c.author_name)}</span>: ${escapeHtml(c.content)}
-        ${currentUser && currentUser.id === c.user_id ? `<button class="comment-delete-btn" data-comment-id="${c.id}" data-post-id="${postId}">✕</button>` : ''}
+        ${currentUser && (currentUser.id === c.user_id || IS_ADMIN) ? `<button class="comment-delete-btn" data-comment-id="${c.id}" data-post-id="${postId}">✕</button>` : ''}
       </div>
     `).join('');
 
