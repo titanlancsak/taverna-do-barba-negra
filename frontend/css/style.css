@@ -158,3 +158,83 @@ header h1 {
     font-size: 13px;
   }
 }
+
+/* ===== Pesquisa global (header) ===== */
+#global-search {
+  position: relative;
+}
+
+#global-search-input {
+  background-color: #1b120a;
+  border: 1px solid #3a2c1e;
+  color: #f5f0e6;
+  padding: 7px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  width: 140px;
+  outline: none;
+  transition: width 0.2s, border-color 0.2s;
+}
+
+#global-search-input:focus {
+  border-color: #d4a017;
+  width: 200px;
+}
+
+#global-search-input::placeholder {
+  color: #8a7a68;
+}
+
+#global-search-results {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  width: 300px;
+  max-width: 80vw;
+  max-height: 60vh;
+  overflow-y: auto;
+  background-color: #23180f;
+  border: 1px solid #3a2c1e;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  z-index: 1500;
+  display: none;
+}
+
+.gs-section-title {
+  font-size: 11px;
+  color: #8a7a68;
+  padding: 8px 12px 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.gs-item {
+  display: block;
+  padding: 8px 12px;
+  color: #f5f0e6;
+  text-decoration: none;
+  font-size: 13px;
+  border-top: 1px solid rgba(58, 44, 30, 0.4);
+}
+
+.gs-item:hover {
+  background-color: #3a2c1e;
+  color: #d4a017;
+}
+
+.gs-sub {
+  color: #8a7a68;
+}
+
+.gs-empty {
+  padding: 14px;
+  text-align: center;
+  color: #8a7a68;
+  font-size: 13px;
+}
+
+@media (max-width: 700px) {
+  #global-search-input { width: 100px; }
+  #global-search-input:focus { width: 140px; }
+}

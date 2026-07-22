@@ -103,6 +103,17 @@ function buildNav() {
   left.appendChild(snsBtn);
   left.appendChild(snsPanel);
 
+  // Caixa de pesquisa global (só logado) — o comportamento fica no search.js
+  if (token && user) {
+    const search = document.createElement('div');
+    search.id = 'global-search';
+    search.innerHTML = `
+      <input type="text" id="global-search-input" placeholder="検索" autocomplete="off">
+      <div id="global-search-results"></div>
+    `;
+    left.appendChild(search);
+  }
+
   // ----- Lado direito: Ferramentas -----
   const right = document.createElement('div');
   right.className = 'nav-side nav-right';
@@ -184,4 +195,9 @@ if (localStorage.getItem('taverna_token')) {
     socketIoScript.onload = loadNotifScript;
     document.body.appendChild(socketIoScript);
   }
+
+  // Pesquisa global
+  const searchScript = document.createElement('script');
+  searchScript.src = isInPages ? '../js/search.js' : 'js/search.js';
+  document.body.appendChild(searchScript);
 }
