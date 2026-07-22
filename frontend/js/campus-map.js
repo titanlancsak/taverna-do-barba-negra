@@ -53,7 +53,7 @@ PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 // Escala dos prédios — aumenta/diminui TODOS de uma vez.
 //   1 = tamanho original (128x96), 2 = dobro, 3 = triplo...
 // Pra um prédio específico, adicione "scale: X" na linha dele (sobrepõe o global).
-const CAMPUS_BUILDING_SCALE = 2;
+const CAMPUS_BUILDING_SCALE = 5;
 
 // Prédios (sprites do Piskel), 128x96 cada
 const CAMPUS_BUILDINGS = [
@@ -70,5 +70,5 @@ const CAMPUS_BUILDINGS = [
   { file: 'iot-smart-house.png', name: 'IoT・スマートハウス実習棟', x: 300, y: 1500 },
 ];
 
-// Rótulos extras de terreno (opcional) — posição em TILES (x=coluna, y=linha)
+// Rótulos extras de terreno (opcional) — posição em TILES (x=coluna, y=linha, scale=x)
 const CAMPUS_LABELS = [];
