@@ -110,7 +110,9 @@ async function login(req, res) {
     }
 
     if (user.is_banned) {
-      return res.status(403).json({ error: 'このアカウントは停止されています' });
+      return res.status(403).json({
+        error: 'このアカウントは停止されています' + (user.ban_reason ? '：' + user.ban_reason : '')
+      });
     }
 
     const token = jwt.sign(

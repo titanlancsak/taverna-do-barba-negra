@@ -1312,3 +1312,8 @@ button:hover {
 .admin-ban-btn.ban:hover { background-color: #7a2626; }
 .admin-ban-btn.unban { background-color: #3a2c1e; color: #f5f0e6; }
 .admin-ban-btn.unban:hover { background-color: #4a3a2a; }
+.admin-user-reason {
+  font-size: 12px;
+  color: #e0a0a0;
+  margin-top: 4px;
+}

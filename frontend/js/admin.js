@@ -57,6 +57,10 @@ function renderUser(u) {
       : `<button class="admin-ban-btn ban" data-id="${u.id}" data-action="ban">停止</button>`;
   }
 
+  const reasonLine = (u.is_banned && u.ban_reason)
+    ? `<div class="admin-user-reason">理由: ${escapeHtml(u.ban_reason)}</div>`
+    : '';
+
   return `
     <div class="admin-user-row ${u.is_banned ? 'is-banned' : ''}">
       <div class="admin-user-info">
@@ -64,6 +68,7 @@ function renderUser(u) {
         <div class="admin-user-meta">
           ${escapeHtml(name)}${u.course ? ' · ' + escapeHtml(u.course) : ''} · 登録: ${formatDate(u.created_at)}${u.email_verified ? '' : ' · 未認証'}
         </div>
+        ${reasonLine}
       </div>
       ${actionBtn}
     </div>
@@ -71,12 +76,20 @@ function renderUser(u) {
 }
 
 async function setBan(id, ban) {
-  if (ban && !confirm('このユーザーを停止しますか？サイトを利用できなくなります。')) return;
+  let reason = null;
+  if (ban) {
+    reason = prompt('停止の理由（任意）:', '');
+    if (reason === null) return; // cancelou
+  }
 
   try {
     const res = await fetch(`${API_BASE}/api/admin/users/${id}/${ban ? 'ban' : 'unban'}`, {
       method: 'POST',
-      headers: { 'Authorization': `Bearer ${token}` }
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: ban ? JSON.stringify({ reason }) : undefined
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || '操作に失敗しました');

@@ -5,7 +5,7 @@ const { isAdminEmail } = require('../../config/admins');
 async function listUsers(req, res) {
   try {
     const result = await pool.query(
-      `SELECT id, email, display_name, course, is_anonymous, is_banned, email_verified, created_at
+      `SELECT id, email, display_name, course, is_anonymous, is_banned, ban_reason, email_verified, created_at
        FROM users
        ORDER BY created_at DESC`
     );
@@ -30,7 +30,8 @@ async function banUser(req, res) {
       return res.status(403).json({ error: '管理者は停止できません' });
     }
 
-    await pool.query('UPDATE users SET is_banned = TRUE WHERE id = $1', [targetId]);
+    const reason = (req.body && req.body.reason ? String(req.body.reason).trim() : '') || null;
+    await pool.query('UPDATE users SET is_banned = TRUE, ban_reason = $1 WHERE id = $2', [reason, targetId]);
 
     // Desconecta na hora os sockets do usuário banido
     const io = req.app.get('io');
@@ -53,7 +54,7 @@ async function banUser(req, res) {
 async function unbanUser(req, res) {
   try {
     const targetId = parseInt(req.params.id);
-    await pool.query('UPDATE users SET is_banned = FALSE WHERE id = $1', [targetId]);
+    await pool.query('UPDATE users SET is_banned = FALSE, ban_reason = NULL WHERE id = $1', [targetId]);
     res.json({ message: 'ユーザーの停止を解除しました' });
   } catch (err) {
     console.error(err);
