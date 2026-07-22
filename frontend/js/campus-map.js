@@ -2,52 +2,68 @@
 //  MAPA DO CAMPUS  —  EDITE ESTE ARQUIVO PARA MONTAR A FACULDADE
 // ============================================================
 //
-// Cada caractere abaixo = 1 tile (quadrado) de CAMPUS_TILE pixels.
-// É só "desenhar" o campus digitando. Legenda dos caracteres:
+// TERRENO (grade abaixo): cada caractere = 1 tile de CAMPUS_TILE px.
+//   .  gramado (anda por cima)
+//   P  caminho (anda por cima)
+//   @  ponto de spawn
+//   T  árvore (COLIDE)   ~  água (COLIDE)   #  parede (COLIDE)
 //
-//   .  gramado        (anda por cima)
-//   P  caminho        (anda por cima)
-//   @  ponto de spawn (onde você aparece; anda por cima)
-//   #  prédio/parede  (COLIDE — não passa)
-//   T  árvore         (COLIDE)
-//   ~  água           (COLIDE)
-//
-// Dicas:
-//  - Pode aumentar/diminuir o mapa à vontade (mais linhas/colunas = campus maior).
-//  - As linhas NÃO precisam ter exatamente o mesmo tamanho: o que faltar
-//    à direita vira gramado automaticamente.
-//  - Nomes de prédios NÃO vão dentro da grade (quebraria o alinhamento).
-//    Coloque-os em CAMPUS_LABELS, com a posição em TILES (coluna x, linha y).
+// PRÉDIOS: use a lista CAMPUS_BUILDINGS (são imagens de 128x96 do Piskel).
+//   file  = arquivo em assets/campus/
+//   name  = nome que flutua em cima
+//   x, y  = posição em PIXELS (canto superior-esquerdo) no mundo
+//   collide: false  -> se quiser que não bloqueie (padrão: bloqueia)
+// Ajuste x/y pra montar o campus do jeito que quiser.
 
 const CAMPUS_TILE = 64;
 
 const CAMPUS_MAP = `
-........................................
-.TT...####............####.........TT...
-.TT...####..PPPPPPPPPP..####........TT..
-............P........P..................
-.....####...P........P...####...........
-.....####...P........P...####...........
-.PPPPPPPPPPPPP........PPPPPPPPPPPPPPPPPP.
-.P.................@..................P..
-.P....TT......######...........TT....P..
-.P............######.....PPPPPPPPPPPPPP..
-.P............######.....P...........P..
-.P.......................P...........P..
-.PPPPPPPPPPPPPPPPPPPPPPPPPP...........P..
-.P.................................TTP..
-.P...####..............####........TTP..
-.P...####.....TT.......####..........P..
-.P...####..............####..........P..
-.PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP..
-........................................
+........P...............P...............P.........
+.TT.....P...............P...............P.......T.
+.T......P...............P...............P.......T.
+........P...............P...............P.........
+........P...............P...............P.........
+........P...............P...............P.........
+PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
+........P...............P...............P.........
+........P...............P...............P.........
+........P...............P...............P.........
+........P...............P...............P.........
+........P...............P...............P.........
+........P...............P...............P.........
+........P...............P...............P.........
+PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
+........P...............P...............P.........
+........P...............P...............P.........
+........P...............P...............P.........
+........P...............P...............P.........
+........P...............P...............P.........
+........P...............P...............P.........
+........P...............P...............P.........
+PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
+........P...............P...............P.........
+........P...............P...............P.........
+........P...............P...............P.........
+........P...............P...............P.........
+........P...............@...............P.........
+.T......P...............P...............P......TT.
+........P...............P...............P.........
 `;
 
-// Nomes dos prédios — posição em TILES (x = coluna, y = linha), começando do 0.
-const CAMPUS_LABELS = [
-  { x: 7,  y: 4,  text: '図書館' },
-  { x: 25, y: 4,  text: '講義棟' },
-  { x: 16, y: 9,  text: '食堂' },
-  { x: 7,  y: 15, text: '体育館' },
-  { x: 25, y: 15, text: '研究室' }
+// Prédios (sprites do Piskel), 128x96 cada
+const CAMPUS_BUILDINGS = [
+  { file: 'lecture-a.png', name: '講義棟A', x: 120, y: 60 },
+  { file: 'lecture-b.png', name: '講義棟B', x: 620, y: 60 },
+  { file: 'lecture-c.png', name: '講義棟C', x: 1120, y: 60 },
+  { file: 'research-ab.png', name: '研究棟A・B / 片柳記念ホール', x: 1620, y: 40 },
+  { file: 'media-hall.png', name: 'メディアホール', x: 2180, y: 60 },
+  { file: 'library.png', name: '図書館棟', x: 2700, y: 60 },
+  { file: 'welfare.png', name: '厚生棟', x: 120, y: 980 },
+  { file: 'katayanagi-research.png', name: '片柳研究所棟', x: 700, y: 1400 },
+  { file: 'headquarter.png', name: '本部棟', x: 1620, y: 1000 },
+  { file: 'ct-center.png', name: 'C&Tセンター', x: 2700, y: 980 },
+  { file: 'iot-smart-house.png', name: 'IoT・スマートハウス実習棟', x: 300, y: 1500 },
 ];
+
+// Rótulos extras de terreno (opcional) — posição em TILES (x=coluna, y=linha)
+const CAMPUS_LABELS = [];

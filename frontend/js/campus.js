@@ -49,6 +49,11 @@ class CampusScene extends Phaser.Scene {
     tg.fillCircle(tw / 2 - 6, th - 37, 8);                 // brilho (topo/esquerda)
     tg.generateTexture('tree', tw, th);
     tg.destroy();
+
+    // Sprites dos prédios (imagens do Piskel)
+    if (typeof CAMPUS_BUILDINGS !== 'undefined') {
+      CAMPUS_BUILDINGS.forEach(b => this.load.image('bld_' + b.file, '../assets/campus/' + b.file));
+    }
   }
 
   create() {
@@ -154,6 +159,30 @@ class CampusScene extends Phaser.Scene {
         }).setOrigin(0.5).setDepth(90000);
       });
     }
+
+    // Prédios em sprite (imagens do Piskel), posicionados por CAMPUS_BUILDINGS
+    this.placeBuildings();
+  }
+
+  // Coloca os prédios (imagens) com colisão, ordenação 2.5D e nome flutuante
+  placeBuildings() {
+    if (typeof CAMPUS_BUILDINGS === 'undefined') return;
+    const W = 128, H = 96;
+    CAMPUS_BUILDINGS.forEach(b => {
+      const key = 'bld_' + b.file;
+      if (!this.textures.exists(key)) return; // imagem não carregou
+      this.add.image(b.x, b.y, key).setOrigin(0, 0).setDepth(b.y + H);
+      if (b.collide !== false) this.addSolid(b.x + W / 2, b.y + H / 2, W, H);
+      if (b.name) {
+        this.add.text(b.x + W / 2, b.y - 4, b.name, {
+          fontFamily: 'sans-serif',
+          fontSize: '12px',
+          color: '#ffffff',
+          backgroundColor: '#00000099',
+          padding: { x: 4, y: 2 }
+        }).setOrigin(0.5, 1).setDepth(90000);
+      }
+    });
   }
 
   // Encontra regiões conectadas de '#' e desenha cada uma como uma caixa 3D
