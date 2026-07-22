@@ -34,7 +34,29 @@
       margin: 12px 0;
     }
     #lab-status { font-size: 13px; color: #8a7a68; }
-    #lab-note { font-size: 13px; color: #8a7a68; margin-top: 12px; line-height: 1.6; }
+    #lab-note {
+      font-size: 13px;
+      color: #b8a894;
+      margin-top: 18px;
+      line-height: 1.7;
+      max-width: 820px;
+      background-color: #23180f;
+      border: 1px solid #3a2c1e;
+      border-radius: 10px;
+      padding: 16px 18px;
+    }
+    #lab-note p { margin-bottom: 8px; }
+    #lab-note p:last-child { margin-bottom: 0; }
+    #lab-note ul { margin: 6px 0 10px 20px; }
+    #lab-note li { margin-bottom: 3px; }
+    #lab-note strong { color: #f5f0e6; }
+    #lab-note code {
+      background-color: #2c1e12;
+      color: #d4a017;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
   </style>
 </head>
 <body>
@@ -57,10 +79,15 @@
         <canvas style="display: none;"></canvas>
       </div>
 
-      <p id="lab-note">
-        ※ すべてあなたのブラウザ内で動くため、サーバーには何も残りません。<br>
-        初回はイメージの読み込みに少し時間がかかります。画面をクリックしてから入力してください。
-      </p>
+      <div id="lab-note">
+        <p><strong>⚠️ この環境はインターネットに接続されていません。</strong> すべてあなたのブラウザ内だけで動くため、ネットワークを必要とするコマンドは動きません：</p>
+        <ul>
+          <li>パッケージのインストール（<code>apk add</code> / <code>apt install</code> など）</li>
+          <li><code>ping</code>、<code>curl</code> / <code>wget</code> でのダウンロード、<code>git clone</code> など</li>
+        </ul>
+        <p><strong>試せること：</strong> ファイル操作（<code>ls</code>, <code>cd</code>, <code>mkdir</code>, <code>rm</code>）、テキスト処理（<code>cat</code>, <code>grep</code>, <code>sed</code>, <code>vi</code>）、権限（<code>chmod</code>）、シェルスクリプトなど、ローカルで完結するコマンドは自由に試せます。</p>
+        <p>すべてブラウザ内で動くのでサーバーには何も残りません。ページを閉じる・<strong>再起動</strong>するとすべてリセットされます。初回はイメージの読み込みに少し時間がかかります。画面をクリックしてから入力してください。</p>
+      </div>
     </div>
   </main>
 
