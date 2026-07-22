@@ -7,19 +7,24 @@
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/tools.css">
   <style>
-    #lab-wrap { max-width: 900px; margin: 0 auto; }
+    /* Sobrescreve o `main { max-width: 500px }` global só nesta página */
+    #lab-main {
+      max-width: none;
+      padding: 30px 40px;
+    }
+    #lab-wrap { max-width: 1100px; margin: 0 auto; }
     #lab-screen {
       background-color: #000;
       border: 1px solid #3a2c1e;
       border-radius: 8px;
-      padding: 8px;
+      padding: 10px;
       overflow: auto;
-      min-height: 460px;
+      min-height: 640px;
     }
     #lab-screen > div {
       white-space: pre;
-      font: 14px monospace;
-      line-height: 15px;
+      font: 16px monospace;
+      line-height: 18px;
       color: #d0d0d0;
     }
     #lab-toolbar {
@@ -37,7 +42,7 @@
     <h1></h1>
   </header>
 
-  <main>
+  <main id="lab-main">
     <div id="lab-wrap">
       <h2>Linuxラボ</h2>
       <p>ブラウザ上で動く使い捨ての Linux 環境です。コマンドを自由に試せます。ページを閉じるとすべて消えます。</p>
