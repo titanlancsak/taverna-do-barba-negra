@@ -40,6 +40,12 @@
       <p>Cisco IOS のコマンドを練習できるシミュレーターです。ルーター／スイッチ／L3スイッチのコマンドを試せます。</p>
 
       <div id="cl-toolbar">
+        <label for="cl-devtype" style="color:#b8a894;font-size:13px;">デバイス:</label>
+        <select id="cl-devtype" style="padding:6px 10px;font-size:14px;border-radius:6px;">
+          <option value="router">ルーター</option>
+          <option value="switch">スイッチ (L2)</option>
+          <option value="l3switch">L3スイッチ</option>
+        </select>
         <button id="cl-restart">リセット</button>
         <span id="cl-status"></span>
       </div>

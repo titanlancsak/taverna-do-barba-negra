@@ -21,17 +21,22 @@
   let dev, mode, ctx, line, cursorHidden, history, histIdx, pending;
 
   function newIface(name) {
+    const isPhysical = /^(GigabitEthernet|FastEthernet|Ethernet|TenGigabitEthernet)/.test(name) && !name.includes('.');
+    const shut = (dev && dev.type !== 'router' && isPhysical) ? false : true;
     return {
-      name, ip: null, mask: null, shutdown: true, description: null,
+      name, ip: null, mask: null, shutdown: shut, description: null,
       swMode: null, accessVlan: null, trunkEncap: null, trunkAllowed: null,
       natRole: null, encapVlan: null, aclIn: null, aclOut: null, helper: null,
       noSwitchport: false, ipDhcp: false, extra: []
     };
   }
 
-  function freshDevice() {
+  function freshDevice(type) {
     return {
-      hostname: 'Router',
+      type: type || 'router',
+      hostname: (type === 'switch' || type === 'l3switch') ? 'Switch' : 'Router',
+      defaultGateway: null,
+      globalExtra: [],
       enableSecret: null, enablePassword: null,
       domainName: null, servicePwEnc: false,
       users: [],                 // {name, secret, privilege}
@@ -53,8 +58,8 @@
     };
   }
 
-  function reset() {
-    dev = freshDevice();
+  function reset(type) {
+    dev = freshDevice(type);
     mode = 'user';
     ctx = {};
     line = '';
@@ -152,6 +157,7 @@
       L.push('!');
     });
     if (dev.domainName) { L.push('ip domain-name ' + dev.domainName); L.push('!'); }
+    if (dev.defaultGateway) { L.push('ip default-gateway ' + dev.defaultGateway); L.push('!'); }
 
     // interfaces
     Object.keys(dev.ifaces).forEach(name => {
@@ -202,6 +208,9 @@
       a.rules.forEach(r => L.push(' ' + r));
       L.push('!');
     });
+
+    // outros comandos globais aceitos
+    if (dev.globalExtra && dev.globalExtra.length) { dev.globalExtra.forEach(x => L.push(x)); L.push('!'); }
 
     // crypto / ssh
     if (dev.sshVersion) L.push('ip ssh version ' + dev.sshVersion);
@@ -317,7 +326,7 @@
     if (m(t[0], 'running-config', 3) || (m(t[0], 'run', 3))) return showRun();
     if (m(t[0], 'startup-config', 3) || m(t[0], 'start', 4)) return dev._saved ? showRun() : 'startup-config is not present';
     if (m(t[0], 'ip', 2)) {
-      if (m(t[1], 'interface', 3) && m(t[2], 'brief', 2)) return showIpIntBrief();
+      if (m(t[1], 'interface', 2) && (!t[2] || m(t[2], 'brief', 1))) return showIpIntBrief();
       if (m(t[1], 'route', 3)) return showIpRoute();
       if (m(t[1], 'nat', 3)) return 'Pro Inside global   Inside local   Outside local  Outside global\n(no active translations — simulador)';
       if (m(t[1], 'protocols', 4)) return dev.routers.map(r => 'Routing Protocol is "' + r.kind + '"').join('\n') || '(no routing protocols)';
@@ -326,9 +335,27 @@
     if (m(t[0], 'vlan', 3)) return showVlanBrief();
     if (m(t[0], 'access-lists', 3)) return showAccessLists();
     if (m(t[0], 'version', 3)) return showVersion();
-    if (m(t[0], 'interfaces', 3)) return showIpIntBrief();
+    if (m(t[0], 'interfaces', 3)) {
+      if (m(t[1], 'status', 3)) return showIntStatus();
+      return showIpIntBrief();
+    }
+    if (m(t[0], 'mac', 3)) return 'Vlan    Mac Address       Type        Ports\n----    -----------       --------    -----\n(シミュレーター: エントリなし)';
+    if (m(t[0], 'spanning-tree', 3)) return 'Spanning-tree — シミュレーター（詳細は省略）';
+    if (m(t[0], 'cdp', 3)) return '(CDP neighbors: なし — シミュレーター)';
+    if (m(t[0], 'flash', 3)) return 'Directory of flash:/\n(シミュレーター)';
     if (m(t[0], 'users', 3)) return '   Line       User       Host(s)              Idle\n*  0 con 0                idle';
     return INVALID;
+  }
+
+  function showIntStatus() {
+    const L = ['Port      Name               Status       Vlan       Duplex  Speed Type'];
+    Object.keys(dev.ifaces).forEach(name => {
+      const i = dev.ifaces[name];
+      const st = i.shutdown ? 'disabled' : 'connected';
+      L.push(pad(name, 10) + pad(i.description || '', 19) + pad(st, 13) + pad(i.accessVlan || '1', 11) + 'auto    auto  auto');
+    });
+    if (Object.keys(dev.ifaces).length === 0) L.push('(no interfaces)');
+    return L.join('\n');
   }
 
   function execPriv(t, raw) {
@@ -451,11 +478,18 @@
 
     if (m(k, 'spanning-tree', 4) || m(k, 'duplex', 3) || m(k, 'speed', 3)) return '';
 
+    // comandos globais comuns aceitos (aparecem no running-config)
+    const GLOBAL_OK = ['vtp', 'ntp', 'logging', 'snmp-server', 'clock', 'boot', 'mac', 'cdp', 'lldp', 'errdisable', 'aaa', 'archive', 'license'];
+    if (GLOBAL_OK.includes(k)) { if (!no) dev.globalExtra.push(a.join(' ')); else dev.globalExtra = dev.globalExtra.filter(x => x !== a.join(' ')); return ''; }
+
     return INVALID;
   }
 
   function execConfigIp(a, no) {
     const k = (a[0] || '').toLowerCase();
+
+    if (m(k, 'default-gateway', 8)) { dev.defaultGateway = no ? null : a[1]; return ''; }
+    if (m(k, 'domain-lookup', 8)) { return ''; }
 
     if ((m(k, 'domain-name', 8)) || (m(k, 'domain', 6) && m(a[1], 'name', 3))) {
       const val = m(k, 'domain-name', 8) ? a[1] : a[2];
@@ -531,7 +565,21 @@
 
     function apply(fn) { targets.forEach(fn); return ''; }
 
-    if (m(k, 'shutdown', 4)) return apply(i => { i.shutdown = no ? false : true; });
+    if (m(k, 'shutdown', 4)) {
+      const msgs = [];
+      targets.forEach(i => {
+        const wasShut = i.shutdown;
+        i.shutdown = no ? false : true;
+        if (no && wasShut) {
+          msgs.push('\n%LINK-5-CHANGED: Interface ' + i.name + ', changed state to up');
+          msgs.push('%LINEPROTO-5-UPDOWN: Line protocol on Interface ' + i.name + ', changed state to up');
+        } else if (!no && !wasShut) {
+          msgs.push('\n%LINK-5-CHANGED: Interface ' + i.name + ', changed state to administratively down');
+          msgs.push('%LINEPROTO-5-UPDOWN: Line protocol on Interface ' + i.name + ', changed state to down');
+        }
+      });
+      return msgs.join('\n');
+    }
     if (m(k, 'description', 4)) return apply(i => { i.description = no ? null : a.slice(1).join(' '); });
 
     if (m(k, 'ip', 2)) {
@@ -562,9 +610,9 @@
       if (m(a[1], 'trunk', 3) && m(a[2], 'encapsulation', 3)) return apply(i => { i.trunkEncap = a[3]; });
       if (m(a[1], 'trunk', 3) && m(a[2], 'allowed', 3) && m(a[3], 'vlan', 3)) return apply(i => { i.trunkAllowed = a.slice(4).join(' '); });
       if (no) return apply(i => { i.noSwitchport = true; });
-      return INVALID;
+      // outros switchport (port-security, voice, nonegotiate...) -> guarda
+      return apply(i => { if (!no) i.extra.push(a.join(' ')); });
     }
-    if (no && m(k, 'switchport', 4)) return apply(i => { i.noSwitchport = true; });
 
     if (m(k, 'encapsulation', 4)) {
       // subinterface: encapsulation dot1Q VLAN
@@ -572,7 +620,8 @@
       return apply(i => { i.encapVlan = vlan; });
     }
 
-    if (m(k, 'duplex', 3) || m(k, 'speed', 3) || m(k, 'channel-group', 4) || m(k, 'mtu', 3)) {
+    const IF_OK = ['duplex', 'speed', 'channel-group', 'mtu', 'spanning-tree', 'negotiation', 'standby', 'storm-control', 'power', 'cdp', 'lldp', 'bandwidth', 'delay', 'load-interval', 'service-policy', 'mac-address', 'vrrp', 'glbp'];
+    if (IF_OK.includes(k)) {
       return apply(i => { if (!no) i.extra.push(a.join(' ')); });
     }
 
@@ -736,14 +785,19 @@
   });
 
   function boot() {
-    reset();
+    const sel = document.getElementById('cl-devtype');
+    const type = sel ? sel.value : 'router';
+    reset(type);
     term.reset();
-    out('Ciscoラボ — Cisco IOS シミュレーター (本物の IOS ではありません)\n');
+    const label = type === 'switch' ? 'スイッチ (L2)' : (type === 'l3switch' ? 'L3スイッチ' : 'ルーター');
+    out('Ciscoラボ — Cisco IOS シミュレーター (本物の IOS ではありません) [' + label + ']\n');
     out('「enable」で特権モード、「configure terminal」で設定モード。「?」でヘルプ。\n\n');
     writePrompt();
     term.focus();
   }
 
   restartBtn.addEventListener('click', boot);
+  const devSel = document.getElementById('cl-devtype');
+  if (devSel) devSel.addEventListener('change', boot);
   boot();
 })();
