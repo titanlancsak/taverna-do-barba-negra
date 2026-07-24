@@ -32,28 +32,6 @@ class CampusScene extends Phaser.Scene {
     g.strokeCircle(size / 2, size / 2, size / 2 - 2);
     g.generateTexture('dot', size, size);
     g.destroy();
-
-    // Árvore com aparência 3D (sombra + tronco + copa com brilho)
-    const tw = 52;
-    const th = 60;
-    const tg = this.make.graphics({ x: 0, y: 0, add: false });
-    tg.fillStyle(0x000000, 0.18);
-    tg.fillEllipse(tw / 2, th - 4, tw * 0.7, 12);          // sombra no chão
-    tg.fillStyle(0x6d4c33, 1);
-    tg.fillRect(tw / 2 - 3, th - 18, 6, 16);               // tronco
-    tg.fillStyle(0x2f6b34, 1);
-    tg.fillCircle(tw / 2, th - 30, 19);                    // copa (base)
-    tg.fillStyle(0x3f8b45, 1);
-    tg.fillCircle(tw / 2 - 3, th - 33, 14);                // meio-tom
-    tg.fillStyle(0x5aa862, 1);
-    tg.fillCircle(tw / 2 - 6, th - 37, 8);                 // brilho (topo/esquerda)
-    tg.generateTexture('tree', tw, th);
-    tg.destroy();
-
-    // Sprites dos prédios (imagens do Piskel)
-    if (typeof CAMPUS_BUILDINGS !== 'undefined') {
-      CAMPUS_BUILDINGS.forEach(b => this.load.image('bld_' + b.file, '../assets/campus/' + b.file));
-    }
   }
 
   create() {
@@ -85,168 +63,132 @@ class CampusScene extends Phaser.Scene {
     this.time.addEvent({ delay: SEND_INTERVAL, loop: true, callback: () => this.sendPosition() });
   }
 
-  // ---- Monta o mundo a partir da grade ASCII ----
+  // ---- Monta o mundo a partir do layout (campus-map.js) ----
   buildWorld() {
-    const rows = CAMPUS_MAP.replace(/^\n+|\n+$/g, '').split('\n');
-    const cols = Math.max(...rows.map(r => r.length));
-    this.map = rows.map(r => r.padEnd(cols, '.'));
-    const T = CAMPUS_TILE;
-    this.cols = cols;
-    this.worldW = cols * T;
-    this.worldH = this.map.length * T;
+    const W = (typeof CAMPUS_WORLD !== 'undefined') ? CAMPUS_WORLD : { w: 3600, h: 2500 };
+    this.worldW = W.w;
+    this.worldH = W.h;
 
     // Fundo de gramado
-    this.add.rectangle(this.worldW / 2, this.worldH / 2, this.worldW, this.worldH, 0x5c9a4f).setDepth(-1000);
+    this.add.rectangle(W.w / 2, W.h / 2, W.w, W.h, 0x5c9a4f).setDepth(-1000);
 
-    // Chão plano: caminhos e água (sempre embaixo de tudo)
-    const ground = this.add.graphics().setDepth(-900);
     this.solids = this.physics.add.staticGroup();
-    let spawn = null;
 
-    for (let y = 0; y < this.map.length; y++) {
-      for (let x = 0; x < cols; x++) {
-        const ch = this.map[y][x];
-        const wx = x * T;
-        const wy = y * T;
-        const cx = wx + T / 2;
-        const cy = wy + T / 2;
-
-        if (ch === 'P' || ch === '@') {
-          ground.fillStyle(0xcdb891, 1);
-          ground.fillRect(wx, wy, T, T);
-          if (ch === '@') spawn = { x: cx, y: cy };
-        } else if (ch === '~') {
-          ground.fillStyle(0x5aa0d8, 1);
-          ground.fillRect(wx, wy, T, T);
-          this.addSolid(cx, cy, T, T);
-        }
-      }
+    // Terreno (caminhos, campos, água, jardim...) — sempre embaixo dos prédios
+    const g = this.add.graphics().setDepth(-900);
+    if (typeof CAMPUS_TERRAIN !== 'undefined') {
+      CAMPUS_TERRAIN.forEach(f => this.drawTerrain(g, f));
     }
 
-    // Prédios: junta os '#' conectados numa caixa 3D só (extrusão)
-    this.drawBuildings(T);
-
-    // Colisão dos prédios (por tile) + árvores 3D (imagem) com colisão
-    for (let y = 0; y < this.map.length; y++) {
-      for (let x = 0; x < cols; x++) {
-        const ch = this.map[y][x];
-        const wx = x * T;
-        const wy = y * T;
-        const cx = wx + T / 2;
-        const cy = wy + T / 2;
-
-        if (ch === '#') {
-          this.addSolid(cx, cy, T, T);
-        } else if (ch === 'T') {
-          const baseY = wy + T;
-          this.add.image(cx, baseY, 'tree').setOrigin(0.5, 1).setDepth(baseY);
-          this.addSolid(cx, cy, T * 0.7, T * 0.7);
-        }
-      }
+    // Prédios (blocos 2.5D com nome e colisão)
+    if (typeof CAMPUS_BUILDINGS !== 'undefined') {
+      CAMPUS_BUILDINGS.forEach(b => this.drawBuildingBox(b));
     }
 
-    this.spawnPoint = spawn || { x: this.worldW / 2, y: this.worldH / 2 };
-
-    // Nomes dos prédios (sempre visíveis por cima)
-    if (typeof CAMPUS_LABELS !== 'undefined') {
-      CAMPUS_LABELS.forEach(l => {
-        this.add.text(l.x * T + T / 2, l.y * T + T / 2, l.text, {
-          fontFamily: 'sans-serif',
-          fontSize: '14px',
-          color: '#ffffff',
-          backgroundColor: '#00000099',
-          padding: { x: 5, y: 3 }
-        }).setOrigin(0.5).setDepth(90000);
-      });
-    }
-
-    // Prédios em sprite (imagens do Piskel), posicionados por CAMPUS_BUILDINGS
-    this.placeBuildings();
+    this.spawnPoint = (typeof CAMPUS_SPAWN !== 'undefined')
+      ? { x: CAMPUS_SPAWN.x, y: CAMPUS_SPAWN.y }
+      : { x: W.w / 2, y: W.h / 2 };
   }
 
-  // Coloca os prédios (imagens) com colisão, ordenação 2.5D e nome flutuante
-  placeBuildings() {
-    if (typeof CAMPUS_BUILDINGS === 'undefined') return;
-    const BW = 128, BH = 96;
-    const gscale = (typeof CAMPUS_BUILDING_SCALE !== 'undefined') ? CAMPUS_BUILDING_SCALE : 1;
-    const gcollide = (typeof CAMPUS_COLLIDE_FACTOR !== 'undefined') ? CAMPUS_COLLIDE_FACTOR : 0.5;
-    CAMPUS_BUILDINGS.forEach(b => {
-      const key = 'bld_' + b.file;
-      if (!this.textures.exists(key)) return; // imagem não carregou
-      const s = b.scale || gscale;
-      const W = BW * s, H = BH * s;
-      this.add.image(b.x, b.y, key).setOrigin(0, 0).setScale(s).setDepth(b.y + H);
-      if (b.collide !== false) {
-        const cf = (b.collideFactor != null) ? b.collideFactor : gcollide;
-        const cw = W * cf, chh = H * cf;
-        this.addSolid(b.x + W / 2, b.y + H - chh / 2, cw, chh); // colisão na base
+  // Desenha uma feature de terreno de acordo com seu tipo
+  drawTerrain(g, f) {
+    switch (f.type) {
+      case 'zone':
+        g.fillStyle(f.color != null ? f.color : 0x4f8f3e, 1);
+        g.fillRect(f.x, f.y, f.w, f.h);
+        break;
+
+      case 'path':
+        g.fillStyle(0xcdb891, 1);
+        g.fillRect(f.x, f.y, f.w, f.h);
+        break;
+
+      case 'road':
+        g.lineStyle(f.width || 60, 0x9a9a9a, 1);
+        g.beginPath();
+        f.points.forEach((p, i) => (i === 0 ? g.moveTo(p[0], p[1]) : g.lineTo(p[0], p[1])));
+        g.strokePath();
+        break;
+
+      case 'track': {
+        const cx = f.x + f.w / 2, cy = f.y + f.h / 2;
+        g.fillStyle(0xa9603f, 1); g.fillEllipse(cx, cy, f.w, f.h);              // pista
+        g.fillStyle(0x4f9e43, 1); g.fillEllipse(cx, cy, f.w * 0.72, f.h * 0.6); // campo
+        g.lineStyle(3, 0xffffff, 0.7); g.strokeEllipse(cx, cy, f.w * 0.86, f.h * 0.78);
+        break;
       }
-      if (b.name) {
-        this.add.text(b.x + W / 2, b.y - 4, b.name, {
-          fontFamily: 'sans-serif',
-          fontSize: '12px',
-          color: '#ffffff',
-          backgroundColor: '#00000099',
-          padding: { x: 4, y: 2 }
-        }).setOrigin(0.5, 1).setDepth(90000);
+
+      case 'tennis': {
+        g.fillStyle(0x2e7d32, 1); g.fillRect(f.x, f.y, f.w, f.h);
+        g.lineStyle(2, 0xffffff, 0.85);
+        const cols = f.cols || 3, rows = f.rows || 2;
+        for (let i = 0; i <= cols; i++) g.lineBetween(f.x + (f.w / cols) * i, f.y, f.x + (f.w / cols) * i, f.y + f.h);
+        for (let j = 0; j <= rows; j++) g.lineBetween(f.x, f.y + (f.h / rows) * j, f.x + f.w, f.y + (f.h / rows) * j);
+        break;
       }
-    });
-  }
 
-  // Encontra regiões conectadas de '#' e desenha cada uma como uma caixa 3D
-  drawBuildings(T) {
-    const rowsN = this.map.length;
-    const seen = Array.from({ length: rowsN }, () => new Array(this.cols).fill(false));
+      case 'water':
+        g.fillStyle(0x5aa0d8, 1);
+        if (f.round) g.fillEllipse(f.x + f.w / 2, f.y + f.h / 2, f.w, f.h);
+        else g.fillRect(f.x, f.y, f.w, f.h);
+        this.addSolid(f.x + f.w / 2, f.y + f.h / 2, f.w * (f.round ? 0.8 : 1), f.h * (f.round ? 0.8 : 1));
+        break;
 
-    for (let y = 0; y < rowsN; y++) {
-      for (let x = 0; x < this.cols; x++) {
-        if (this.map[y][x] !== '#' || seen[y][x]) continue;
-
-        let minX = x, maxX = x, minY = y, maxY = y;
-        const stack = [[x, y]];
-        seen[y][x] = true;
-        while (stack.length) {
-          const [cx0, cy0] = stack.pop();
-          minX = Math.min(minX, cx0); maxX = Math.max(maxX, cx0);
-          minY = Math.min(minY, cy0); maxY = Math.max(maxY, cy0);
-          const neigh = [[cx0 + 1, cy0], [cx0 - 1, cy0], [cx0, cy0 + 1], [cx0, cy0 - 1]];
-          for (const [nx, ny] of neigh) {
-            if (ny >= 0 && ny < rowsN && nx >= 0 && nx < this.cols && !seen[ny][nx] && this.map[ny][nx] === '#') {
-              seen[ny][nx] = true;
-              stack.push([nx, ny]);
-            }
-          }
-        }
-
-        this.drawBuilding(minX * T, minY * T, (maxX - minX + 1) * T, (maxY - minY + 1) * T);
-      }
+      case 'garden':
+        g.fillStyle(0xcdb891, 1); g.fillCircle(f.x, f.y, f.r);        // caminho circular
+        g.fillStyle(0x66b34f, 1); g.fillCircle(f.x, f.y, f.r * 0.62); // centro verde
+        break;
     }
   }
 
-  // Desenha um prédio como caixa "3D": sombra + parede frontal + telhado + janelas
-  drawBuilding(bx, by, bw, bh) {
-    const H = 30; // altura aparente
+  // Desenha um prédio como caixa "3D": sombra + parede + telhado + janelas + nome
+  drawBuildingBox(b) {
+    const H = 34; // altura aparente 2.5D
+    const roof = (b.color != null) ? b.color : 0xdfe6ee;
+    const wall = this.darken(roof, 0.72);
     const g = this.add.graphics();
 
     g.fillStyle(0x000000, 0.16);
-    g.fillRect(bx + 6, by + 6, bw, bh);            // sombra
+    g.fillRect(b.x + 7, b.y + 7, b.w, b.h);            // sombra
 
-    g.fillStyle(0x9aa7b4, 1);
-    g.fillRect(bx, by - H + bh, bw, H);            // parede frontal (sombreada)
+    g.fillStyle(wall, 1);
+    g.fillRect(b.x, b.y - H + b.h, b.w, H);            // parede frontal
 
-    g.fillStyle(0xdfe6ee, 1);
-    g.fillRect(bx, by - H, bw, bh);                // telhado (topo, claro)
+    const r = b.round ? Math.min(b.w, b.h) * 0.35 : 0;
+    g.fillStyle(roof, 1);
+    if (r) g.fillRoundedRect(b.x, b.y - H, b.w, b.h, r);
+    else g.fillRect(b.x, b.y - H, b.w, b.h);           // telhado
 
     g.lineStyle(1.5, 0x66727f, 1);
-    g.strokeRect(bx, by - H, bw, bh);              // contorno do telhado
-    g.strokeRect(bx, by - H + bh, bw, H);          // contorno da parede
+    if (r) g.strokeRoundedRect(b.x, b.y - H, b.w, b.h, r);
+    else g.strokeRect(b.x, b.y - H, b.w, b.h);
+    g.strokeRect(b.x, b.y - H + b.h, b.w, H);          // contorno da parede
 
-    g.lineStyle(1, 0x8593a1, 0.7);                 // "janelas" na parede
-    for (let wy = by - H + bh + 6; wy < by + bh - 3; wy += 8) {
-      g.lineBetween(bx + 3, wy, bx + bw - 3, wy);
+    g.lineStyle(1, this.darken(wall, 0.85), 0.7);      // "janelas"
+    for (let wy = b.y - H + b.h + 6; wy < b.y + b.h - 3; wy += 9) {
+      g.lineBetween(b.x + 4, wy, b.x + b.w - 4, wy);
     }
 
-    g.setDepth(by + bh); // ordena pela base, pro efeito 2.5D
+    g.setDepth(b.y + b.h); // ordena pela base (2.5D)
+    this.addSolid(b.x + b.w / 2, b.y + b.h / 2, b.w, b.h);
+
+    if (b.name) {
+      this.add.text(b.x + b.w / 2, b.y - H - 4, b.name, {
+        fontFamily: 'sans-serif',
+        fontSize: '13px',
+        color: '#ffffff',
+        backgroundColor: '#00000099',
+        padding: { x: 4, y: 2 }
+      }).setOrigin(0.5, 1).setDepth(90000);
+    }
+  }
+
+  // Escurece uma cor 0xRRGGBB por um fator (0..1)
+  darken(c, f) {
+    const r = Math.floor(((c >> 16) & 0xff) * f);
+    const g = Math.floor(((c >> 8) & 0xff) * f);
+    const b = Math.floor((c & 0xff) * f);
+    return (r << 16) | (g << 8) | b;
   }
 
   addSolid(cx, cy, w, h) {
