@@ -28,6 +28,7 @@
       width: 100%;
       min-height: 380px;
       background-color: #2d572d;
+      position: relative;
     }
     #game-container canvas {
       display: block;
@@ -67,6 +68,75 @@
     #campus-chat-input:focus {
       border-color: #d4a017;
     }
+
+    /* Minimapa (canto superior esquerdo) */
+    #campus-minimap {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 20;
+      background-color: #1b120aee;
+      border: 2px solid #3a2c1e;
+      border-radius: 8px;
+      padding: 6px;
+      cursor: pointer;
+      user-select: none;
+    }
+    #campus-minimap:hover { border-color: #d4a017; }
+    #campus-count {
+      color: #f5f0e6;
+      font-family: sans-serif;
+      font-size: 12px;
+      text-align: center;
+      margin-bottom: 4px;
+    }
+    #campus-minimap-canvas { display: block; border-radius: 4px; }
+    #campus-minimap-hint {
+      color: #8a7a68;
+      font-family: sans-serif;
+      font-size: 10px;
+      text-align: center;
+      margin-top: 3px;
+    }
+
+    /* Mapa inteiro (modal) */
+    #campus-map-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background-color: rgba(0, 0, 0, 0.75);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #campus-map-modal.hidden { display: none; }
+    #campus-map-box {
+      position: relative;
+      background-color: #1b120a;
+      border: 2px solid #3a2c1e;
+      border-radius: 10px;
+      padding: 10px;
+    }
+    #campus-map-close {
+      position: absolute;
+      top: -14px;
+      right: -14px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: none;
+      background-color: #3a2c1e;
+      color: #f5f0e6;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    #campus-map-close:hover { background-color: #4a3a2a; }
+    #campus-bigmap-canvas {
+      display: block;
+      border-radius: 6px;
+      max-width: 88vw;
+      max-height: 82vh;
+    }
   </style>
 </head>
 <body>
@@ -76,7 +146,19 @@
 
   <main id="campus-main">
     <p id="game-hint">矢印キーまたは WASD で移動 · Enter でチャット</p>
-    <div id="game-container"></div>
+    <div id="game-container">
+      <div id="campus-minimap" title="クリックで全体マップ">
+        <div id="campus-count">🟢 1人</div>
+        <canvas id="campus-minimap-canvas"></canvas>
+        <div id="campus-minimap-hint">クリックで拡大</div>
+      </div>
+    </div>
+    <div id="campus-map-modal" class="hidden">
+      <div id="campus-map-box">
+        <button id="campus-map-close" title="閉じる">✕</button>
+        <canvas id="campus-bigmap-canvas"></canvas>
+      </div>
+    </div>
     <div id="campus-chat">
       <button id="campus-music-btn" title="音楽">🎵</button>
       <input type="text" id="campus-chat-input" maxlength="100" placeholder="Enter を押してチャット…">

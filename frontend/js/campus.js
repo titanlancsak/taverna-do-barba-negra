@@ -59,6 +59,7 @@ class CampusScene extends Phaser.Scene {
 
     this.setupChatInput();
     this.setupNetwork();
+    this.setupMinimap();
 
     this.time.addEvent({ delay: SEND_INTERVAL, loop: true, callback: () => this.sendPosition() });
   }
@@ -254,8 +255,10 @@ class CampusScene extends Phaser.Scene {
 
     campusSocket.on('campus_me', (info) => {
       this.myId = info.id;
+      this.myColor = info.color;
       this.player.setTint(info.color);
       this.me.label.setText(info.name || '');
+      this.updatePlayerCount();
     });
 
     campusSocket.on('campus_players', (players) => {
@@ -286,12 +289,14 @@ class CampusScene extends Phaser.Scene {
     if (color != null) sprite.setTint(color);
     this.others[id] = {
       sprite,
+      color,
       label: this.createLabel(name || ''),
       bubble: null,
       bubbleUntil: 0,
       targetX: x,
       targetY: y
     };
+    this.updatePlayerCount();
   }
 
   removeOther(id) {
@@ -301,6 +306,175 @@ class CampusScene extends Phaser.Scene {
     e.label.destroy();
     if (e.bubble) e.bubble.destroy();
     delete this.others[id];
+    this.updatePlayerCount();
+  }
+
+  updatePlayerCount() {
+    if (!this.countEl) return;
+    const n = Object.keys(this.others).length + 1; // + eu
+    this.countEl.textContent = '🟢 ' + n + '人';
+  }
+
+  // ---- Minimapa + mapa inteiro (canvas 2D, visão de cima) ----
+  setupMinimap() {
+    this.countEl = document.getElementById('campus-count');
+    this.miniCanvas = document.getElementById('campus-minimap-canvas');
+    this.bigCanvas = document.getElementById('campus-bigmap-canvas');
+    this.mapModal = document.getElementById('campus-map-modal');
+    this.updatePlayerCount();
+    if (!this.miniCanvas) return;
+
+    const MINI_W = 190;
+    this.miniScale = MINI_W / this.worldW;
+    this.miniCanvas.width = MINI_W;
+    this.miniCanvas.height = Math.round(this.worldH * this.miniScale);
+
+    // fundo estático (terreno + prédios) renderizado uma vez e reaproveitado
+    this.miniStatic = document.createElement('canvas');
+    this.miniStatic.width = this.miniCanvas.width;
+    this.miniStatic.height = this.miniCanvas.height;
+    this.drawMapStatic(this.miniStatic.getContext('2d'), this.miniScale);
+
+    const mini = document.getElementById('campus-minimap');
+    if (mini) mini.addEventListener('click', () => this.openBigMap());
+    const closeBtn = document.getElementById('campus-map-close');
+    if (closeBtn) closeBtn.addEventListener('click', () => this.mapModal.classList.add('hidden'));
+    if (this.mapModal) {
+      this.mapModal.addEventListener('click', (e) => {
+        if (e.target === this.mapModal) this.mapModal.classList.add('hidden');
+      });
+    }
+  }
+
+  openBigMap() {
+    if (!this.bigCanvas || !this.mapModal) return;
+    const s = Math.min(window.innerWidth * 0.86 / this.worldW, window.innerHeight * 0.80 / this.worldH);
+    this.bigScale = s;
+    this.bigCanvas.width = Math.round(this.worldW * s);
+    this.bigCanvas.height = Math.round(this.worldH * s);
+    this.mapModal.classList.remove('hidden');
+    this.renderBigMap();
+  }
+
+  renderBigMap() {
+    if (!this.bigCanvas) return;
+    const ctx = this.bigCanvas.getContext('2d');
+    this.drawMapStatic(ctx, this.bigScale);
+    this.drawMapPlayers(ctx, this.bigScale, 6, false);
+    // nomes dos prédios (só no mapa grande)
+    if (typeof CAMPUS_BUILDINGS !== 'undefined') {
+      ctx.fillStyle = '#12305a';
+      ctx.font = 'bold 11px sans-serif';
+      ctx.textAlign = 'center';
+      CAMPUS_BUILDINGS.forEach(b => {
+        ctx.fillText(b.name, (b.x + b.w / 2) * this.bigScale, (b.y + b.h / 2) * this.bigScale + 4);
+      });
+    }
+  }
+
+  drawMinimap() {
+    if (!this.miniCanvas || !this.miniStatic) return;
+    const ctx = this.miniCanvas.getContext('2d');
+    ctx.clearRect(0, 0, this.miniCanvas.width, this.miniCanvas.height);
+    ctx.drawImage(this.miniStatic, 0, 0);
+    this.drawMapPlayers(ctx, this.miniScale, 3, true);
+  }
+
+  hexColor(c) {
+    return '#' + (c >>> 0 & 0xffffff).toString(16).padStart(6, '0');
+  }
+
+  // Desenha o layout (terreno + prédios) de cima, na escala s
+  drawMapStatic(ctx, s) {
+    const W = this.worldW, H = this.worldH;
+    ctx.fillStyle = '#5c9a4f';
+    ctx.fillRect(0, 0, W * s, H * s);
+
+    if (typeof CAMPUS_TERRAIN !== 'undefined') {
+      CAMPUS_TERRAIN.forEach(f => {
+        switch (f.type) {
+          case 'zone':
+            ctx.fillStyle = this.hexColor(f.color != null ? f.color : 0x4f8f3e);
+            ctx.fillRect(f.x * s, f.y * s, f.w * s, f.h * s);
+            break;
+          case 'path':
+            ctx.fillStyle = '#cdb891';
+            ctx.fillRect(f.x * s, f.y * s, f.w * s, f.h * s);
+            break;
+          case 'road':
+            ctx.strokeStyle = '#9a9a9a';
+            ctx.lineWidth = (f.width || 60) * s;
+            ctx.beginPath();
+            f.points.forEach((p, i) => (i === 0 ? ctx.moveTo(p[0] * s, p[1] * s) : ctx.lineTo(p[0] * s, p[1] * s)));
+            ctx.stroke();
+            break;
+          case 'track': {
+            const cx = (f.x + f.w / 2) * s, cy = (f.y + f.h / 2) * s;
+            ctx.fillStyle = '#a9603f';
+            ctx.beginPath(); ctx.ellipse(cx, cy, (f.w / 2) * s, (f.h / 2) * s, 0, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = '#4f9e43';
+            ctx.beginPath(); ctx.ellipse(cx, cy, (f.w * 0.36) * s, (f.h * 0.3) * s, 0, 0, Math.PI * 2); ctx.fill();
+            break;
+          }
+          case 'tennis':
+            ctx.fillStyle = '#2e7d32';
+            ctx.fillRect(f.x * s, f.y * s, f.w * s, f.h * s);
+            break;
+          case 'water':
+            ctx.fillStyle = '#5aa0d8';
+            if (f.round) {
+              ctx.beginPath();
+              ctx.ellipse((f.x + f.w / 2) * s, (f.y + f.h / 2) * s, (f.w / 2) * s, (f.h / 2) * s, 0, 0, Math.PI * 2);
+              ctx.fill();
+            } else {
+              ctx.fillRect(f.x * s, f.y * s, f.w * s, f.h * s);
+            }
+            break;
+          case 'garden':
+            ctx.fillStyle = '#cdb891';
+            ctx.beginPath(); ctx.arc(f.x * s, f.y * s, f.r * s, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = '#66b34f';
+            ctx.beginPath(); ctx.arc(f.x * s, f.y * s, f.r * 0.62 * s, 0, Math.PI * 2); ctx.fill();
+            break;
+        }
+      });
+    }
+
+    if (typeof CAMPUS_BUILDINGS !== 'undefined') {
+      ctx.lineWidth = Math.max(1, s * 3);
+      CAMPUS_BUILDINGS.forEach(b => {
+        ctx.fillStyle = this.hexColor(b.color != null ? b.color : 0xdfe6ee);
+        ctx.fillRect(b.x * s, b.y * s, b.w * s, b.h * s);
+        ctx.strokeStyle = '#5a6672';
+        ctx.strokeRect(b.x * s, b.y * s, b.w * s, b.h * s);
+      });
+    }
+  }
+
+  // Desenha os pontos dos jogadores (e o retângulo da câmera) na escala s
+  drawMapPlayers(ctx, s, dotR, showView) {
+    for (const id in this.others) {
+      const e = this.others[id];
+      ctx.fillStyle = e.color != null ? this.hexColor(e.color) : '#ffffff';
+      ctx.beginPath();
+      ctx.arc(e.sprite.x * s, e.sprite.y * s, dotR, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    if (this.player) {
+      ctx.fillStyle = this.myColor != null ? this.hexColor(this.myColor) : '#ffffff';
+      ctx.beginPath();
+      ctx.arc(this.player.x * s, this.player.y * s, dotR + 1, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+    if (showView && this.cameras && this.cameras.main) {
+      const v = this.cameras.main.worldView;
+      ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(v.x * s, v.y * s, v.width * s, v.height * s);
+    }
   }
 
   showBubble(entry, text) {
@@ -385,6 +559,13 @@ class CampusScene extends Phaser.Scene {
       this.applyWalk(e.sprite, moving);
       e.sprite.setDepth(e.sprite.y);
       this.updateEntry(e);
+    }
+
+    // Minimapa (~8x por segundo é suficiente)
+    if (!this._miniT || time - this._miniT > 120) {
+      this._miniT = time;
+      this.drawMinimap();
+      if (this.mapModal && !this.mapModal.classList.contains('hidden')) this.renderBigMap();
     }
   }
 }
