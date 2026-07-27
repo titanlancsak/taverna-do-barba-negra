@@ -1926,13 +1926,24 @@ main.typing-page { max-width: min(900px, 94vw); width: 100%; }
   border-bottom: 2px solid #d4a017;
   border-radius: 2px;
 }
-.typing-hidden-input {
-  position: absolute;
-  left: -9999px;
-  opacity: 0;
-  width: 1px;
-  height: 1px;
+.typing-input {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+  box-sizing: border-box;
+  background-color: #1b1b1b;
+  border: 1px solid #3a2c1e;
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-family: 'Courier New', monospace;
+  font-size: 18px;
+  letter-spacing: 1px;
+  color: #f5f0e6;
+  outline: none;
 }
+.typing-input:focus { border-color: #d4a017; }
+.typing-input::placeholder { color: #6a5c48; }
+.typing-input:disabled { opacity: 0.5; cursor: not-allowed; }
 .typing-result {
   margin: 12px 0;
   font-weight: bold;

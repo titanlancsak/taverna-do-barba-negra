@@ -31,12 +31,13 @@ const achievementsGrid = document.getElementById('achievements-grid');
 
 // --- Estado ---
 let target = '';
-let pos = 0;
+let prevValue = '';      // último valor do input (para contar teclas novas)
 let errors = 0;
 let typedTotal = 0;
 let startTime = null;
 let timer = null;
 let finished = false;
+let composing = false;   // true durante composição do IME (japonês)
 let currentIsDaily = false;
 let currentEntry = null; // item atual (texto + explicação)
 
@@ -50,6 +51,7 @@ function escapeHtml(text) {
 TYPING_LANGUAGES.forEach((l) => {
   langSelect.add(new Option(l.label, l.value));
 });
+langSelect.value = 'ja'; // japonês como idioma padrão
 TYPING_CATEGORIES.forEach((c) => {
   catSelect.add(new Option(c.label, c.value));
   rankingCatFilter.add(new Option(c.label, c.value));
@@ -64,26 +66,36 @@ const LANG_LABELS = Object.fromEntries(TYPING_LANGUAGES.map((l) => [l.value, l.l
 function startRound(entry, isDaily) {
   currentEntry = entry;
   target = (entry && entry.text) || '';
-  pos = 0;
+  prevValue = '';
   errors = 0;
   typedTotal = 0;
   startTime = null;
   finished = false;
+  composing = false;
   currentIsDaily = !!isDaily;
   resultEl.textContent = '';
   explainBtn.hidden = true;
+  explainBtn.textContent = 'コマンドを解説 ▾';
   explainPanel.hidden = true;
   explainPanel.innerHTML = '';
   clearInterval(timer);
 
-  // Renderiza cada caractere num span
-  textEl.innerHTML = target.split('').map((ch, i) =>
-    `<span class="tc${i === 0 ? ' current' : ''}">${escapeHtml(ch)}</span>`
-  ).join('');
-
-  updateStats();
   inputEl.value = '';
+  inputEl.disabled = !target;
+  renderText();
+  updateStats();
   inputEl.focus();
+}
+
+// Renderiza o alvo caractere a caractere, comparando com o que já foi digitado.
+function renderText() {
+  const val = inputEl.value;
+  textEl.innerHTML = target.split('').map((ch, i) => {
+    let cls = 'tc';
+    if (i < val.length) cls += (val[i] === ch) ? ' correct' : ' incorrect';
+    else if (i === val.length) cls += ' current';
+    return `<span class="${cls}">${escapeHtml(ch)}</span>`;
+  }).join('');
 }
 
 function newRound() {
@@ -97,54 +109,37 @@ function newRound() {
   }
 }
 
-const spans = () => textEl.querySelectorAll('.tc');
-
-function setCurrent() {
-  const all = spans();
-  all.forEach((s) => s.classList.remove('current'));
-  if (pos < all.length) all[pos].classList.add('current');
-}
-
-function handleKey(e) {
+// Processa o estado atual do input. Funciona para ASCII (comandos, inglês) e
+// para japonês via IME: só é chamado quando não há composição em andamento, então
+// o valor já reflete o texto confirmado.
+function processInput() {
   if (finished || !target) return;
-  // Ignora combinações com Ctrl/Meta/Alt (atalhos)
-  if (e.ctrlKey || e.metaKey || e.altKey) return;
 
-  if (e.key === 'Backspace') {
-    e.preventDefault();
-    if (pos > 0) {
-      pos--;
-      const s = spans()[pos];
-      s.classList.remove('correct', 'incorrect');
-      setCurrent();
-      updateStats();
-    }
-    return;
+  let val = inputEl.value;
+  if (val.length > target.length) {        // não deixa passar do fim
+    val = val.slice(0, target.length);
+    inputEl.value = val;
   }
 
-  // Só caracteres imprimíveis (comprimento 1)
-  if (e.key.length !== 1) return;
-  e.preventDefault();
-
-  if (startTime === null) {
+  if (startTime === null && val.length > 0) {
     startTime = Date.now();
     timer = setInterval(updateStats, 150);
   }
 
-  const all = spans();
-  const expected = target[pos];
-  typedTotal++;
-  if (e.key === expected) {
-    all[pos].classList.add('correct');
-  } else {
-    all[pos].classList.add('incorrect');
-    errors++;
+  // Conta só o que cresceu como "teclas digitadas" (backspace não desconta,
+  // igual à lógica anterior de precisão).
+  if (val.length > prevValue.length) {
+    for (let i = prevValue.length; i < val.length; i++) {
+      typedTotal++;
+      if (val[i] !== target[i]) errors++;
+    }
   }
-  pos++;
-  setCurrent();
+  prevValue = val;
+
+  renderText();
   updateStats();
 
-  if (pos >= target.length) finish();
+  if (val.length >= target.length) finish();
 }
 
 function computeStats() {
@@ -167,11 +162,12 @@ function updateStats() {
 async function finish() {
   finished = true;
   clearInterval(timer);
-  setCurrent();
+  renderText();
   const { wpm, accuracy, elapsedMs } = computeStats();
   updateStats();
   resultEl.textContent = `完了！ ${wpm} WPM · 精度 ${accuracy}% · ミス ${errors}`;
-  explainBtn.hidden = false; // libera o botão de explicação
+  // Só comandos têm explicação; frases (英文/和文) não.
+  explainBtn.hidden = !(currentEntry && (currentEntry.en || currentEntry.ja));
 
   try {
     const res = await fetch(`${API_BASE}/api/typing/results`, {
@@ -203,7 +199,10 @@ async function finish() {
   if (currentIsDaily) loadDaily();
 }
 
-inputEl.addEventListener('keydown', handleKey);
+// Durante a composição do IME o valor é provisório; só processamos ao confirmar.
+inputEl.addEventListener('input', (e) => { if (e.isComposing || composing) return; processInput(); });
+inputEl.addEventListener('compositionstart', () => { composing = true; });
+inputEl.addEventListener('compositionend', () => { composing = false; processInput(); });
 textEl.addEventListener('click', () => inputEl.focus());
 newBtn.addEventListener('click', newRound);
 dailyCheck.addEventListener('change', () => {

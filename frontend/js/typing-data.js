@@ -1,10 +1,14 @@
-// Acervo da Typing Game. Cada item é um COMANDO (ASCII, sem IME) com explicação
-// bilíngue: s = resumo, u = para que serve, ex = exemplos. O seletor de idioma
-// escolhe o idioma da explicação (o texto digitado é o mesmo). Adicionar 'pt' é
-// só incluir a chave em cada item e em TYPING_LANGUAGES.
+// Acervo da Typing Game. Há dois tipos de item:
+//  - COMANDO (ASCII): { text, en:{s,u,ex}, ja:{s,u,ex} } — explicação bilíngue
+//    (s = resumo, u = para que serve, ex = exemplos). O seletor de idioma escolhe
+//    o idioma da explicação; o texto digitado é o mesmo.
+//  - FRASE (prosa): { text } — só o texto a digitar (inglês ou japonês), sem
+//    explicação. As frases em japonês exigem IME para digitar.
+// O idioma padrão é japonês (primeiro em TYPING_LANGUAGES). Adicionar 'pt' é só
+// incluir a chave em cada comando e em TYPING_LANGUAGES.
 const TYPING_LANGUAGES = [
-  { value: 'en', label: 'English' },
-  { value: 'ja', label: '日本語' }
+  { value: 'ja', label: '日本語' },
+  { value: 'en', label: 'English' }
 ];
 
 const TYPING_CATEGORIES = [
@@ -13,7 +17,9 @@ const TYPING_CATEGORIES = [
   { value: 'python', label: 'Python' },
   { value: 'java', label: 'Java' },
   { value: 'aws', label: 'AWS' },
-  { value: 'cisco', label: 'Cisco' }
+  { value: 'cisco', label: 'Cisco' },
+  { value: 'english', label: '英文 (English)' },
+  { value: 'japanese', label: '和文 (日本語)' }
 ];
 
 const TYPING_SNIPPETS = {
@@ -38,7 +44,16 @@ const TYPING_SNIPPETS = {
       ja: { s: 'ファイルシステム全体から .conf で終わるファイルを探します。', u: '設定ファイルの場所をシステム全体から探します。', ex: ['find . -mtime -1 — 過去1日で変更', 'find /tmp -size +100M — 100MB超のファイル'] } },
     { text: 'df -h && du -sh /var/log',
       en: { s: 'Shows disk usage per filesystem, then the size of /var/log.', u: 'Diagnose which mount or folder is filling the disk.', ex: ['df -h — human-readable free space', 'du -sh * — size of each item here'] },
-      ja: { s: 'ディスク使用量と /var/log のサイズを表示します。', u: 'どのマウントやフォルダが容量を食っているか調べます。', ex: ['df -h — 空き容量を見やすく表示', 'du -sh * — 各項目のサイズ'] } }
+      ja: { s: 'ディスク使用量と /var/log のサイズを表示します。', u: 'どのマウントやフォルダが容量を食っているか調べます。', ex: ['df -h — 空き容量を見やすく表示', 'du -sh * — 各項目のサイズ'] } },
+    { text: 'sudo systemctl restart nginx',
+      en: { s: 'Restarts the nginx service via systemd.', u: 'Apply new config or recover a stuck service.', ex: ['systemctl status nginx — check state', 'systemctl enable nginx — start on boot'] },
+      ja: { s: 'systemd 経由で nginx サービスを再起動します。', u: '設定の反映や、止まったサービスの復旧に使います。', ex: ['systemctl status nginx — 状態を確認', 'systemctl enable nginx — 起動時に自動開始'] } },
+    { text: 'ssh -i key.pem user@host -p 2222',
+      en: { s: 'Connects over SSH using a key file and a custom port.', u: 'Log into a remote server securely.', ex: ['scp file user@host:/path — copy a file over', 'ssh-keygen — create a key pair'] },
+      ja: { s: '鍵ファイルとカスタムポートで SSH 接続します。', u: 'リモートサーバーに安全にログインします。', ex: ['scp file user@host:/path — ファイルを転送', 'ssh-keygen — 鍵ペアを作成'] } },
+    { text: 'docker ps -a',
+      en: { s: 'Lists all containers, including stopped ones.', u: 'See what containers exist and their status.', ex: ['docker ps — only running containers', 'docker logs <id> — view container logs'] },
+      ja: { s: '停止中も含め全てのコンテナを一覧します。', u: 'どんなコンテナがあり、状態がどうか確認します。', ex: ['docker ps — 稼働中のみ表示', 'docker logs <id> — コンテナのログを見る'] } }
   ],
   sql: [
     { text: 'SELECT id, name FROM users WHERE active = true;',
@@ -61,7 +76,16 @@ const TYPING_SNIPPETS = {
       ja: { s: 'users テーブルの email 列にインデックスを作成します。', u: '列での検索や結合を高速化します。', ex: ['CREATE UNIQUE INDEX ... — 一意制約付き', 'DROP INDEX idx_users_email; — 削除'] } },
     { text: 'SELECT * FROM a JOIN b ON a.id = b.a_id;',
       en: { s: 'Combines rows from tables a and b where their keys match.', u: 'Query related data spread across tables.', ex: ['LEFT JOIN — keep all rows from the left table', 'ON defines how the tables relate'] },
-      ja: { s: 'キーが一致する a と b の行を結合します。', u: '複数テーブルにまたがる関連データを取得します。', ex: ['LEFT JOIN — 左テーブルの行を全て残す', 'ON で結合条件を指定'] } }
+      ja: { s: 'キーが一致する a と b の行を結合します。', u: '複数テーブルにまたがる関連データを取得します。', ex: ['LEFT JOIN — 左テーブルの行を全て残す', 'ON で結合条件を指定'] } },
+    { text: 'ALTER TABLE users ADD COLUMN age INT;',
+      en: { s: 'Adds a new age column to the users table.', u: 'Change a table\'s structure after it exists.', ex: ['DROP COLUMN age — remove a column', 'RENAME COLUMN a TO b — rename'] },
+      ja: { s: 'users テーブルに age 列を追加します。', u: '作成済みテーブルの構造を変更します。', ex: ['DROP COLUMN age — 列を削除', 'RENAME COLUMN a TO b — 列名を変更'] } },
+    { text: 'SELECT * FROM users ORDER BY created_at DESC LIMIT 5;',
+      en: { s: 'Returns the 5 most recently created users.', u: 'Sort rows and take only the top of the list.', ex: ['ASC — ascending order (default)', 'OFFSET 5 — skip the first 5'] },
+      ja: { s: '最近作成された 5 人のユーザーを返します。', u: '行を並べ替え、先頭だけを取り出します。', ex: ['ASC — 昇順（デフォルト）', 'OFFSET 5 — 先頭5件を飛ばす'] } },
+    { text: 'SELECT COUNT(*) FROM orders WHERE total > 100;',
+      en: { s: 'Counts orders whose total is greater than 100.', u: 'Get a single aggregate number from a table.', ex: ['AVG(total) — average value', 'MAX(total) — largest value'] },
+      ja: { s: '合計が 100 を超える注文の件数を数えます。', u: 'テーブルから集計値を 1 つ取得します。', ex: ['AVG(total) — 平均値', 'MAX(total) — 最大値'] } }
   ],
   python: [
     { text: 'def add(a, b): return a + b',
@@ -84,7 +108,16 @@ const TYPING_SNIPPETS = {
       ja: { s: 'コードを実行し、落ちる代わりに例外を捕まえます。', u: 'エラーを適切に処理します。', ex: ['except ValueError: — 特定の例外を捕捉', 'finally: — 後処理を必ず実行'] } },
     { text: 'app = Flask(__name__)',
       en: { s: 'Creates a Flask web application instance.', u: 'Start building a small web server/API.', ex: ["@app.route('/') — define a route", 'app.run() — start the server'] },
-      ja: { s: 'Flask の Web アプリのインスタンスを作ります。', u: '小さな Web サーバー/API を作り始めます。', ex: ["@app.route('/') — ルートを定義", 'app.run() — サーバー起動'] } }
+      ja: { s: 'Flask の Web アプリのインスタンスを作ります。', u: '小さな Web サーバー/API を作り始めます。', ex: ["@app.route('/') — ルートを定義", 'app.run() — サーバー起動'] } },
+    { text: 'for i, x in enumerate(items): print(i, x)',
+      en: { s: 'Loops over items with both the index and the value.', u: 'Iterate when you also need the position.', ex: ['enumerate(xs, 1) — start index at 1', 'zip(a, b) — pair two lists'] },
+      ja: { s: '添字と値の両方を取りながら items を反復します。', u: '位置も必要なときの繰り返しに使います。', ex: ['enumerate(xs, 1) — 添字を1から', 'zip(a, b) — 2つのリストを対に'] } },
+    { text: 'print(f"total: {sum(nums)}")',
+      en: { s: 'Prints a formatted string embedding a computed value.', u: 'Build readable output with f-strings.', ex: ['f"{x:.2f}" — 2 decimal places', 'f"{name=}" — show name and value'] },
+      ja: { s: '計算結果を埋め込んだ書式付き文字列を表示します。', u: 'f文字列で読みやすい出力を作ります。', ex: ['f"{x:.2f}" — 小数点2桁', 'f"{name=}" — 変数名と値を表示'] } },
+    { text: 'value = data.get("key", 0)',
+      en: { s: 'Reads a dict key, returning 0 if it is missing.', u: 'Avoid KeyError when a key may not exist.', ex: ['data["key"] — raises if missing', 'data.setdefault("k", [])'] },
+      ja: { s: '辞書のキーを読み、無ければ 0 を返します。', u: 'キーが無いときの KeyError を防ぎます。', ex: ['data["key"] — 無いと例外', 'data.setdefault("k", [])'] } }
   ],
   java: [
     { text: 'List<String> names = new ArrayList<>();',
@@ -107,7 +140,16 @@ const TYPING_SNIPPETS = {
       ja: { s: 'リストの要素をカンマ区切りの 1 文字列に連結します。', u: 'コレクションをテキストに変換します。', ex: ['"a,b,c".split(",") — 逆の操作', 'String.join("-", parts)'] } },
     { text: 'Optional<User> u = repo.findById(id);',
       en: { s: 'Returns a value that may or may not be present.', u: 'Avoid null by making absence explicit.', ex: ['u.isPresent() — check first', 'u.orElse(defaultUser)'] },
-      ja: { s: '存在するかもしれない値を返します。', u: 'null を避け、不在を明示します。', ex: ['u.isPresent() — 有無を確認', 'u.orElse(defaultUser)'] } }
+      ja: { s: '存在するかもしれない値を返します。', u: 'null を避け、不在を明示します。', ex: ['u.isPresent() — 有無を確認', 'u.orElse(defaultUser)'] } },
+    { text: 'int[] arr = {1, 2, 3};',
+      en: { s: 'Declares and initializes an array of integers.', u: 'Store a fixed-size sequence of values.', ex: ['arr.length — number of elements', 'arr[0] — read the first element'] },
+      ja: { s: '整数の配列を宣言し初期化します。', u: '固定長の値の並びを保持します。', ex: ['arr.length — 要素数', 'arr[0] — 先頭要素を読む'] } },
+    { text: 'if (x > 0) { count++; } else { count--; }',
+      en: { s: 'Runs one of two branches based on a condition.', u: 'Choose behavior depending on state.', ex: ['else if (x == 0) — another branch', 'x > 0 ? 1 : -1 — ternary form'] },
+      ja: { s: '条件に応じて 2 つの分岐のどちらかを実行します。', u: '状態に応じて処理を切り替えます。', ex: ['else if (x == 0) — 別の分岐', 'x > 0 ? 1 : -1 — 三項演算子'] } },
+    { text: 'names.stream().filter(s -> s.length() > 3).count();',
+      en: { s: 'Counts strings longer than 3 characters using a stream.', u: 'Process collections declaratively.', ex: ['.map(String::toUpperCase) — transform', '.collect(Collectors.toList())'] },
+      ja: { s: 'ストリームで長さ 3 超の文字列を数えます。', u: 'コレクションを宣言的に処理します。', ex: ['.map(String::toUpperCase) — 変換', '.collect(Collectors.toList())'] } }
   ],
   aws: [
     { text: 'aws s3 cp file.txt s3://my-bucket/',
@@ -127,7 +169,16 @@ const TYPING_SNIPPETS = {
       ja: { s: 'アカウント内の IAM ユーザーを一覧します。', u: 'アクセス権の監査や ID 管理に使います。', ex: ['aws iam create-user --user-name app', 'aws iam attach-user-policy ...'] } },
     { text: 'aws logs tail /aws/lambda/proc --follow',
       en: { s: 'Streams CloudWatch logs for a log group in real time.', u: 'Watch application/function logs live.', ex: ['--since 1h — start from an hour ago', '--format short — compact output'] },
-      ja: { s: 'ロググループの CloudWatch ログをリアルタイムで流します。', u: 'アプリ/関数のログをライブで監視します。', ex: ['--since 1h — 1時間前から', '--format short — 簡潔表示'] } }
+      ja: { s: 'ロググループの CloudWatch ログをリアルタイムで流します。', u: 'アプリ/関数のログをライブで監視します。', ex: ['--since 1h — 1時間前から', '--format short — 簡潔表示'] } },
+    { text: 'aws sts get-caller-identity',
+      en: { s: 'Shows the account and IAM identity of your current credentials.', u: 'Confirm which account/role the CLI is using.', ex: ['aws configure list — see active profile', '--profile prod — use a named profile'] },
+      ja: { s: '現在の認証情報のアカウントと IAM ID を表示します。', u: 'CLI がどのアカウント/ロールを使っているか確認します。', ex: ['aws configure list — 使用中のプロファイル', '--profile prod — 名前付きプロファイル'] } },
+    { text: 'aws dynamodb scan --table-name Users',
+      en: { s: 'Reads every item from a DynamoDB table.', u: 'Inspect table contents (avoid on large tables).', ex: ['--limit 10 — cap the number of items', 'query is cheaper than scan when possible'] },
+      ja: { s: 'DynamoDB テーブルの全項目を読み取ります。', u: 'テーブルの中身を確認します（大きい表では非推奨）。', ex: ['--limit 10 — 件数を制限', '可能なら scan より query が安価'] } },
+    { text: 'aws cloudformation deploy --template-file t.yml --stack-name web',
+      en: { s: 'Deploys or updates a stack from a template file.', u: 'Provision infrastructure as code.', ex: ['--parameter-overrides Key=Value', 'aws cloudformation delete-stack --stack-name web'] },
+      ja: { s: 'テンプレートからスタックを作成/更新します。', u: 'インフラをコードとして構築します。', ex: ['--parameter-overrides Key=Value', 'aws cloudformation delete-stack --stack-name web'] } }
   ],
   cisco: [
     { text: 'enable',
@@ -147,7 +198,34 @@ const TYPING_SNIPPETS = {
       ja: { s: 'インターフェースに IP アドレスとマスクを割り当てます。', u: 'デバイス/ポートにネットワーク到達性を与えます。', ex: ['ip address dhcp — DHCP で取得', 'no ip address — 削除'] } },
     { text: 'switchport access vlan 10',
       en: { s: 'Puts a switch port into access mode on VLAN 10.', u: 'Assign an endpoint port to a VLAN.', ex: ['switchport mode access — set the mode', 'show vlan brief — verify'] },
-      ja: { s: 'スイッチポートを VLAN 10 のアクセスモードにします。', u: '端末用ポートを VLAN に割り当てます。', ex: ['switchport mode access — モード設定', 'show vlan brief — 確認'] } }
+      ja: { s: 'スイッチポートを VLAN 10 のアクセスモードにします。', u: '端末用ポートを VLAN に割り当てます。', ex: ['switchport mode access — モード設定', 'show vlan brief — 確認'] } },
+    { text: 'show ip interface brief',
+      en: { s: 'Summarizes every interface with its IP and status.', u: 'Quickly see which ports are up and addressed.', ex: ['show interfaces status — port details', 'show ip route — the routing table'] },
+      ja: { s: '全インターフェースの IP と状態を要約表示します。', u: 'どのポートが up で IP を持つか素早く確認します。', ex: ['show interfaces status — ポート詳細', 'show ip route — ルーティングテーブル'] } },
+    { text: 'no shutdown',
+      en: { s: 'Administratively enables the selected interface.', u: 'Bring a port up after configuring it.', ex: ['shutdown — disable the port', 'Run it inside interface config mode'] },
+      ja: { s: '選択中のインターフェースを有効化します。', u: '設定後にポートを起動させます。', ex: ['shutdown — ポートを無効化', 'インターフェース設定モード内で実行'] } },
+    { text: 'copy running-config startup-config',
+      en: { s: 'Saves the running config so it survives a reboot.', u: 'Persist changes to the device.', ex: ['write memory — same as this (shorthand)', 'erase startup-config — reset to default'] },
+      ja: { s: '動作中の設定を保存し、再起動後も残します。', u: 'デバイスへの変更を永続化します。', ex: ['write memory — これと同じ（短縮形）', 'erase startup-config — 初期化'] } }
+  ],
+  english: [
+    { text: 'The quick brown fox jumps over the lazy dog.' },
+    { text: 'Practice typing every single day to build real speed and accuracy.' },
+    { text: 'Clear code is written for humans first and for machines second.' },
+    { text: 'A journey of a thousand miles begins with a single step.' },
+    { text: 'Consistency beats intensity when you are learning a brand new skill.' },
+    { text: 'Good engineers tend to read far more code than they ever write.' },
+    { text: 'Stay calm, focus on accuracy, and the speed will come with time.' }
+  ],
+  japanese: [
+    { text: '今日はとてもいい天気ですね。' },
+    { text: '毎日少しずつ練習すれば、必ず上達します。' },
+    { text: 'わたしは毎朝コーヒーを飲みながら新聞を読みます。' },
+    { text: '東京から新しい仕事の連絡が来ました。' },
+    { text: 'プログラミングは楽しいですが、難しいこともあります。' },
+    { text: 'ゆっくりでいいので、正確に入力しましょう。' },
+    { text: '日本語の文章をタイピングして、指を慣らしていきます。' }
   ]
 };
 
