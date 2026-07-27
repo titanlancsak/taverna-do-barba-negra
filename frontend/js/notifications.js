@@ -1,5 +1,5 @@
 // IIFE pra isolar tudo do escopo global — evita colisão de const (ex.: API_BASE)
-// com scripts de página que carregam junto, como chat.js e groups.js.
+// com scripts de página que carregam junto, como friends.js.
 (function () {
 const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '';
 const notifToken = localStorage.getItem('taverna_token');
