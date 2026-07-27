@@ -1833,11 +1833,11 @@ main.friends-page {
 /* Aumenta os botões/ícones de convidar e fechar no header do widget */
 #chat-widget-invite-btn,
 #chat-widget-close {
-  width: 32px;
-  height: 32px;
+  width: 38px;
+  height: 38px;
 }
 #chat-widget-invite-btn .cw-ico,
 #chat-widget-close .cw-ico {
-  width: 22px;
-  height: 22px;
+  width: 28px;
+  height: 28px;
 }
