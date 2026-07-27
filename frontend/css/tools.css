@@ -2024,3 +2024,47 @@ main.typing-page { max-width: min(900px, 94vw); width: 100%; }
   .typing-stats { grid-template-columns: repeat(2, 1fr); }
   .typing-text { font-size: 17px; }
 }
+
+/* ===== Explicação do comando (Typing Game) ===== */
+.typing-explain-btn {
+  background-color: #3a2c1e;
+  color: #d4a017;
+  border: none;
+  border-radius: 20px;
+  padding: 9px 18px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 12px;
+}
+.typing-explain-btn:hover { background-color: #4a3a2a; }
+.typing-explain {
+  background-color: #23180f;
+  border: 1px solid #b8860b;
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+.typing-explain p { margin: 6px 0; color: #f5f0e6; }
+.explain-cmd code {
+  display: inline-block;
+  background-color: #1b1b1b;
+  padding: 6px 10px;
+  border-radius: 8px;
+  color: #f5d76e;
+  font-family: 'Courier New', monospace;
+  word-break: break-word;
+}
+.explain-key {
+  display: inline-block;
+  background-color: #b8860b;
+  color: #1b1b1b;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 1px 8px;
+  border-radius: 10px;
+  margin-right: 6px;
+}
+.explain-examples { margin: 4px 0 0; padding-left: 20px; }
+.explain-examples li { margin: 4px 0; }
+.explain-examples code { color: #c9e0a0; font-family: 'Courier New', monospace; }

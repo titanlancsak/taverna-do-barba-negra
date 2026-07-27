@@ -19,6 +19,9 @@ const statAcc = document.getElementById('stat-acc');
 const statErr = document.getElementById('stat-err');
 const statTime = document.getElementById('stat-time');
 
+const explainBtn = document.getElementById('typing-explain-btn');
+const explainPanel = document.getElementById('typing-explain');
+
 const rankingCatFilter = document.getElementById('ranking-category-filter');
 const rankingList = document.getElementById('ranking-list');
 const historyList = document.getElementById('history-list');
@@ -35,6 +38,7 @@ let startTime = null;
 let timer = null;
 let finished = false;
 let currentIsDaily = false;
+let currentEntry = null; // item atual (texto + explicação)
 
 function escapeHtml(text) {
   const div = document.createElement('div');
@@ -57,8 +61,9 @@ const CATEGORY_LABELS = Object.fromEntries(TYPING_CATEGORIES.map((c) => [c.value
 const LANG_LABELS = Object.fromEntries(TYPING_LANGUAGES.map((l) => [l.value, l.label]));
 
 // --- Jogo ---
-function startRound(text, isDaily) {
-  target = text || '';
+function startRound(entry, isDaily) {
+  currentEntry = entry;
+  target = (entry && entry.text) || '';
   pos = 0;
   errors = 0;
   typedTotal = 0;
@@ -66,6 +71,9 @@ function startRound(text, isDaily) {
   finished = false;
   currentIsDaily = !!isDaily;
   resultEl.textContent = '';
+  explainBtn.hidden = true;
+  explainPanel.hidden = true;
+  explainPanel.innerHTML = '';
   clearInterval(timer);
 
   // Renderiza cada caractere num span
@@ -82,12 +90,10 @@ function newRound() {
   const isDaily = dailyCheck.checked;
   if (isDaily) {
     const snip = getDailySnippet();
-    // Alinha os selects com o desafio do dia (informativo)
-    langSelect.value = snip.language;
-    catSelect.value = snip.category;
-    startRound(snip.text, true);
+    catSelect.value = snip.category; // alinha a categoria com o desafio do dia
+    startRound(snip.entry, true);
   } else {
-    startRound(randomSnippet(langSelect.value, catSelect.value), false);
+    startRound(randomSnippet(catSelect.value), false);
   }
 }
 
@@ -165,6 +171,7 @@ async function finish() {
   const { wpm, accuracy, elapsedMs } = computeStats();
   updateStats();
   resultEl.textContent = `完了！ ${wpm} WPM · 精度 ${accuracy}% · ミス ${errors}`;
+  explainBtn.hidden = false; // libera o botão de explicação
 
   try {
     const res = await fetch(`${API_BASE}/api/typing/results`, {
@@ -200,9 +207,30 @@ inputEl.addEventListener('keydown', handleKey);
 textEl.addEventListener('click', () => inputEl.focus());
 newBtn.addEventListener('click', newRound);
 dailyCheck.addEventListener('change', () => {
-  // No modo diário, os selects são definidos pelo desafio
-  langSelect.disabled = dailyCheck.checked;
+  // No modo diário a categoria é definida pelo desafio; idioma continua livre (é o da explicação)
   catSelect.disabled = dailyCheck.checked;
+});
+
+// --- Explicação do comando ---
+function renderExplanation() {
+  if (!currentEntry) return;
+  const lang = langSelect.value;
+  const ex = currentEntry[lang] || currentEntry.en;
+  const examples = (ex.ex || []).map((e) => `<li><code>${escapeHtml(e)}</code></li>`).join('');
+  explainPanel.innerHTML = `
+    <p class="explain-cmd"><code>${escapeHtml(currentEntry.text)}</code></p>
+    <p><span class="explain-key">概要</span> ${escapeHtml(ex.s)}</p>
+    <p><span class="explain-key">用途</span> ${escapeHtml(ex.u)}</p>
+    <p><span class="explain-key">例</span></p>
+    <ul class="explain-examples">${examples}</ul>
+  `;
+}
+
+explainBtn.addEventListener('click', () => {
+  const show = explainPanel.hidden;
+  if (show) renderExplanation();
+  explainPanel.hidden = !show;
+  explainBtn.textContent = show ? 'コマンドの解説を隠す ▴' : 'コマンドを解説 ▾';
 });
 
 // --- Abas ---
@@ -278,7 +306,7 @@ async function loadHistory() {
 async function loadDaily() {
   try {
     const snip = getDailySnippet();
-    dailyInfo.innerHTML = `本日の課題: <strong>${escapeHtml(CATEGORY_LABELS[snip.category])}</strong> · ${escapeHtml(LANG_LABELS[snip.language].split(' ')[0])}<br><code class="daily-snippet">${escapeHtml(snip.text)}</code>`;
+    dailyInfo.innerHTML = `本日の課題: <strong>${escapeHtml(CATEGORY_LABELS[snip.category])}</strong><br><code class="daily-snippet">${escapeHtml(snip.entry.text)}</code>`;
 
     const res = await fetch(`${API_BASE}/api/typing/daily`, {
       headers: { 'Authorization': `Bearer ${token}` }
