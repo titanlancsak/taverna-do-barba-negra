@@ -101,3 +101,104 @@ async function setBan(id, ban) {
 }
 
 loadUsers();
+
+// ===== ステータスページ（サーバー監視） =====
+const statusGrid = document.getElementById('status-grid');
+const statusUpdated = document.getElementById('status-updated');
+const statusRefreshBtn = document.getElementById('status-refresh');
+
+function formatBytes(bytes) {
+  if (bytes == null || !Number.isFinite(bytes)) return '—';
+  const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+  let i = 0;
+  let n = bytes;
+  while (n >= 1024 && i < units.length - 1) { n /= 1024; i++; }
+  return `${n.toFixed(n >= 10 || i === 0 ? 0 : 1)} ${units[i]}`;
+}
+
+function formatUptime(sec) {
+  if (sec == null) return '—';
+  const d = Math.floor(sec / 86400);
+  const h = Math.floor((sec % 86400) / 3600);
+  const m = Math.floor((sec % 3600) / 60);
+  const parts = [];
+  if (d) parts.push(`${d}日`);
+  if (h) parts.push(`${h}時間`);
+  parts.push(`${m}分`);
+  return parts.join(' ');
+}
+
+// Card com bolinha de status (online/offline/unknown)
+function dotCard(title, state, detail) {
+  const label = state === 'online' ? 'オンライン' : state === 'offline' ? 'オフライン' : '不明';
+  return `
+    <div class="status-card">
+      <div class="status-card-title">${title}</div>
+      <div class="status-dot-row">
+        <span class="status-dot ${state}"></span>
+        <span class="status-dot-label">${label}</span>
+      </div>
+      ${detail ? `<div class="status-card-detail">${detail}</div>` : ''}
+    </div>`;
+}
+
+// Card com barra de porcentagem (CPU/RAM/Disco)
+function gaugeCard(title, percent, detail) {
+  const p = Number.isFinite(percent) ? percent : 0;
+  const level = p >= 90 ? 'critical' : p >= 70 ? 'warn' : 'ok';
+  return `
+    <div class="status-card">
+      <div class="status-card-title">${title}</div>
+      <div class="status-gauge-value">${Number.isFinite(percent) ? p + '%' : '—'}</div>
+      <div class="status-gauge-track"><div class="status-gauge-fill ${level}" style="width:${p}%"></div></div>
+      ${detail ? `<div class="status-card-detail">${detail}</div>` : ''}
+    </div>`;
+}
+
+async function loadStatus() {
+  try {
+    const res = await fetch(`${API_BASE}/api/admin/status`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const d = await res.json();
+    if (!res.ok) throw new Error(d.error || '読み込みに失敗しました');
+
+    const cards = [];
+
+    // オンライン人数（一番上に目立たせる）
+    cards.push(`
+      <div class="status-card highlight">
+        <div class="status-card-title">オンラインのユーザー</div>
+        <div class="status-online-count">${d.online.users}</div>
+        <div class="status-card-detail">接続数: ${d.online.connections}</div>
+      </div>`);
+
+    cards.push(dotCard('サーバー', d.server.status,
+      `稼働時間: ${formatUptime(d.server.uptimeSeconds)}<br>${escapeHtml(d.server.hostname || '')}`));
+    cards.push(dotCard('API', d.api.status, ''));
+    cards.push(dotCard('データベース', d.database.status,
+      d.database.latencyMs != null ? `応答: ${d.database.latencyMs} ms` : ''));
+    cards.push(dotCard('Nginx', d.nginx.status, ''));
+
+    cards.push(gaugeCard('CPU', d.cpu.percent,
+      `${d.cpu.cores} コア · 負荷: ${d.cpu.loadAvg1}`));
+    cards.push(gaugeCard('RAM', d.ram.percent,
+      `${formatBytes(d.ram.usedBytes)} / ${formatBytes(d.ram.totalBytes)}`));
+    if (d.disk) {
+      cards.push(gaugeCard('ディスク', d.disk.percent,
+        `${formatBytes(d.disk.usedBytes)} / ${formatBytes(d.disk.totalBytes)}`));
+    } else {
+      cards.push(gaugeCard('ディスク', NaN, '取得できません'));
+    }
+
+    statusGrid.innerHTML = cards.join('');
+    const t = new Date(d.timestamp);
+    statusUpdated.textContent = `最終更新: ${String(t.getHours()).padStart(2, '0')}:${String(t.getMinutes()).padStart(2, '0')}:${String(t.getSeconds()).padStart(2, '0')}`;
+  } catch (err) {
+    statusGrid.innerHTML = `<p>${escapeHtml(err.message)}</p>`;
+  }
+}
+
+if (statusRefreshBtn) statusRefreshBtn.addEventListener('click', loadStatus);
+loadStatus();
+setInterval(loadStatus, 10000); // atualiza a cada 10s
