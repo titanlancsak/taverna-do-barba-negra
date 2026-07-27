@@ -1799,3 +1799,33 @@ main.friends-page {
 .friend-card .remove-friend-btn:hover { background-color: #5a1e1e; color: #f5d6d6; }
 .friend-action-icon { width: 20px; height: 20px; display: block; }
 .friend-card .remove-friend-btn .delete-icon { width: 18px; height: 18px; }
+
+/* ===== Ícones do widget de chat (SVG via CSS mask, herdam a cor do botão) ===== */
+.cw-ico {
+  display: inline-block;
+  width: 17px;
+  height: 17px;
+  background-color: currentColor;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+.cw-ico-plus  { -webkit-mask-image: url(../assets/icons/plus-square.svg); mask-image: url(../assets/icons/plus-square.svg); }
+.cw-ico-close { -webkit-mask-image: url(../assets/icons/close.svg);       mask-image: url(../assets/icons/close.svg); }
+.cw-ico-attach{ -webkit-mask-image: url(../assets/icons/attach.svg);      mask-image: url(../assets/icons/attach.svg); }
+.cw-ico-send  { -webkit-mask-image: url(../assets/icons/send.svg);        mask-image: url(../assets/icons/send.svg); width: 18px; height: 18px; }
+
+/* Centraliza os ícones e garante a cor de cada botão */
+#chat-widget-invite-btn,
+#chat-widget-close,
+#chat-widget-send,
+#chat-widget-attach-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+#chat-widget-attach-btn { color: #b8a894; }
+#chat-widget-attach-btn:hover { color: #d4a017; }
