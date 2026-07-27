@@ -40,7 +40,8 @@ button:hover {
 
 /* Painel de administração usa a tela quase inteira (só esta página) */
 main.admin-page {
-  max-width: 1200px;
+  max-width: min(1600px, 95vw);
+  width: 100%;
 }
 
 .link-list {
