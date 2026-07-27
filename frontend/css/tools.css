@@ -38,6 +38,11 @@ button:hover {
   max-width: 700px;
 }
 
+/* Painel de administração usa a tela quase inteira (só esta página) */
+main.admin-page {
+  max-width: 1200px;
+}
+
 .link-list {
   list-style: none;
   margin-top: 20px;
