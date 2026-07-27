@@ -49,6 +49,7 @@ function buildNav() {
         ['フレンド・チャット', `${prefix}friends.html`],
         ['イベント', `${prefix}events.html`],
         ['キャンパス', `${prefix}campus.html`],
+        ['タイピングゲーム', `${prefix}typing.html`],
         ['マイプロフィール', `${prefix}profile.html`],
         ['サイト紹介', `${rootPrefix}intro.html`]
       ]

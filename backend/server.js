@@ -72,6 +72,9 @@ app.use('/api/search', searchRoutes);
 const reportsRoutes = require('./modules/reports/reportsRoutes');
 app.use('/api/reports', reportsRoutes);
 
+const typingRoutes = require('./modules/typing/typingRoutes');
+app.use('/api/typing', typingRoutes);
+
 // --- Socket.io: autenticação da conexão via token JWT ---
 io.use(async (socket, next) => {
   const token = socket.handshake.auth?.token;

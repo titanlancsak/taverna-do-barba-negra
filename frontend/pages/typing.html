@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>タイピングゲーム - Blackbeard Tavern</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/tools.css">
+</head>
+<body>
+  <header>
+    <h1></h1>
+  </header>
+
+  <main class="typing-page">
+    <h2>タイピングゲーム</h2>
+
+    <div class="typing-controls">
+      <label>言語
+        <select id="typing-language"></select>
+      </label>
+      <label>カテゴリ
+        <select id="typing-category"></select>
+      </label>
+      <label class="typing-daily-toggle">
+        <input type="checkbox" id="typing-daily-check"> デイリーチャレンジ
+      </label>
+      <button id="typing-new-btn">新しい文</button>
+    </div>
+
+    <div class="typing-stats">
+      <div class="typing-stat"><span class="typing-stat-value" id="stat-wpm">0</span><span class="typing-stat-label">WPM</span></div>
+      <div class="typing-stat"><span class="typing-stat-value" id="stat-acc">100%</span><span class="typing-stat-label">精度</span></div>
+      <div class="typing-stat"><span class="typing-stat-value" id="stat-err">0</span><span class="typing-stat-label">ミス</span></div>
+      <div class="typing-stat"><span class="typing-stat-value" id="stat-time">0.0s</span><span class="typing-stat-label">時間</span></div>
+    </div>
+
+    <div id="typing-text" class="typing-text" tabindex="0">ここをクリックして「新しい文」を押すと開始します。</div>
+    <input id="typing-input" class="typing-hidden-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+    <p id="typing-result" class="typing-result"></p>
+
+    <div class="typing-tabs">
+      <button class="typing-tab active" data-tab="ranking">ランキング</button>
+      <button class="typing-tab" data-tab="history">履歴</button>
+      <button class="typing-tab" data-tab="daily">デイリー</button>
+      <button class="typing-tab" data-tab="achievements">実績</button>
+    </div>
+
+    <div class="typing-panel" id="panel-ranking">
+      <div class="typing-panel-controls">
+        <label>カテゴリ
+          <select id="ranking-category-filter"></select>
+        </label>
+      </div>
+      <div id="ranking-list"><p>読み込み中...</p></div>
+    </div>
+
+    <div class="typing-panel" id="panel-history" hidden>
+      <div id="history-list"><p>読み込み中...</p></div>
+    </div>
+
+    <div class="typing-panel" id="panel-daily" hidden>
+      <p id="daily-info"></p>
+      <div id="daily-list"><p>読み込み中...</p></div>
+    </div>
+
+    <div class="typing-panel" id="panel-achievements" hidden>
+      <div id="achievements-grid"><p>読み込み中...</p></div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Blackbeard Tavern</p>
+  </footer>
+
+  <script src="../js/session.js"></script>
+  <script src="../js/typing-data.js"></script>
+  <script src="../js/typing.js"></script>
+</body>
+</html>
