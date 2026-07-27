@@ -1424,3 +1424,179 @@ main.admin-page {
 .status-gauge-fill.ok { background-color: #4caf50; }
 .status-gauge-fill.warn { background-color: #d4a017; }
 .status-gauge-fill.critical { background-color: #d64545; }
+
+/* ===== 通報ボタン（フィード） ===== */
+.report-btn {
+  background: none;
+  border: none;
+  color: #b8a894;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  transition: background-color 0.2s, color 0.2s;
+}
+.report-btn:hover {
+  background-color: #5a1e1e;
+  color: #f5d6d6;
+}
+.report-btn-sm {
+  font-size: 12px;
+  padding: 2px 6px;
+  margin-left: 6px;
+}
+
+/* ===== 通報モーダル ===== */
+.report-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+}
+.report-modal {
+  background-color: #2c1e12;
+  border: 1px solid #b8860b;
+  border-radius: 12px;
+  padding: 22px;
+  width: 100%;
+  max-width: 380px;
+  text-align: left;
+}
+.report-modal h3 {
+  margin: 0 0 4px;
+  color: #f5f0e6;
+}
+.report-modal-sub {
+  margin: 0 0 14px;
+  font-size: 13px;
+  color: #c9b48f;
+}
+.report-reasons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.report-reason {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background-color: #23180f;
+  border: 1px solid #3a2c1e;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #f5f0e6;
+  font-size: 14px;
+}
+.report-reason input { width: auto; margin: 0; }
+.report-modal textarea {
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #23180f;
+  border: 1px solid #3a2c1e;
+  border-radius: 8px;
+  color: #f5f0e6;
+  padding: 10px;
+  font-size: 14px;
+  resize: vertical;
+}
+.report-modal-msg {
+  min-height: 18px;
+  margin: 10px 0 0;
+  font-size: 13px;
+  color: #f5d76e;
+}
+.report-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 14px;
+}
+.report-cancel-btn {
+  background-color: #3a2c1e;
+  color: #f5f0e6;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 18px;
+  cursor: pointer;
+  font-weight: bold;
+}
+.report-cancel-btn:hover { background-color: #4a3a2a; }
+.report-send-btn {
+  background-color: #b8860b;
+  color: #1b1b1b;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 18px;
+  cursor: pointer;
+  font-weight: bold;
+}
+.report-send-btn:hover { background-color: #d4a017; }
+.report-send-btn:disabled { opacity: 0.6; cursor: default; }
+
+/* ===== 通報モデレーション（管理パネル） ===== */
+#reports-section { margin-bottom: 32px; }
+.report-row {
+  background-color: #23180f;
+  border: 1px solid #3a2c1e;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  text-align: left;
+}
+.report-row.report-status-pending { border-left: 4px solid #d4a017; }
+.report-row.report-status-resolved { opacity: 0.7; }
+.report-row.report-status-dismissed { opacity: 0.6; }
+.report-row-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.report-reason-badge,
+.report-target-badge,
+.report-status-badge {
+  font-size: 11px;
+  padding: 2px 9px;
+  border-radius: 10px;
+  font-weight: bold;
+}
+.report-reason-badge { background-color: #5a1e1e; color: #f5d6d6; }
+.report-reason-badge.reason-spam { background-color: #4a3a1e; color: #f5e6b8; }
+.report-reason-badge.reason-other { background-color: #2e3a4a; color: #cfe0f5; }
+.report-target-badge { background-color: #3a2c1e; color: #c9b48f; }
+.report-status-badge.s-pending { background-color: #b8860b; color: #1b1b1b; }
+.report-status-badge.s-resolved { background-color: #2e5d2e; color: #dfeedf; }
+.report-status-badge.s-dismissed { background-color: #444; color: #ddd; }
+.report-date { font-size: 11px; color: #8a7a68; margin-left: auto; }
+.report-content {
+  background-color: #1b1b1b;
+  border-radius: 8px;
+  padding: 10px;
+  color: #f5f0e6;
+  font-size: 14px;
+  margin-bottom: 8px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.report-meta { font-size: 12px; color: #a89268; }
+.report-desc { font-size: 13px; color: #c9b48f; margin-top: 6px; }
+.report-actions-row { display: flex; gap: 10px; margin-top: 12px; }
+.report-action-btn {
+  border: none;
+  border-radius: 20px;
+  padding: 7px 16px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: bold;
+}
+.report-action-btn.resolve { background-color: #2e5d2e; color: #dfeedf; }
+.report-action-btn.resolve:hover { background-color: #3a743a; }
+.report-action-btn.dismiss { background-color: #3a2c1e; color: #f5f0e6; }
+.report-action-btn.dismiss:hover { background-color: #4a3a2a; }

@@ -102,6 +102,100 @@ async function setBan(id, ban) {
 
 loadUsers();
 
+// ===== 通報モデレーション =====
+const reportsList = document.getElementById('reports-list');
+const reportsStatus = document.getElementById('reports-status');
+const reportsRefreshBtn = document.getElementById('reports-refresh');
+
+const REASON_LABELS = {
+  spam: 'スパム',
+  offense: '攻撃的な内容',
+  inappropriate: '不適切なコンテンツ',
+  other: 'その他'
+};
+const STATUS_LABELS = {
+  pending: '未対応',
+  resolved: '対応済み',
+  dismissed: '却下'
+};
+const TARGET_LABELS = { post: '投稿', comment: 'コメント' };
+
+async function loadReports() {
+  try {
+    const res = await fetch(`${API_BASE}/api/reports`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || '読み込みに失敗しました');
+
+    if (!data.reports.length) {
+      reportsList.innerHTML = '<p>通報はありません。</p>';
+      return;
+    }
+
+    reportsList.innerHTML = data.reports.map(renderReport).join('');
+    reportsList.querySelectorAll('.report-action-btn').forEach((btn) => {
+      btn.addEventListener('click', () => actOnReport(btn.dataset.id, btn.dataset.action));
+    });
+  } catch (err) {
+    reportsList.innerHTML = `<p>${escapeHtml(err.message)}</p>`;
+  }
+}
+
+function renderReport(r) {
+  const reason = REASON_LABELS[r.reason] || r.reason;
+  const statusLabel = STATUS_LABELS[r.status] || r.status;
+  const targetLabel = TARGET_LABELS[r.target_type] || r.target_type;
+
+  const content = r.target_content != null
+    ? escapeHtml(r.target_content).slice(0, 200)
+    : '<em>（削除済み）</em>';
+  const author = r.target_author_name
+    ? `${escapeHtml(r.target_author_name)} (${escapeHtml(r.target_author_email || '')})`
+    : '—';
+
+  const actions = r.status === 'pending'
+    ? `<div class="report-actions-row">
+         <button class="report-action-btn resolve" data-id="${r.id}" data-action="resolve">対応済みにする</button>
+         <button class="report-action-btn dismiss" data-id="${r.id}" data-action="dismiss">却下</button>
+       </div>`
+    : '';
+
+  return `
+    <div class="report-row report-status-${r.status}">
+      <div class="report-row-head">
+        <span class="report-reason-badge reason-${r.reason}">${reason}</span>
+        <span class="report-target-badge">${targetLabel}</span>
+        <span class="report-status-badge s-${r.status}">${statusLabel}</span>
+        <span class="report-date">${formatDate(r.created_at)}</span>
+      </div>
+      <div class="report-content">${content}</div>
+      <div class="report-meta">投稿者: ${author}</div>
+      <div class="report-meta">通報者: ${escapeHtml(r.reporter_name || '匿名')} (${escapeHtml(r.reporter_email || '')})</div>
+      ${r.description ? `<div class="report-desc">詳細: ${escapeHtml(r.description)}</div>` : ''}
+      ${actions}
+    </div>
+  `;
+}
+
+async function actOnReport(id, action) {
+  try {
+    const res = await fetch(`${API_BASE}/api/reports/${id}/${action}`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || '操作に失敗しました');
+    reportsStatus.textContent = data.message;
+    loadReports();
+  } catch (err) {
+    reportsStatus.textContent = err.message;
+  }
+}
+
+if (reportsRefreshBtn) reportsRefreshBtn.addEventListener('click', loadReports);
+loadReports();
+
 // ===== ステータスページ（サーバー監視） =====
 const statusGrid = document.getElementById('status-grid');
 const statusUpdated = document.getElementById('status-updated');

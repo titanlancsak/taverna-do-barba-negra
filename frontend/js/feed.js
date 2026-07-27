@@ -77,6 +77,7 @@ function renderPost(post) {
           <span class="comment-count">${post.comment_count}</span> コメント
         </button>
         ${currentUser && (currentUser.id === post.author_id || IS_ADMIN) ? `<button class="post-delete-btn" data-post-id="${post.id}">${DELETE_ICON} 削除</button>` : ''}
+        ${currentUser && currentUser.id !== post.author_id ? `<button class="report-btn" data-report-type="post" data-report-id="${post.id}" title="通報">🚩 通報</button>` : ''}
       </div>
       <div class="comments-box" data-post-id="${post.id}">
         <div class="comments-list"></div>
@@ -175,6 +176,84 @@ function attachPostListeners() {
   document.querySelectorAll('.post-delete-btn').forEach(btn => {
     btn.addEventListener('click', () => handleDeletePost(btn.dataset.postId));
   });
+
+  document.querySelectorAll('.post-actions .report-btn').forEach(btn => {
+    btn.addEventListener('click', () => openReportModal(btn.dataset.reportType, btn.dataset.reportId));
+  });
+}
+
+// ===== Sistema de Denúncias (通報) =====
+const REPORT_REASONS = [
+  { value: 'spam', label: 'スパム' },              // Spam
+  { value: 'offense', label: '攻撃的な内容' },      // Ofensa
+  { value: 'inappropriate', label: '不適切なコンテンツ' }, // Conteúdo impróprio
+  { value: 'other', label: 'その他' }              // Outro
+];
+
+function openReportModal(targetType, targetId) {
+  if (!token) {
+    window.location.href = 'pages/login.html';
+    return;
+  }
+  // Evita empilhar modais
+  document.getElementById('report-modal')?.remove();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'report-modal';
+  overlay.className = 'report-modal-overlay';
+  overlay.innerHTML = `
+    <div class="report-modal">
+      <h3>通報</h3>
+      <p class="report-modal-sub">理由を選択してください。</p>
+      <div class="report-reasons">
+        ${REPORT_REASONS.map((r, i) => `
+          <label class="report-reason">
+            <input type="radio" name="report-reason" value="${r.value}" ${i === 0 ? 'checked' : ''}>
+            <span>${r.label}</span>
+          </label>`).join('')}
+      </div>
+      <textarea id="report-description" maxlength="500" rows="3" placeholder="詳細（任意）"></textarea>
+      <p class="report-modal-msg" id="report-modal-msg"></p>
+      <div class="report-modal-actions">
+        <button type="button" class="report-cancel-btn">キャンセル</button>
+        <button type="button" class="report-send-btn">送信</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  const close = () => overlay.remove();
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+  overlay.querySelector('.report-cancel-btn').addEventListener('click', close);
+  overlay.querySelector('.report-send-btn').addEventListener('click', () => submitReport(targetType, targetId, overlay));
+}
+
+async function submitReport(targetType, targetId, overlay) {
+  const reason = overlay.querySelector('input[name="report-reason"]:checked')?.value;
+  const description = overlay.querySelector('#report-description').value.trim();
+  const msg = overlay.querySelector('#report-modal-msg');
+  const sendBtn = overlay.querySelector('.report-send-btn');
+  sendBtn.disabled = true;
+  msg.textContent = '送信中...';
+
+  try {
+    const response = await fetch(`${API_BASE}/api/reports`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ targetType, targetId: parseInt(targetId, 10), reason, description })
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || '通報の送信に失敗しました');
+
+    msg.textContent = data.message;
+    setTimeout(() => overlay.remove(), 1500);
+  } catch (err) {
+    msg.textContent = err.message;
+    sendBtn.disabled = false;
+  }
 }
 
 async function handleDeletePost(postId) {
@@ -258,11 +337,16 @@ async function loadComments(postId) {
       <div class="comment-item" data-comment-id="${c.id}">
         <span class="comment-author">${escapeHtml(c.author_name)}</span>: ${escapeHtml(c.content)}
         ${currentUser && (currentUser.id === c.user_id || IS_ADMIN) ? `<button class="comment-delete-btn" data-comment-id="${c.id}" data-post-id="${postId}">✕</button>` : ''}
+        ${currentUser && currentUser.id !== c.user_id ? `<button class="report-btn report-btn-sm" data-report-type="comment" data-report-id="${c.id}" title="通報">🚩</button>` : ''}
       </div>
     `).join('');
 
     list.querySelectorAll('.comment-delete-btn').forEach(btn => {
       btn.addEventListener('click', () => handleDeleteComment(btn.dataset.commentId, btn.dataset.postId));
+    });
+
+    list.querySelectorAll('.report-btn').forEach(btn => {
+      btn.addEventListener('click', () => openReportModal(btn.dataset.reportType, btn.dataset.reportId));
     });
   } catch (err) {
     list.innerHTML = '<p>コメントの読み込みに失敗しました。</p>';
