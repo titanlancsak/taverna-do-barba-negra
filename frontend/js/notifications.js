@@ -102,10 +102,10 @@ function initNotifications() {
       case 'friend_accept':
         return `${pagePrefix}friends.html`;
       case 'group_invite':
-        return `${pagePrefix}groups.html`;
+        return `${pagePrefix}friends.html?groupId=${encodeURIComponent(ref)}`;
       case 'message':
-        // chat.js auto-abre a conversa quando recebe userId + name
-        return `${pagePrefix}chat.html?userId=${encodeURIComponent(ref)}&name=${encodeURIComponent(actorName || '')}`;
+        // friends.js auto-abre a conversa quando recebe userId + name
+        return `${pagePrefix}friends.html?userId=${encodeURIComponent(ref)}&name=${encodeURIComponent(actorName || '')}`;
       default:
         return null;
     }

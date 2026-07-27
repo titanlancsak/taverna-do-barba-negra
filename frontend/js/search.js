@@ -40,13 +40,13 @@
   function render(data) {
     let html = '';
     html += section('ユーザー', (data.users || []).map((u) =>
-      item(`${pagePrefix}chat.html?userId=${u.id}&name=${encodeURIComponent(u.display_name)}`, u.display_name)));
+      item(`${pagePrefix}friends.html?userId=${u.id}&name=${encodeURIComponent(u.display_name)}`, u.display_name)));
     html += section('投稿', (data.posts || []).map((p) =>
       item(`${rootPrefix}index.html`, snippet(p.content), p.author_name)));
     html += section('イベント', (data.events || []).map((e) =>
       item(`${pagePrefix}events.html`, e.name, e.event_date)));
     html += section('グループ', (data.groups || []).map((g) =>
-      item(`${pagePrefix}groups.html`, g.name)));
+      item(`${pagePrefix}friends.html?groupId=${g.id}`, g.name)));
 
     resultsEl.innerHTML = html || '<div class="gs-empty">結果がありません</div>';
     resultsEl.style.display = 'block';

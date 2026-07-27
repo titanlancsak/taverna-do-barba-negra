@@ -1,7 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
-const { updateProfile, uploadProfilePicture } = require('./profileController');
+const { updateProfile, uploadProfilePicture, deleteProfilePicture } = require('./profileController');
 const { requireAuth } = require('../../middleware/authMiddleware');
 const { heavyLimiter } = require('../../middleware/rateLimiters');
 
@@ -14,5 +14,6 @@ const upload = multer({
 
 router.put('/', requireAuth, updateProfile);
 router.post('/picture', requireAuth, heavyLimiter, upload.single('picture'), uploadProfilePicture);
+router.delete('/picture', requireAuth, deleteProfilePicture);
 
 module.exports = router;

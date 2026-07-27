@@ -11,6 +11,8 @@ const statusMessage = document.getElementById('status-message');
 const profilePreview = document.getElementById('profile-preview');
 const pictureInput = document.getElementById('picture-input');
 const uploadBtn = document.getElementById('upload-picture-btn');
+const removePictureBtn = document.getElementById('remove-picture-btn');
+const DEFAULT_PICTURE = '../assets/profile-pictures/default.png';
 
 async function loadProfile() {
   try {
@@ -100,6 +102,31 @@ uploadBtn.addEventListener('click', async () => {
 
     profilePreview.src = `..${data.profilePictureUrl}`;
     statusMessage.textContent = 'プロフィール写真を更新しました！';
+  } catch (err) {
+    statusMessage.textContent = err.message;
+  }
+});
+
+removePictureBtn.addEventListener('click', async () => {
+  if (!confirm('プロフィール写真を削除しますか？')) return;
+
+  statusMessage.textContent = '写真を削除中...';
+
+  try {
+    const response = await fetch(`${API_BASE}/api/profile/picture`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || '写真の削除に失敗しました');
+    }
+
+    profilePreview.src = DEFAULT_PICTURE;
+    pictureInput.value = '';
+    statusMessage.textContent = 'プロフィール写真を削除しました。';
   } catch (err) {
     statusMessage.textContent = err.message;
   }

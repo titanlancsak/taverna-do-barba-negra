@@ -12,14 +12,17 @@
     <h1></h1>
   </header>
 
-  <main>
+  <main class="profile-page">
     <h2>マイプロフィール</h2>
 
     <div id="profile-picture-section">
       <img id="profile-preview" src="../assets/profile-pictures/default.png" alt="プロフィール写真" width="120" height="120" style="border-radius: 50%; object-fit: cover;">
       <label for="picture-input">Picture Input</label>
       <input type="file" id="picture-input" accept="image/png, image/jpeg, image/webp">
-      <button id="upload-picture-btn">写真をアップロード</button>
+      <div id="picture-buttons">
+        <button id="upload-picture-btn">写真をアップロード</button>
+        <button id="remove-picture-btn" type="button">写真を削除</button>
+      </div>
     </div>
 
     <form id="profile-form">

@@ -77,7 +77,13 @@ function renderPost(post) {
           <span class="comment-count">${post.comment_count}</span> コメント
         </button>
         ${currentUser && (currentUser.id === post.author_id || IS_ADMIN) ? `<button class="post-delete-btn" data-post-id="${post.id}">${DELETE_ICON} 削除</button>` : ''}
-        ${currentUser && currentUser.id !== post.author_id ? `<button class="report-btn" data-report-type="post" data-report-id="${post.id}" title="通報">🚩 通報</button>` : ''}
+        ${currentUser && currentUser.id !== post.author_id ? `
+        <div class="kebab-menu">
+          <button class="kebab-btn" aria-label="メニュー">⋯</button>
+          <div class="kebab-dropdown" hidden>
+            <button class="report-btn" data-report-type="post" data-report-id="${post.id}">通報</button>
+          </div>
+        </div>` : ''}
       </div>
       <div class="comments-box" data-post-id="${post.id}">
         <div class="comments-list"></div>
@@ -189,6 +195,16 @@ const REPORT_REASONS = [
   { value: 'inappropriate', label: '不適切なコンテンツ' }, // Conteúdo impróprio
   { value: 'other', label: 'その他' }              // Outro
 ];
+
+// Menu "⋯": abre/fecha o dropdown e fecha ao clicar fora (delegação global, roda 1x)
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('.kebab-btn');
+  const openDropdown = btn ? btn.parentElement.querySelector('.kebab-dropdown') : null;
+  document.querySelectorAll('.kebab-dropdown').forEach((d) => {
+    if (d !== openDropdown) d.hidden = true;
+  });
+  if (openDropdown) openDropdown.hidden = !openDropdown.hidden;
+});
 
 function openReportModal(targetType, targetId) {
   if (!token) {
@@ -337,7 +353,13 @@ async function loadComments(postId) {
       <div class="comment-item" data-comment-id="${c.id}">
         <span class="comment-author">${escapeHtml(c.author_name)}</span>: ${escapeHtml(c.content)}
         ${currentUser && (currentUser.id === c.user_id || IS_ADMIN) ? `<button class="comment-delete-btn" data-comment-id="${c.id}" data-post-id="${postId}">✕</button>` : ''}
-        ${currentUser && currentUser.id !== c.user_id ? `<button class="report-btn report-btn-sm" data-report-type="comment" data-report-id="${c.id}" title="通報">🚩</button>` : ''}
+        ${currentUser && currentUser.id !== c.user_id ? `
+        <div class="kebab-menu">
+          <button class="kebab-btn kebab-btn-sm" aria-label="メニュー">⋯</button>
+          <div class="kebab-dropdown" hidden>
+            <button class="report-btn" data-report-type="comment" data-report-id="${c.id}">通報</button>
+          </div>
+        </div>` : ''}
       </div>
     `).join('');
 

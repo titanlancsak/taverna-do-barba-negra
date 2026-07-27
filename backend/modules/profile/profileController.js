@@ -88,4 +88,27 @@ async function uploadProfilePicture(req, res) {
   }
 }
 
-module.exports = { updateProfile, uploadProfilePicture };
+async function deleteProfilePicture(req, res) {
+  try {
+    const userId = req.user.userId;
+
+    const result = await pool.query('SELECT profile_picture_url FROM users WHERE id = $1', [userId]);
+    const picUrl = result.rows[0]?.profile_picture_url;
+
+    if (picUrl) {
+      const filePath = path.join(PROFILE_PICS_DIR, path.basename(picUrl));
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    }
+
+    await pool.query('UPDATE users SET profile_picture_url = NULL, updated_at = NOW() WHERE id = $1', [userId]);
+
+    res.json({ message: 'プロフィール写真を削除しました' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'プロフィール写真の削除に失敗しました' });
+  }
+}
+
+module.exports = { updateProfile, uploadProfilePicture, deleteProfilePicture };

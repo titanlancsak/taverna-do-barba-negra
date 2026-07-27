@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,26 +12,85 @@
     <h1></h1>
   </header>
 
-  <main class="content-list">
-    <h2>フレンド</h2>
+  <main class="friends-page">
+    <div class="friends-layout">
+      <!-- Coluna esquerda: amigos -->
+      <aside class="friends-sidebar">
+        <h2>フレンド</h2>
 
-    <div id="add-friend-box">
-      <input type="email" id="add-friend-email" placeholder="学校のメールでフレンド追加">
-      <button id="add-friend-btn">リクエストを送る</button>
-      <p id="add-friend-status"></p>
+        <div id="add-friend-box">
+          <input type="email" id="add-friend-email" placeholder="学校のメールでフレンド追加">
+          <button id="add-friend-btn">リクエストを送る</button>
+          <p id="add-friend-status"></p>
+        </div>
+
+        <h3>保留中のリクエスト</h3>
+        <div id="pending-requests-list"><p>読み込み中...</p></div>
+
+        <h3>マイフレンド</h3>
+        <div id="friends-list"><p>読み込み中...</p></div>
+      </aside>
+
+      <!-- Coluna direita: conversas e grupos -->
+      <section class="friends-main">
+        <h3>グループ</h3>
+        <div id="groups-list"><p>読み込み中...</p></div>
+
+        <h3>会話</h3>
+        <div id="conversations-list"><p>読み込み中...</p></div>
+      </section>
     </div>
-
-    <h3>保留中のリクエスト</h3>
-    <div id="pending-requests-list"><p>読み込み中...</p></div>
-
-    <h3>マイフレンド</h3>
-    <div id="friends-list"><p>読み込み中...</p></div>
   </main>
+
+  <!-- Janela de chat flutuante e arrastável (1-a-1 e grupo) -->
+  <div id="chat-widget" style="display:none;">
+    <div id="chat-widget-header">
+      <img id="chat-widget-avatar" src="" alt="">
+      <span id="chat-widget-name"></span>
+      <button id="chat-widget-invite-btn" title="招待して会話する">＋</button>
+      <button id="chat-widget-members-btn" title="メンバーを見る">👥</button>
+      <button id="chat-widget-close" title="閉じる">✕</button>
+    </div>
+    <div id="chat-widget-messages"></div>
+    <div id="chat-widget-input-box">
+      <label for="chat-widget-media-input" id="chat-widget-attach-btn">📎</label>
+      <input type="file" id="chat-widget-media-input" accept="image/*,video/*">
+      <input type="text" id="chat-widget-input" placeholder="メッセージを入力...">
+      <button id="chat-widget-send">➤</button>
+    </div>
+  </div>
+
+  <!-- Modal de convite: transforma conversa em grupo / adiciona membros -->
+  <div id="invite-modal" style="display:none;">
+    <div id="invite-modal-content">
+      <h3>招待して会話する</h3>
+      <div id="invite-group-name-row">
+        <input type="text" id="invite-group-name" placeholder="グループ名" maxlength="100">
+      </div>
+      <div id="invite-friends-list"></div>
+      <p id="invite-status"></p>
+      <div class="invite-modal-actions">
+        <button id="invite-cancel-btn">キャンセル</button>
+        <button id="invite-confirm-btn">招待</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de membros do grupo -->
+  <div id="members-modal" style="display:none;">
+    <div id="members-modal-content">
+      <h3>グループメンバー</h3>
+      <div id="members-list"></div>
+      <div id="members-actions"></div>
+      <button id="members-modal-close">閉じる</button>
+    </div>
+  </div>
 
   <footer>
     <p>&copy; 2026 Blackbeard Tavern</p>
   </footer>
 
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
   <script src="../js/session.js"></script>
   <script src="../js/friends.js"></script>
 </body>

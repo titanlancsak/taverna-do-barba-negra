@@ -1425,26 +1425,47 @@ main.admin-page {
 .status-gauge-fill.warn { background-color: #d4a017; }
 .status-gauge-fill.critical { background-color: #d64545; }
 
-/* ===== 通報ボタン（フィード） ===== */
-.report-btn {
+/* ===== メニュー「⋯」＋ 通報（フィード） ===== */
+.kebab-menu { position: relative; display: inline-block; }
+.kebab-btn {
   background: none;
   border: none;
   color: #b8a894;
   cursor: pointer;
-  font-size: 13px;
-  padding: 6px 12px;
+  font-size: 18px;
+  line-height: 1;
+  padding: 4px 10px;
   border-radius: 20px;
   transition: background-color 0.2s, color 0.2s;
 }
-.report-btn:hover {
-  background-color: #5a1e1e;
-  color: #f5d6d6;
+.kebab-btn:hover { background-color: #3a2c1e; color: #f5f0e6; }
+.kebab-btn-sm { font-size: 15px; padding: 0 6px; margin-left: 4px; }
+.kebab-dropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin-top: 4px;
+  background-color: #2c1e12;
+  border: 1px solid #3a2c1e;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  z-index: 50;
+  min-width: 120px;
+  overflow: hidden;
 }
-.report-btn-sm {
-  font-size: 12px;
-  padding: 2px 6px;
-  margin-left: 6px;
+.kebab-dropdown[hidden] { display: none; }
+.report-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  color: #f5f0e6;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 10px 14px;
 }
+.report-btn:hover { background-color: #5a1e1e; color: #f5d6d6; }
 
 /* ===== 通報モーダル ===== */
 .report-modal-overlay {
@@ -1600,3 +1621,156 @@ main.admin-page {
 .report-action-btn.resolve:hover { background-color: #3a743a; }
 .report-action-btn.dismiss { background-color: #3a2c1e; color: #f5f0e6; }
 .report-action-btn.dismiss:hover { background-color: #4a3a2a; }
+
+/* ===== マイプロフィール（このページのみ幅を広く） ===== */
+main.profile-page {
+  max-width: min(1000px, 92vw);
+  width: 100%;
+}
+#picture-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+#remove-picture-btn {
+  background-color: #5a1e1e;
+  color: #f5d6d6;
+}
+#remove-picture-btn:hover {
+  background-color: #7a2626;
+}
+
+/* Empurra o menu ⋯ para a direita na barra de ações do post */
+.post-actions .kebab-menu { margin-left: auto; }
+
+/* ===== フレンド統合ページ（friends + groups + chat） ===== */
+main.friends-page {
+  max-width: min(1200px, 95vw);
+  width: 100%;
+}
+.friends-layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+.friends-sidebar {
+  flex: 0 0 340px;
+  max-width: 340px;
+}
+.friends-main {
+  flex: 1;
+  min-width: 0;
+}
+.friends-sidebar h2 { margin-bottom: 12px; }
+.friends-sidebar h3, .friends-main h3 {
+  margin: 18px 0 8px;
+  color: #d4a017;
+  font-size: 15px;
+}
+.friend-card { cursor: default; }
+
+@media (max-width: 760px) {
+  .friends-layout { flex-direction: column; }
+  .friends-sidebar { flex-basis: auto; max-width: none; width: 100%; }
+  .friends-main { width: 100%; }
+}
+
+/* Header do widget vira "alça" de arraste */
+#chat-widget-header { cursor: grab; user-select: none; }
+#chat-widget-header button { cursor: pointer; }
+
+/* Botão "＋" de convite no header do widget */
+#chat-widget-invite-btn {
+  background: none;
+  border: none;
+  color: #b8a894;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+}
+#chat-widget-invite-btn:hover { background-color: #3a2c1e; color: #f5f0e6; }
+
+/* Nome do remetente nas mensagens de grupo */
+.widget-msg-sender {
+  font-size: 10px;
+  color: #d4a017;
+  margin-bottom: 2px;
+}
+
+/* Modal de convite */
+#invite-modal {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+#invite-modal-content {
+  background-color: #23180f;
+  border: 1px solid #b8860b;
+  border-radius: 14px;
+  padding: 20px;
+  width: 320px;
+  max-height: 460px;
+  display: flex;
+  flex-direction: column;
+}
+#invite-modal-content h3 { color: #d4a017; margin-bottom: 12px; }
+#invite-group-name-row { margin-bottom: 12px; }
+#invite-group-name {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #3a2c1e;
+  background-color: #1b1b1b;
+  color: #f5f0e6;
+}
+#invite-friends-list {
+  overflow-y: auto;
+  flex: 1;
+  margin-bottom: 10px;
+}
+.invite-friend-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background-color: #2c1e12;
+  border: 1px solid #3a2c1e;
+  border-radius: 8px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  color: #f5f0e6;
+  font-size: 14px;
+}
+.invite-friend-check input { width: auto; }
+#invite-status { min-height: 18px; font-size: 13px; color: #f5d76e; margin: 4px 0; }
+.invite-modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+#invite-cancel-btn {
+  background-color: #3a2c1e;
+  color: #f5f0e6;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-weight: bold;
+}
+#invite-cancel-btn:hover { background-color: #4a3a2a; }
+#invite-confirm-btn {
+  background-color: #b8860b;
+  color: #1b1b1b;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-weight: bold;
+}
+#invite-confirm-btn:hover { background-color: #d4a017; }
+#invite-confirm-btn:disabled { opacity: 0.6; cursor: default; }

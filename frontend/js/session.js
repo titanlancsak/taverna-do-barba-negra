@@ -46,9 +46,7 @@ function buildNav() {
   const snsItems = token && user
     ? [
         ['ホーム', `${rootPrefix}index.html`],
-        ['フレンド', `${prefix}friends.html`],
-        ['チャット', `${prefix}chat.html`],
-        ['グループ', `${prefix}groups.html`],
+        ['フレンド・チャット', `${prefix}friends.html`],
         ['イベント', `${prefix}events.html`],
         ['キャンパス', `${prefix}campus.html`],
         ['マイプロフィール', `${prefix}profile.html`],
