@@ -12,7 +12,6 @@ if (!token) {
 
 const nameInput = document.getElementById('event-name-input');
 const dateInput = document.getElementById('event-date-input');
-const timeInput = document.getElementById('event-time-input');
 const locationInput = document.getElementById('event-location-input');
 const descriptionInput = document.getElementById('event-description-input');
 const photoInput = document.getElementById('event-photo-input');
@@ -169,7 +168,6 @@ submitBtn.addEventListener('click', async () => {
   const formData = new FormData();
   formData.append('name', name);
   formData.append('date', date);
-  if (timeInput.value) formData.append('time', timeInput.value);
   if (locationInput.value.trim()) formData.append('location', locationInput.value.trim());
   if (descriptionInput.value.trim()) formData.append('description', descriptionInput.value.trim());
   if (photoInput.files[0]) formData.append('photo', photoInput.files[0]);
@@ -185,7 +183,6 @@ submitBtn.addEventListener('click', async () => {
 
     nameInput.value = '';
     dateInput.value = '';
-    timeInput.value = '';
     locationInput.value = '';
     descriptionInput.value = '';
     photoInput.value = '';
