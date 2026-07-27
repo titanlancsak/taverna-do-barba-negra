@@ -1829,3 +1829,15 @@ main.friends-page {
 }
 #chat-widget-attach-btn { color: #b8a894; }
 #chat-widget-attach-btn:hover { color: #d4a017; }
+
+/* Aumenta os botões/ícones de convidar e fechar no header do widget */
+#chat-widget-invite-btn,
+#chat-widget-close {
+  width: 32px;
+  height: 32px;
+}
+#chat-widget-invite-btn .cw-ico,
+#chat-widget-close .cw-ico {
+  width: 22px;
+  height: 22px;
+}
