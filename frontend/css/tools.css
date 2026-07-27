@@ -1130,6 +1130,14 @@ main.admin-page {
   flex: 1;
 }
 
+.event-time-label {
+  display: flex;
+  align-items: center;
+  color: #c9b48f;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
 .event-form-actions {
   display: flex;
   justify-content: space-between;
