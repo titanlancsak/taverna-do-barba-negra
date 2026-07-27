@@ -155,8 +155,8 @@ async function loadFriends() {
           <div class="friend-name">${escapeHtml(f.display_name)}</div>
           ${f.course ? `<div class="friend-course">${escapeHtml(f.course)}</div>` : ''}
         </div>
-        <button class="chat-with-friend-btn" data-id="${f.id}" data-name="${escapeHtml(f.display_name)}" data-pic="${f.profile_picture_url || ''}">チャット</button>
-        <button class="remove-friend-btn" data-id="${f.id}">削除</button>
+        <button class="chat-with-friend-btn" data-id="${f.id}" data-name="${escapeHtml(f.display_name)}" data-pic="${f.profile_picture_url || ''}" title="チャット" aria-label="チャット"><img class="friend-action-icon" src="../assets/icons/comment-empty.svg" alt="チャット"></button>
+        <button class="remove-friend-btn" data-id="${f.id}" title="削除" aria-label="削除">${DELETE_ICON}</button>
       </div>
     `).join('');
 

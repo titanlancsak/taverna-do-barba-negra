@@ -1774,3 +1774,20 @@ main.friends-page {
 }
 #invite-confirm-btn:hover { background-color: #d4a017; }
 #invite-confirm-btn:disabled { opacity: 0.6; cursor: default; }
+
+/* Botões de ação do amigo agora são ícones (チャット / 削除) */
+.chat-with-friend-btn, .friend-card .remove-friend-btn {
+  background: none;
+  border: none;
+  padding: 6px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #b8a894;
+}
+.chat-with-friend-btn:hover { background-color: #3a2c1e; color: #f5f0e6; }
+.friend-card .remove-friend-btn:hover { background-color: #5a1e1e; color: #f5d6d6; }
+.friend-action-icon { width: 20px; height: 20px; display: block; }
+.friend-card .remove-friend-btn .delete-icon { width: 18px; height: 18px; }
