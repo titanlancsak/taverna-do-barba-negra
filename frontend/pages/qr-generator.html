@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QRコードジェネレーター - Blackbeard Tavern</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/tools.css">
+</head>
+<body>
+  <header>
+    <h1></h1>
+  </header>
+
+  <main>
+    <h2>QRコードジェネレーター</h2>
+    <p>リンクやテキストを貼り付けて QR コードを生成します。</p>
+
+    <form id="qr-form">
+      <label for="qr-input">リンク・テキスト</label>
+      <input type="text" id="qr-input" placeholder="https://example.com" required>
+
+      <label for="ecc-select">誤り訂正レベル:</label>
+      <select id="ecc-select">
+        <option value="L">低 (L)</option>
+        <option value="M" selected>中 (M)</option>
+        <option value="Q">やや高 (Q)</option>
+        <option value="H">高 (H)</option>
+      </select>
+
+      <button type="submit">生成</button>
+    </form>
+
+    <p id="status-message"></p>
+
+    <div id="qr-result" hidden>
+      <img id="qr-image" alt="生成された QR コード">
+      <a id="qr-download" download="qrcode.gif">
+        <button type="button">ダウンロード</button>
+      </a>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Blackbeard Tavern</p>
+  </footer>
+
+  <script src="../js/vendor/qrcode.js"></script>
+  <script src="../js/qr-generator.js"></script>
+  <script src="../js/session.js"></script>
+</body>
+</html>

@@ -34,6 +34,7 @@ function buildNav() {
     ['動画・音声ダウンローダー', `${prefix}video-downloader.html`],
     ['音声コンバーター', `${prefix}audio-converter.html`],
     ['音楽プレーヤー', `${prefix}music-player.html`],
+    ['QRコードジェネレーター', `${prefix}qr-generator.html`],
     ['無料の本', `${prefix}free-books.html`],
     ['Linuxディストロ', `${prefix}linux-distros.html`],
     ['便利なスクリプト', `${prefix}scripts.html`],
