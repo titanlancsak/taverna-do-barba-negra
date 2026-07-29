@@ -1814,6 +1814,7 @@ main.friends-page {
   mask-repeat: no-repeat;
 }
 .cw-ico-plus  { -webkit-mask-image: url(../assets/icons/plus-square.svg); mask-image: url(../assets/icons/plus-square.svg); }
+.cw-ico-group { -webkit-mask-image: url(../assets/icons/group.svg);       mask-image: url(../assets/icons/group.svg); }
 .cw-ico-close { -webkit-mask-image: url(../assets/icons/close.svg);       mask-image: url(../assets/icons/close.svg); }
 .cw-ico-attach{ -webkit-mask-image: url(../assets/icons/attach.svg);      mask-image: url(../assets/icons/attach.svg); }
 .cw-ico-send  { -webkit-mask-image: url(../assets/icons/send.svg);        mask-image: url(../assets/icons/send.svg); width: 18px; height: 18px; }
