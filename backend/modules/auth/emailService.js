@@ -19,4 +19,21 @@ async function sendVerificationEmail(toEmail, token) {
   });
 }
 
-module.exports = { sendVerificationEmail };
+async function sendPasswordResetEmail(toEmail, token) {
+  const resetUrl = `https://blackbeardtavern.me/pages/reset-password.html?token=${token}`;
+
+  await resend.emails.send({
+    from: 'Blackbeard Tavern <noreply@blackbeardtavern.me>',
+    to: toEmail,
+    subject: 'パスワードの再設定 - Blackbeard Tavern',
+    html: `
+      <h2>パスワードの再設定</h2>
+      <p>下のリンクをクリックして、新しいパスワードを設定してください：</p>
+      <a href="${resetUrl}">${resetUrl}</a>
+      <p>このリンクは1時間で期限切れになります。</p>
+      <p>心当たりがない場合は、このメールを無視してください。</p>
+    `
+  });
+}
+
+module.exports = { sendVerificationEmail, sendPasswordResetEmail };

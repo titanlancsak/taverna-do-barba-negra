@@ -2085,3 +2085,53 @@ main.typing-page { max-width: min(900px, 94vw); width: 100%; }
 .explain-examples { margin: 4px 0 0; padding-left: 20px; }
 .explain-examples li { margin: 4px 0; }
 .explain-examples code { color: #c9e0a0; font-family: 'Courier New', monospace; }
+
+/* ===== Links de autenticação (esqueci senha, voltar) ===== */
+.auth-links { margin-top: 16px; font-size: 14px; }
+.auth-links a { color: #d4a017; text-decoration: none; }
+.auth-links a:hover { text-decoration: underline; }
+
+/* ===== Danger zone (exclusão de conta) ===== */
+#danger-zone {
+  margin-top: 40px;
+  padding: 20px;
+  border: 1px solid #7a2626;
+  border-radius: 12px;
+  background-color: #1f1414;
+}
+#danger-zone h3 { margin: 0 0 8px; color: #e06565; font-size: 18px; }
+#danger-zone p { color: #c9b48f; font-size: 13.5px; margin: 6px 0; }
+#delete-account-btn, #delete-confirm-btn {
+  background-color: #7a2626;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-size: 14px;
+}
+#delete-account-btn:hover, #delete-confirm-btn:hover { background-color: #9a2f2f; }
+#delete-confirm-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+#delete-confirm { margin-top: 12px; }
+#delete-password {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  margin: 8px 0;
+  background-color: #1b1b1b;
+  border: 1px solid #3a2c1e;
+  border-radius: 8px;
+  color: #f5f0e6;
+}
+#delete-confirm-actions { display: flex; gap: 10px; }
+#delete-cancel-btn {
+  background-color: #3a2c1e;
+  color: #f5f0e6;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-size: 14px;
+}
+#delete-cancel-btn:hover { background-color: #4a3a2a; }
+#delete-status { color: #e06565; font-weight: bold; min-height: 18px; }

@@ -133,3 +133,61 @@ removePictureBtn.addEventListener('click', async () => {
 });
 
 loadProfile();
+
+// --- Exclusão de conta ---
+const deleteBtn = document.getElementById('delete-account-btn');
+const deleteConfirm = document.getElementById('delete-confirm');
+const deletePassword = document.getElementById('delete-password');
+const deleteCancelBtn = document.getElementById('delete-cancel-btn');
+const deleteConfirmBtn = document.getElementById('delete-confirm-btn');
+const deleteStatus = document.getElementById('delete-status');
+
+deleteBtn.addEventListener('click', () => {
+  deleteConfirm.style.display = 'block';
+  deleteBtn.style.display = 'none';
+  deleteStatus.textContent = '';
+  deletePassword.focus();
+});
+
+deleteCancelBtn.addEventListener('click', () => {
+  deleteConfirm.style.display = 'none';
+  deleteBtn.style.display = 'inline-block';
+  deletePassword.value = '';
+  deleteStatus.textContent = '';
+});
+
+deleteConfirmBtn.addEventListener('click', async () => {
+  const password = deletePassword.value;
+  if (!password) {
+    deleteStatus.textContent = 'パスワードを入力してください。';
+    return;
+  }
+
+  deleteConfirmBtn.disabled = true;
+  deleteStatus.textContent = '削除中...';
+
+  try {
+    const response = await fetch(`${API_BASE}/api/auth/account`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ password })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || '削除に失敗しました');
+    }
+
+    localStorage.removeItem('taverna_token');
+    localStorage.removeItem('taverna_user');
+    deleteStatus.textContent = data.message;
+    setTimeout(() => { window.location.href = 'login.html'; }, 1500);
+  } catch (err) {
+    deleteStatus.textContent = err.message;
+    deleteConfirmBtn.disabled = false;
+  }
+});
