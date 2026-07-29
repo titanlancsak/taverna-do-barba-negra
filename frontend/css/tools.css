@@ -841,7 +841,12 @@ main.admin-page {
   width: 24px;
   height: 24px;
   border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
+#chat-widget-members-btn:hover { color: #d4a017; }
+#chat-widget-members-btn .cw-ico { width: 19px; height: 19px; }
 
 #chat-widget-members-btn:hover {
   background-color: #3a2c1e;
