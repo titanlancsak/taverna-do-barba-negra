@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>サブネット計算機 - Blackbeard Tavern</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/tools.css">
+</head>
+<body>
+  <header>
+    <h1></h1>
+  </header>
+
+  <main class="subnet-page">
+    <h2>サブネット計算機（IPv4 / IPv6）</h2>
+    <p>CIDR・VLSM・ネットワーク／ブロードキャスト・ホスト数・サブネット自動生成に対応。すべてブラウザ内で計算します。</p>
+
+    <div class="sc-tabs">
+      <button class="sc-tab active" data-tab="calc">計算機</button>
+      <button class="sc-tab" data-tab="gen">サブネット分割</button>
+      <button class="sc-tab" data-tab="vlsm">VLSM</button>
+      <button class="sc-tab" data-tab="history">履歴</button>
+    </div>
+
+    <!-- ===== 計算機 ===== -->
+    <section id="panel-calc" class="sc-panel active">
+      <form id="calc-form">
+        <label for="calc-ip">IP アドレス（IPv4 / IPv6、CIDR 付きも可）</label>
+        <input type="text" id="calc-ip" placeholder="例: 192.168.1.10/24 または 2001:db8::1" required>
+
+        <label for="calc-prefix">プレフィックス（CIDR）— IP に /xx が無い場合に使用</label>
+        <input type="number" id="calc-prefix" min="0" max="128" value="24">
+
+        <button type="submit">計算する</button>
+      </form>
+      <p id="calc-status" class="sc-status"></p>
+      <div id="calc-result" class="sc-result" hidden></div>
+    </section>
+
+    <!-- ===== サブネット分割 ===== -->
+    <section id="panel-gen" class="sc-panel">
+      <form id="gen-form">
+        <label for="gen-ip">ベースネットワーク</label>
+        <input type="text" id="gen-ip" placeholder="例: 192.168.0.0/24 または 2001:db8::/48" required>
+
+        <label for="gen-base-prefix">ベースプレフィックス（IP に /xx が無い場合）</label>
+        <input type="number" id="gen-base-prefix" min="0" max="128" value="24">
+
+        <label for="gen-mode">分割方法</label>
+        <select id="gen-mode">
+          <option value="prefix">新しいプレフィックスを指定</option>
+          <option value="count">必要なサブネット数を指定</option>
+        </select>
+
+        <div id="gen-prefix-field">
+          <label for="gen-new-prefix">新しいプレフィックス</label>
+          <input type="number" id="gen-new-prefix" min="0" max="128" value="26">
+        </div>
+
+        <div id="gen-count-field" hidden>
+          <label for="gen-count">必要なサブネット数</label>
+          <input type="number" id="gen-count" min="1" value="4">
+        </div>
+
+        <button type="submit">サブネットを生成</button>
+      </form>
+      <p id="gen-status" class="sc-status"></p>
+      <div id="gen-result" class="sc-result" hidden></div>
+    </section>
+
+    <!-- ===== VLSM ===== -->
+    <section id="panel-vlsm" class="sc-panel">
+      <form id="vlsm-form">
+        <label for="vlsm-ip">ベースネットワーク</label>
+        <input type="text" id="vlsm-ip" placeholder="例: 192.168.0.0/24" required>
+
+        <label for="vlsm-base-prefix">ベースプレフィックス（IP に /xx が無い場合）</label>
+        <input type="number" id="vlsm-base-prefix" min="0" max="128" value="24">
+
+        <label>ホスト要件（大きい順に自動で割り当てます）</label>
+        <div id="vlsm-rows"></div>
+        <button type="button" id="vlsm-add" class="sc-secondary">＋ 要件を追加</button>
+
+        <button type="submit">VLSM を計算</button>
+      </form>
+      <p id="vlsm-status" class="sc-status"></p>
+      <div id="vlsm-result" class="sc-result" hidden></div>
+    </section>
+
+    <!-- ===== 履歴 ===== -->
+    <section id="panel-history" class="sc-panel">
+      <div class="sc-history-head">
+        <h3>計算履歴</h3>
+        <button id="history-clear" class="sc-secondary">履歴を消去</button>
+      </div>
+      <div id="history-list"></div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Blackbeard Tavern</p>
+  </footer>
+
+  <script src="../js/subnet-calculator.js"></script>
+  <script src="../js/session.js"></script>
+</body>
+</html>
