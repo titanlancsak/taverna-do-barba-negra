@@ -108,7 +108,7 @@ uploadBtn.addEventListener('click', async () => {
 });
 
 removePictureBtn.addEventListener('click', async () => {
-  if (!confirm('プロフィール写真を削除しますか？')) return;
+  if (!confirm(window.__i18n ? window.__i18n.t('プロフィール写真を削除しますか？') : 'プロフィール写真を削除しますか？')) return;
 
   statusMessage.textContent = '写真を削除中...';
 

@@ -273,7 +273,7 @@ async function submitReport(targetType, targetId, overlay) {
 }
 
 async function handleDeletePost(postId) {
-  if (!confirm('この投稿を削除しますか？元に戻せません。')) return;
+  if (!confirm(window.__i18n ? window.__i18n.t('この投稿を削除しますか？元に戻せません。') : 'この投稿を削除しますか？元に戻せません。')) return;
 
   try {
     const response = await fetch(`${API_BASE}/api/feed/posts/${postId}`, {
@@ -376,7 +376,7 @@ async function loadComments(postId) {
 }
 
 async function handleDeleteComment(commentId, postId) {
-  if (!confirm('このコメントを削除しますか？')) return;
+  if (!confirm(window.__i18n ? window.__i18n.t('このコメントを削除しますか？') : 'このコメントを削除しますか？')) return;
 
   try {
     const response = await fetch(`${API_BASE}/api/feed/comments/${commentId}`, {

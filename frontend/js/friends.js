@@ -176,7 +176,7 @@ async function loadFriends() {
 }
 
 async function removeFriend(userId) {
-  if (!confirm('このフレンドを削除しますか？')) return;
+  if (!confirm(window.__i18n ? window.__i18n.t('このフレンドを削除しますか？') : 'このフレンドを削除しますか？')) return;
   try {
     await fetch(`${API_BASE}/api/friends/${userId}`, {
       method: 'DELETE',
@@ -248,7 +248,7 @@ async function loadConversations() {
 }
 
 async function deleteConversation(otherUserId, otherUserName) {
-  if (!confirm(`${otherUserName} とのチャットをすべて削除しますか？両方の履歴が消え、元に戻せません。`)) return;
+  if (!confirm(window.__i18n ? window.__i18n.t(`${otherUserName} とのチャットをすべて削除しますか？両方の履歴が消え、元に戻せません。`) : `${otherUserName} とのチャットをすべて削除しますか？両方の履歴が消え、元に戻せません。`)) return;
   try {
     const response = await fetch(`${API_BASE}/api/chat/conversation/${otherUserId}`, {
       method: 'DELETE',
@@ -259,7 +259,7 @@ async function deleteConversation(otherUserId, otherUserName) {
     if (activeChat && activeChat.type === 'dm' && activeChat.id === otherUserId) closeWidget();
     loadConversations();
   } catch (err) {
-    alert(err.message);
+    alert(window.__i18n ? window.__i18n.t(err.message) : err.message);
   }
 }
 
@@ -451,7 +451,7 @@ chatWidgetMediaInput.addEventListener('change', async () => {
     }
     chatWidgetMediaInput.value = '';
   } catch (err) {
-    alert(err.message);
+    alert(window.__i18n ? window.__i18n.t(err.message) : err.message);
   }
 });
 
@@ -585,7 +585,7 @@ chatWidgetMembersBtn.addEventListener('click', async () => {
 });
 
 async function leaveGroup(groupId) {
-  if (!confirm('このグループを退出しますか？再度参加するには招待が必要です。')) return;
+  if (!confirm(window.__i18n ? window.__i18n.t('このグループを退出しますか？再度参加するには招待が必要です。') : 'このグループを退出しますか？再度参加するには招待が必要です。')) return;
   try {
     const response = await fetch(`${API_BASE}/api/groups/${groupId}/leave`, {
       method: 'DELETE',
@@ -595,12 +595,12 @@ async function leaveGroup(groupId) {
     if (!response.ok) throw new Error(data.error || 'グループの退出に失敗しました');
     afterGroupRemoved(groupId);
   } catch (err) {
-    alert(err.message);
+    alert(window.__i18n ? window.__i18n.t(err.message) : err.message);
   }
 }
 
 async function deleteGroup(groupId) {
-  if (!confirm('このグループを全員のために削除しますか？すべてのメッセージが失われ、元に戻せません。')) return;
+  if (!confirm(window.__i18n ? window.__i18n.t('このグループを全員のために削除しますか？すべてのメッセージが失われ、元に戻せません。') : 'このグループを全員のために削除しますか？すべてのメッセージが失われ、元に戻せません。')) return;
   try {
     const response = await fetch(`${API_BASE}/api/groups/${groupId}`, {
       method: 'DELETE',
@@ -610,7 +610,7 @@ async function deleteGroup(groupId) {
     if (!response.ok) throw new Error(data.error || 'グループの削除に失敗しました');
     afterGroupRemoved(groupId);
   } catch (err) {
-    alert(err.message);
+    alert(window.__i18n ? window.__i18n.t(err.message) : err.message);
   }
 }
 

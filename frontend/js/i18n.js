@@ -306,6 +306,13 @@
       'これは IOS のシミュレーターです（本物の IOS ではありません）。': 'This is an IOS simulator (not real IOS).',
       'デバイス:': 'Device:', 'ヒント：': 'Hint:', 'リセット': 'Reset', 'など。': 'etc.',
       '「enable」で特権モード、「configure terminal」で設定モード。「?」でヘルプ。': 'Use “enable” for privileged mode, “configure terminal” for config mode, “?” for help.',
+      // Diálogos confirm() (os interpolados são tratados por PATTERNS)
+      'このイベントを削除しますか？元に戻せません。': 'Delete this event? This cannot be undone.',
+      'この投稿を削除しますか？元に戻せません。': 'Delete this post? This cannot be undone.',
+      'このコメントを削除しますか？': 'Delete this comment?',
+      'このフレンドを削除しますか？': 'Remove this friend?',
+      'このグループを退出しますか？再度参加するには招待が必要です。': 'Leave this group? You will need an invite to rejoin.',
+      'このグループを全員のために削除しますか？すべてのメッセージが失われ、元に戻せません。': 'Delete this group for everyone? All messages will be lost and this cannot be undone.',
       '© 2026 Blackbeard Tavern': '© 2026 Blackbeard Tavern'
     },
     pt: {
@@ -574,6 +581,13 @@
       'これは IOS のシミュレーターです（本物の IOS ではありません）。': 'Este é um simulador de IOS (não é o IOS real).',
       'デバイス:': 'Dispositivo:', 'ヒント：': 'Dica:', 'リセット': 'Redefinir', 'など。': 'etc.',
       '「enable」で特権モード、「configure terminal」で設定モード。「?」でヘルプ。': 'Use “enable” para o modo privilegiado, “configure terminal” para o modo de configuração e “?” para ajuda.',
+      // Diálogos confirm() (os interpolados são tratados por PATTERNS)
+      'このイベントを削除しますか？元に戻せません。': 'Excluir este evento? Esta ação não pode ser desfeita.',
+      'この投稿を削除しますか？元に戻せません。': 'Excluir este post? Esta ação não pode ser desfeita.',
+      'このコメントを削除しますか？': 'Excluir este comentário?',
+      'このフレンドを削除しますか？': 'Remover este amigo?',
+      'このグループを退出しますか？再度参加するには招待が必要です。': 'Sair deste grupo? Você precisará de um convite para voltar.',
+      'このグループを全員のために削除しますか？すべてのメッセージが失われ、元に戻せません。': 'Excluir este grupo para todos? Todas as mensagens serão perdidas e não pode ser desfeito.',
       '© 2026 Blackbeard Tavern': '© 2026 Blackbeard Tavern'
     },
     es: {
@@ -842,6 +856,13 @@
       'これは IOS のシミュレーターです（本物の IOS ではありません）。': 'Este es un simulador de IOS (no es el IOS real).',
       'デバイス:': 'Dispositivo:', 'ヒント：': 'Pista:', 'リセット': 'Restablecer', 'など。': 'etc.',
       '「enable」で特権モード、「configure terminal」で設定モード。「?」でヘルプ。': 'Usa “enable” para el modo privilegiado, “configure terminal” para el modo de configuración y “?” para la ayuda.',
+      // Diálogos confirm() (los interpolados los maneja PATTERNS)
+      'このイベントを削除しますか？元に戻せません。': '¿Eliminar este evento? No se puede deshacer.',
+      'この投稿を削除しますか？元に戻せません。': '¿Eliminar esta publicación? No se puede deshacer.',
+      'このコメントを削除しますか？': '¿Eliminar este comentario?',
+      'このフレンドを削除しますか？': '¿Eliminar a este amigo?',
+      'このグループを退出しますか？再度参加するには招待が必要です。': '¿Salir de este grupo? Necesitarás una invitación para volver.',
+      'このグループを全員のために削除しますか？すべてのメッセージが失われ、元に戻せません。': '¿Eliminar este grupo para todos? Se perderán todos los mensajes y no se puede deshacer.',
       '© 2026 Blackbeard Tavern': '© 2026 Blackbeard Tavern'
     }
   };
@@ -893,7 +914,17 @@
     // contador de presença no campus: "🟢 3人" / "3人"
     { re: /^(🟢\s*)?(\d+)人$/, fn: function (m) { return (m[1] || '') + m[2] + (LANG === 'es' ? ' en línea' : ' online'); } },
     // subnet: "N件のサブネットを生成しました。"
-    { re: /^(\d+)件のサブネットを生成しました。$/, fn: function (m) { return LANG === 'en' ? 'Generated ' + m[1] + ' subnets.' : LANG === 'pt' ? 'Geramos ' + m[1] + ' sub-redes.' : 'Se generaron ' + m[1] + ' subredes.'; } }
+    { re: /^(\d+)件のサブネットを生成しました。$/, fn: function (m) { return LANG === 'en' ? 'Generated ' + m[1] + ' subnets.' : LANG === 'pt' ? 'Geramos ' + m[1] + ' sub-redes.' : 'Se generaron ' + m[1] + ' subredes.'; } },
+    // --- Corpos de notificação (gerados pelo backend com o nome do ator) ---
+    { re: /^(.+)さんがあなたの投稿にいいねしました$/, fn: function (m) { return LANG === 'en' ? m[1] + ' liked your post' : LANG === 'pt' ? m[1] + ' curtiu seu post' : 'A ' + m[1] + ' le gustó tu publicación'; } },
+    { re: /^(.+)さんがあなたの投稿にコメントしました$/, fn: function (m) { return LANG === 'en' ? m[1] + ' commented on your post' : LANG === 'pt' ? m[1] + ' comentou no seu post' : m[1] + ' comentó tu publicación'; } },
+    { re: /^(.+)さんがグループ「(.+)」にあなたを追加しました$/, fn: function (m) { return LANG === 'en' ? m[1] + ' added you to the group “' + m[2] + '”' : LANG === 'pt' ? m[1] + ' adicionou você ao grupo “' + m[2] + '”' : m[1] + ' te añadió al grupo “' + m[2] + '”'; } },
+    { re: /^(.+)さんからフレンドリクエストが届きました$/, fn: function (m) { return LANG === 'en' ? 'Friend request from ' + m[1] : LANG === 'pt' ? 'Pedido de amizade de ' + m[1] : 'Solicitud de amistad de ' + m[1]; } },
+    { re: /^(.+)さんがフレンドリクエストを承認しました$/, fn: function (m) { return LANG === 'en' ? m[1] + ' accepted your friend request' : LANG === 'pt' ? m[1] + ' aceitou seu pedido de amizade' : m[1] + ' aceptó tu solicitud de amistad'; } },
+    { re: /^(.+) 画像を送信しました 🖼️$/, fn: function (m) { return LANG === 'en' ? m[1] + ' sent an image 🖼️' : LANG === 'pt' ? m[1] + ' enviou uma imagem 🖼️' : m[1] + ' envió una imagen 🖼️'; } },
+    { re: /^(.+) 動画を送信しました 🎥$/, fn: function (m) { return LANG === 'en' ? m[1] + ' sent a video 🎥' : LANG === 'pt' ? m[1] + ' enviou um vídeo 🎥' : m[1] + ' envió un vídeo 🎥'; } },
+    // confirm() interpolado do chat (apagar conversa com <nome>)
+    { re: /^(.+) とのチャットをすべて削除しますか？両方の履歴が消え、元に戻せません。$/, fn: function (m) { return LANG === 'en' ? 'Delete all chat with ' + m[1] + '? Both sides’ history will be lost and this can’t be undone.' : LANG === 'pt' ? 'Excluir toda a conversa com ' + m[1] + '? O histórico dos dois lados será perdido e não pode ser desfeito.' : 'Eliminar todo el chat con ' + m[1] + '? Se perderá el historial de ambos y no se puede deshacer.'; } }
   ];
 
   function translateString(core) {

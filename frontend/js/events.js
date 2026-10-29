@@ -124,12 +124,12 @@ async function toggleAttendance(eventId, currentlyAttending) {
     btn.textContent = data.attending ? '✓ 参加中（取消）' : '参加する';
     count.textContent = `${data.attendeeCount}人参加`;
   } catch (err) {
-    alert(err.message);
+    alert(window.__i18n ? window.__i18n.t(err.message) : err.message);
   }
 }
 
 async function deleteEvent(eventId) {
-  if (!confirm('このイベントを削除しますか？元に戻せません。')) return;
+  if (!confirm(window.__i18n ? window.__i18n.t('このイベントを削除しますか？元に戻せません。') : 'このイベントを削除しますか？元に戻せません。')) return;
 
   try {
     const response = await fetch(`${API_BASE}/api/events/${eventId}`, {
@@ -141,7 +141,7 @@ async function deleteEvent(eventId) {
 
     loadEvents();
   } catch (err) {
-    alert(err.message);
+    alert(window.__i18n ? window.__i18n.t(err.message) : err.message);
   }
 }
 
