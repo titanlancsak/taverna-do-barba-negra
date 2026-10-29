@@ -4,7 +4,16 @@ function getToken() {
 
 function getUser() {
   const raw = localStorage.getItem('taverna_user');
-  return raw ? JSON.parse(raw) : null;
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw);
+  } catch (err) {
+    // taverna_user corrompido: não deixa o JSON.parse quebrar a montagem da nav
+    // (e, por tabela, a página inteira). Limpa e trata como deslogado.
+    console.warn('taverna_user inválido no localStorage; limpando.', err);
+    localStorage.removeItem('taverna_user');
+    return null;
+  }
 }
 
 function logout() {
