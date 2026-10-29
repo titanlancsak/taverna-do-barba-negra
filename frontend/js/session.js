@@ -244,3 +244,12 @@ if (localStorage.getItem('taverna_token')) {
   searchScript.src = isInPages ? '../js/search.js' : 'js/search.js';
   document.body.appendChild(searchScript);
 }
+
+// i18n (tradução da UI + seletor de idioma) — em todas as páginas com nav,
+// logado ou não. Carregado após buildNav() para traduzir o menu já montado.
+(function () {
+  const isInPages = window.location.pathname.includes('/pages/');
+  const i18nScript = document.createElement('script');
+  i18nScript.src = isInPages ? '../js/i18n.js' : 'js/i18n.js';
+  document.body.appendChild(i18nScript);
+})();
