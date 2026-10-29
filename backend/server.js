@@ -9,14 +9,78 @@ require('dotenv').config();
 const app = express();
 app.set('trust proxy', 1);
 const httpServer = http.createServer(app);
+
+// Origens permitidas para o Socket.io (CORS + verificação de Origin no transporte
+// de polling). Configurável por ambiente para funcionar em qualquer domínio
+// (ex.: app.blackbeardtavern.me na AWS) sem recompilar.
+const CLIENT_ORIGINS = (process.env.CLIENT_ORIGIN || 'https://blackbeardtavern.me,http://localhost:8080')
+	.split(',')
+	.map((s) => s.trim())
+	.filter(Boolean);
+
 const io = new Server(httpServer, {
-	cors: { origin: ['https://blackbeardtavern.me', 'http://localhost:8080'] }
+	cors: { origin: CLIENT_ORIGINS }
 });
+
+// Adapter Redis: compartilha salas e broadcasts do Socket.io entre múltiplas
+// instâncias atrás do ALB. Sem REDIS_URL (dev / instância única), o Socket.io
+// usa o adapter em memória padrão e tudo continua funcionando.
+if (process.env.REDIS_URL) {
+	const { createClient } = require('redis');
+	const { createAdapter } = require('@socket.io/redis-adapter');
+	const pubClient = createClient({ url: process.env.REDIS_URL });
+	const subClient = pubClient.duplicate();
+	Promise.all([pubClient.connect(), subClient.connect()])
+		.then(() => {
+			io.adapter(createAdapter(pubClient, subClient));
+			console.log('Socket.io: adapter Redis ativo (escala horizontal habilitada)');
+		})
+		.catch((err) => console.error('Socket.io: falha ao conectar no Redis, seguindo sem adapter:', err));
+}
 
 const PORT = process.env.PORT || 3000;
 
+// --- Cabeçalhos de segurança (helmet) ---
+// CSP afinado às origens realmente usadas pelo frontend:
+//  - scripts de CDN: cdn.socket.io (realtime) e cdn.jsdelivr.net (phaser do campus, xterm do Cisco lab)
+//  - 'wasm-unsafe-eval' + worker blob: para o v86 (emulador Linux em WebAssembly)
+//  - ws:/wss: para o Socket.io; 'unsafe-inline' SÓ em estilos (há <style> e style= no HTML)
+// Scripts não usam 'unsafe-inline': o único script inline (index.html) foi externalizado.
+const helmet = require('helmet');
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      useDefaults: true,
+      directives: {
+        'script-src': ["'self'", "'wasm-unsafe-eval'", 'https://cdn.socket.io', 'https://cdn.jsdelivr.net'],
+        'style-src': ["'self'", "'unsafe-inline'"],
+        'img-src': ["'self'", 'data:'],
+        'media-src': ["'self'"],
+        'connect-src': ["'self'", 'ws:', 'wss:'],
+        'worker-src': ["'self'", 'blob:'],
+        'frame-ancestors': ["'self'"]
+      }
+    },
+    // CDNs externos (socket.io, jsdelivr) são carregados sem COEP.
+    crossOriginEmbedderPolicy: false
+  })
+);
+
 app.use(cors());
 app.use(express.json());
+
+// --- Servir o frontend estático e a mídia enviada por usuários ---
+// Na VM isso era papel do Nginx. No container, o próprio Express serve tudo:
+// o ALB encaminha diretamente para cá. As rotas de mídia vêm ANTES do static
+// geral para que os uploads sejam lidos do volume persistente (EFS), e não da
+// cópia vazia embutida na imagem.
+const { MEDIA_ROOT, MEDIA_SUBDIRS, ensureMediaDirs } = require('./config/paths');
+ensureMediaDirs();
+for (const sub of MEDIA_SUBDIRS) {
+	app.use(`/assets/${sub}`, express.static(path.join(MEDIA_ROOT, sub)));
+}
+const FRONTEND_DIR = path.join(__dirname, '..', 'frontend');
+app.use(express.static(FRONTEND_DIR));
 
 const { generalLimiter } = require('./middleware/rateLimiters');
 app.use(generalLimiter);
@@ -124,6 +188,11 @@ io.on('connection', (socket) => {
   }
   onlineUsers.get(userId).add(socket.id);
 
+  // Sala por usuário: emitir para `user:<id>` atinge todas as abas do usuário em
+  // QUALQUER instância (via adapter Redis). Com uma instância só, é equivalente a
+  // mirar os sockets locais — logo o comportamento é idêntico ao anterior.
+  socket.join(`user:${userId}`);
+
   console.log(`User ${userId} connected (socket ${socket.id})`);
 
   socket.on('send_message', async (data) => {
@@ -157,12 +226,7 @@ io.on('connection', (socket) => {
 
       socket.emit('new_message', message);
 
-      const receiverSockets = onlineUsers.get(receiverId);
-      if (receiverSockets) {
-        receiverSockets.forEach(socketId => {
-          io.to(socketId).emit('new_message', message);
-        });
-      }
+      io.to(`user:${receiverId}`).emit('new_message', message);
 
       // Notifica o destinatário no sino. Falha aqui não deve quebrar o envio da mensagem.
       try {
@@ -201,18 +265,16 @@ io.on('connection', (socket) => {
           [receiverId]
         );
 
-        if (receiverSockets) {
-          const notifPayload = {
-            id: notifRow.id,
-            type: 'message',
-            reference_id: userId, // remetente, pra abrir a conversa ao clicar
-            message: notifMessage,
-            created_at: notifRow.created_at,
-            read_at: null,
-            unreadCount: parseInt(unreadForReceiver.rows[0].count)
-          };
-          receiverSockets.forEach(socketId => io.to(socketId).emit('new_notification', notifPayload));
-        }
+        const notifPayload = {
+          id: notifRow.id,
+          type: 'message',
+          reference_id: userId, // remetente, pra abrir a conversa ao clicar
+          message: notifMessage,
+          created_at: notifRow.created_at,
+          read_at: null,
+          unreadCount: parseInt(unreadForReceiver.rows[0].count)
+        };
+        io.to(`user:${receiverId}`).emit('new_notification', notifPayload);
       } catch (notifErr) {
         console.error('Failed to create message notification:', notifErr);
       }
@@ -244,12 +306,7 @@ io.on('connection', (socket) => {
       const payload = { messageId };
       socket.emit('message_deleted', payload);
 
-      const receiverSockets = onlineUsers.get(msg.receiver_id);
-      if (receiverSockets) {
-        receiverSockets.forEach(socketId => {
-          io.to(socketId).emit('message_deleted', payload);
-        });
-      }
+      io.to(`user:${msg.receiver_id}`).emit('message_deleted', payload);
     } catch (err) {
       console.error(err);
       socket.emit('error_message', { error: 'メッセージの削除に失敗しました' });
