@@ -11,92 +11,346 @@
 </head>
 <body>
 
-  <!-- HERO / abertura -->
-  <section class="intro-hero">
-    <video class="intro-hero-video" autoplay muted loop playsinline>
+  <!-- ===== Announcement bar ===== -->
+  <div class="ed-announce">
+    <span>✦ 新着：バーチャルキャンパスが公開中</span>
+    <a href="#tools">見てみる <span aria-hidden="true">→</span></a>
+  </div>
+
+  <!-- ===== Nav sticky ===== -->
+  <header class="ed-nav">
+    <div class="ed-container ed-nav-row">
+      <div class="ed-brand">
+        <div class="ed-logo-tile" aria-hidden="true">🏴‍☠️</div>
+        <span class="ed-wordmark">Blackbeard Tavern</span>
+      </div>
+      <nav class="ed-nav-links">
+        <a href="#tools">ツール</a>
+        <a href="#craft">設計思想</a>
+        <a href="#pricing">料金</a>
+        <a href="#tech">技術</a>
+      </nav>
+      <div class="ed-nav-right">
+        <a class="ed-nav-signin" href="pages/login.html">ログイン</a>
+        <a class="ed-btn ed-btn-primary" href="index.html">サイトに入る</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== HERO ===== -->
+  <section class="ed-hero">
+    <video class="ed-hero-video" autoplay muted loop playsinline>
       <source src="assets/img/tavern-bg.mp4" type="video/mp4">
     </video>
-    <div class="intro-hero-content">
-      <h1>Blackbeard Tavern</h1>
-      <p class="intro-tagline">学生のためのオールインワン・プラットフォーム</p>
-      <a class="intro-enter-btn" href="index.html">サイトに入る</a>
-      <div class="intro-scroll-cue">スクロールして見る ↓</div>
-    </div>
-  </section>
+    <div class="ed-container ed-hero-grid">
+      <div class="ed-hero-copy">
+        <span class="ed-eyebrow reveal"><span class="dot"></span>学生のためのオールインワン・プラットフォーム</span>
+        <h1 class="ed-h1">道具も仲間も、ぜんぶ<span class="hl">ひとつの場所に。</span></h1>
+        <p class="ed-lede reveal">便利なツール、リアルタイムのSNS、歩き回れるバーチャルキャンパス。ひとつのアカウントで、学生の毎日に必要なものがぜんぶ揃います。</p>
+        <div class="ed-hero-actions reveal">
+          <a class="ed-btn ed-btn-primary" href="index.html">サイトに入る <span class="ar" aria-hidden="true">→</span></a>
+          <a class="ed-btn ed-btn-ghost" href="#features"><span aria-hidden="true">▸</span> スクロールして見る</a>
+        </div>
+        <div class="ed-proof reveal">
+          <b>10以上のツール</b><span class="sep"></span>
+          <b>リアルタイムSNS</b><span class="sep"></span>
+          <b>マルチプレイヤーキャンパス</b>
+        </div>
+      </div>
 
-  <!-- O que é -->
-  <section class="intro-section">
-    <div class="intro-block reveal">
-      <h2>Blackbeard Tavern とは？</h2>
-      <p>便利なツール、SNS、バーチャルキャンパスが一つになった、<br>学生のためのサイトです。</p>
-    </div>
-  </section>
-
-  <!-- Ferramentas -->
-  <section class="intro-section">
-    <div class="intro-block">
-      <h2 class="reveal">🛠 ツール</h2>
-      <div class="intro-grid">
-        <div class="intro-card reveal">画像コンバーター</div>
-        <div class="intro-card reveal">動画・音声ダウンローダー</div>
-        <div class="intro-card reveal">音声コンバーター</div>
-        <div class="intro-card reveal">音楽プレーヤー</div>
-        <div class="intro-card reveal">QRコードジェネレーター</div>
-        <div class="intro-card reveal">無料の本</div>
-        <div class="intro-card reveal">Linuxディストロ</div>
-        <div class="intro-card reveal">便利なスクリプト</div>
-        <div class="intro-card reveal">Linuxラボ</div>
-        <div class="intro-card reveal">Ciscoラボ</div>
+      <div class="ed-hero-canvas reveal">
+        <div class="ed-mock">
+          <div class="ed-mock-chrome">
+            <div class="dots"><i></i><i></i><i></i></div>
+            <span class="ed-mock-status"><span class="live"></span>リアルタイム</span>
+          </div>
+          <div class="ed-mock-body">
+            <div class="ed-mock-hero">
+              <div class="bar w1"></div><div class="bar w2"></div><div class="bar w3"></div>
+            </div>
+            <div class="ed-mock-cards">
+              <div class="ed-mock-card"><div class="ic"></div><div class="ln"></div><div class="ln s"></div></div>
+              <div class="ed-mock-card"><div class="ic"></div><div class="ln"></div><div class="ln s"></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="ed-chip-float">
+          <div class="k" aria-hidden="true">👁</div>
+          <span>ログイン不要で見てまわれる</span>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- SNS -->
-  <section class="intro-section">
-    <div class="intro-block">
-      <h2 class="reveal">💬 ソーシャル（SNS）</h2>
-      <div class="intro-grid">
-        <div class="intro-card reveal">フィード（投稿・いいね・コメント）</div>
-        <div class="intro-card reveal">フレンド・チャット（リアルタイム）</div>
-        <div class="intro-card reveal">グループ</div>
-        <div class="intro-card reveal">イベント</div>
-        <div class="intro-card reveal">通知</div>
-        <div class="intro-card reveal">タイピングゲーム（EN/JA・ランキング・実績）</div>
+  <!-- ===== Tech strip ===== -->
+  <section class="ed-band" id="tech">
+    <div class="ed-container ed-strip">
+      <span class="ed-eyebrow">このサイトを支える技術</span>
+      <div class="ed-strip-row">
+        <span class="serif">Node.js</span>
+        <span>PostgreSQL</span>
+        <span class="serif">Socket.io</span>
+        <span>Phaser</span>
+        <span class="serif">Express</span>
+        <span>Nginx</span>
+        <span class="serif">Rocky Linux</span>
       </div>
     </div>
   </section>
 
-  <!-- Campus -->
-  <section class="intro-section">
-    <div class="intro-block reveal">
-      <h2>🗺 バーチャルキャンパス</h2>
-      <p>リアルタイムのマルチプレイヤー空間。<br>キャラクターで歩き回り、他のユーザーと出会えます。</p>
-    </div>
-  </section>
+  <!-- ===== Why / features assimétrico ===== -->
+  <section class="ed-section" id="features">
+    <div class="ed-container ed-why-grid">
+      <div class="ed-why-intro">
+        <span class="ed-eyebrow reveal"><span class="dot"></span>なぜ Blackbeard Tavern？</span>
+        <h2 class="ed-h2">ツールも、SNSも、<span class="hl">ひとつの船で。</span></h2>
+        <p class="ed-lede reveal">バラバラのサービスを行き来しなくていい。道具も、仲間も、居場所も、ひとつのアカウントにまとめました。</p>
+        <a class="ed-text-link reveal" href="#tools">すべての機能を見る <span aria-hidden="true">→</span></a>
+      </div>
 
-  <!-- Tecnologias -->
-  <section class="intro-section">
-    <div class="intro-block">
-      <h2 class="reveal">⚙️ 使用技術</h2>
-      <div class="intro-tech">
-        <div class="intro-tech-row reveal"><span class="intro-tech-label">フロントエンド</span><span>HTML・CSS・JavaScript（Vanilla）／ Phaser</span></div>
-        <div class="intro-tech-row reveal"><span class="intro-tech-label">バックエンド</span><span>Node.js・Express ／ Socket.io ／ PM2</span></div>
-        <div class="intro-tech-row reveal"><span class="intro-tech-label">データベース</span><span>PostgreSQL</span></div>
-        <div class="intro-tech-row reveal"><span class="intro-tech-label">インフラ</span><span>Nginx ／ Rocky Linux ／ Let's Encrypt（HTTPS）</span></div>
-        <div class="intro-tech-row reveal"><span class="intro-tech-label">認証</span><span>JWT ／ bcrypt</span></div>
-        <div class="intro-tech-row reveal"><span class="intro-tech-label">メディア処理</span><span>sharp ／ FFmpeg ／ yt-dlp</span></div>
-        <div class="intro-tech-row reveal"><span class="intro-tech-label">メール</span><span>Resend</span></div>
+      <div class="ed-feature-grid">
+        <article class="ed-fcard v-cream o0 reveal">
+          <div class="ed-fcard-icon" aria-hidden="true">🛠</div>
+          <h3>そろった道具箱</h3>
+          <p>画像・音声・動画の変換から、QRコードや本まで。毎日使える道具が最初から揃っています。</p>
+        </article>
+        <article class="ed-fcard v-dark o1 reveal">
+          <div class="ed-fcard-icon" aria-hidden="true">💬</div>
+          <h3>リアルタイムの交流</h3>
+          <p>フィード、フレンド、グループチャット、イベント。仲間とつながる場所が、ここにあります。</p>
+        </article>
+        <article class="ed-fcard v-cream o2 reveal">
+          <div class="ed-fcard-icon" aria-hidden="true">🗺</div>
+          <h3>歩けるキャンパス</h3>
+          <p>キャラクターを動かして、同じ空間にいる仲間と出会える。八王子をモデルにしたバーチャル空間です。</p>
+        </article>
+        <article class="ed-fcard v-gold o3 reveal">
+          <div class="ed-fcard-icon" aria-hidden="true">⌨️</div>
+          <h3>タイピングで競う</h3>
+          <p>EN/JA のタイピングゲーム。ランキングと実績で、遊びながら腕を磨けます。</p>
+        </article>
       </div>
     </div>
   </section>
 
-  <!-- CTA final -->
-  <section class="intro-hero intro-final">
-    <div class="intro-hero-content">
-      <h2 class="reveal">準備はいい？</h2>
-      <a class="intro-enter-btn reveal" href="index.html">サイトに入る</a>
+  <!-- ===== Showcase ===== -->
+  <section class="ed-band ed-section" id="tools">
+    <div class="ed-container">
+      <div class="ed-showcase-head">
+        <div>
+          <span class="ed-eyebrow reveal"><span class="dot"></span>ツール</span>
+          <h2 class="ed-h2">そろっている道具たち</h2>
+        </div>
+        <p class="blurb reveal">変換ツールからネットワークの実験室まで。すべてブラウザの中で完結します。</p>
+      </div>
+
+      <div class="ed-cards">
+        <article class="ed-scard reveal">
+          <div class="ed-thumb t-dark"><span class="mk mk1"></span><span class="mk mk2"></span><span class="mk mk3"></span></div>
+          <div class="ed-scard-body">
+            <div class="ed-scard-top"><h3>画像コンバーター</h3><span class="ed-cat">ツール</span></div>
+            <p>形式を選ぶだけで、ブラウザ内で画像を変換。</p>
+          </div>
+        </article>
+        <article class="ed-scard reveal">
+          <div class="ed-thumb t-gold"><span class="g g1"></span><span class="g g2"></span><span class="g g3"></span><span class="g g4"></span></div>
+          <div class="ed-scard-body">
+            <div class="ed-scard-top"><h3>動画・音声ダウンローダー</h3><span class="ed-cat">ツール</span></div>
+            <p>リンクを貼って、動画や音声を保存。</p>
+          </div>
+        </article>
+        <article class="ed-scard reveal">
+          <div class="ed-thumb t-cream"><span class="col c1"></span><span class="col c2"></span><span class="col c3"></span></div>
+          <div class="ed-scard-body">
+            <div class="ed-scard-top"><h3>フレンド・チャット（リアルタイム）</h3><span class="ed-cat">SNS</span></div>
+            <p>仲間と一対一やグループでリアルタイムに話す。</p>
+          </div>
+        </article>
+        <article class="ed-scard reveal">
+          <div class="ed-thumb t-dark"><span class="mk mk1"></span><span class="mk mk2"></span><span class="mk mk3"></span></div>
+          <div class="ed-scard-body">
+            <div class="ed-scard-top"><h3>イベント</h3><span class="ed-cat">SNS</span></div>
+            <p>イベントを作って、みんなで参加。</p>
+          </div>
+        </article>
+        <article class="ed-scard reveal">
+          <div class="ed-thumb t-gold"><span class="g g1"></span><span class="g g2"></span><span class="g g3"></span><span class="g g4"></span></div>
+          <div class="ed-scard-body">
+            <div class="ed-scard-top"><h3>タイピングゲーム</h3><span class="ed-cat">ゲーム</span></div>
+            <p>EN/JA で腕試し。ランキングと実績つき。</p>
+          </div>
+        </article>
+        <article class="ed-scard reveal">
+          <div class="ed-thumb t-cream"><span class="col c1"></span><span class="col c2"></span><span class="col c3"></span></div>
+          <div class="ed-scard-body">
+            <div class="ed-scard-top"><h3>Ciscoラボ</h3><span class="ed-cat">ツール</span></div>
+            <p>ブラウザの中でネットワークを実験。</p>
+          </div>
+        </article>
+      </div>
     </div>
   </section>
+
+  <!-- ===== Pull-quote ===== -->
+  <section class="ed-section">
+    <div class="ed-container">
+      <figure class="ed-quote-fig">
+        <div class="ed-quote-mark" aria-hidden="true">“</div>
+        <blockquote class="ed-quote">学生のために、<span class="hl">すべてを一つの場所に。</span></blockquote>
+        <figcaption class="ed-figcap">
+          <span class="ed-avatar" aria-hidden="true">BT</span>
+          <span class="who"><b>Blackbeard Tavern</b><span>八王子発・学生のためのプラットフォーム</span></span>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===== Craft (dark) ===== -->
+  <section class="ed-dark ed-section" id="craft">
+    <div class="ed-container ed-craft-grid">
+      <div class="ed-craft-copy">
+        <span class="ed-eyebrow reveal"><span class="dot"></span>設計思想</span>
+        <h2 class="ed-h2">使う人のために、<span class="hl">つくり込みました。</span></h2>
+        <p class="reveal">流行りで作ったのではなく、本当に使えるものを一つずつ組み上げました。細部まで、学生の毎日に寄り添うように。</p>
+
+        <div class="ed-check reveal">
+          <span class="ck" aria-hidden="true">✓</span>
+          <div><b>リアルタイム</b><span>投稿もチャットもキャンパスも、待たずに動く。</span></div>
+        </div>
+        <div class="ed-check reveal">
+          <span class="ck" aria-hidden="true">✓</span>
+          <div><b>完全無料</b><span>学生なら、すべての機能をずっと無料で使えます。</span></div>
+        </div>
+        <div class="ed-check reveal">
+          <span class="ck" aria-hidden="true">✓</span>
+          <div><b>多言語対応</b><span>日本語・英語・ポルトガル語・スペイン語に対応。</span></div>
+        </div>
+      </div>
+
+      <div class="ed-spec reveal">
+        <div class="ed-swatches">
+          <div class="ed-swatch sw-cream"><b>CREAM</b></div>
+          <div class="ed-swatch sw-gold"><b>GOLD</b></div>
+          <div class="ed-swatch sw-terra"><b>EMBER</b></div>
+          <div class="ed-swatch sw-ink"><b>INK</b></div>
+        </div>
+        <div class="ed-specimen">明朝体のディスプレイ。</div>
+        <div class="ed-tags">
+          <span class="ed-tag">学生</span>
+          <span class="ed-tag">無料</span>
+          <span class="ed-tag">多言語</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Pricing (tudo grátis) ===== -->
+  <section class="ed-section" id="pricing">
+    <div class="ed-container">
+      <div class="ed-price-head">
+        <span class="ed-eyebrow reveal"><span class="dot"></span>料金</span>
+        <h2 class="ed-h2">シンプル。ぜんぶ<span class="hl">無料。</span></h2>
+        <p class="reveal">隠れた費用も、有料プランもありません。学生のためのすべてが、最初からここに。</p>
+      </div>
+
+      <div class="ed-price-grid">
+        <article class="ed-tier reveal">
+          <h3>道具箱</h3>
+          <p class="tag">いつでも使えるツール群</p>
+          <div class="ed-price">¥0 <small>/ 永久に</small></div>
+          <ul>
+            <li><span class="ck">✓</span> 画像コンバーター</li>
+            <li><span class="ck">✓</span> 音声コンバーター</li>
+            <li><span class="ck">✓</span> QRコードジェネレーター</li>
+          </ul>
+          <a class="ed-btn ed-btn-ghost" href="index.html">サイトに入る</a>
+        </article>
+
+        <article class="ed-tier featured reveal">
+          <span class="ed-ribbon">いちばん人気</span>
+          <h3>全機能</h3>
+          <p class="tag">ぜんぶ入り、ずっと無料</p>
+          <div class="ed-price">¥0 <small>/ 永久に</small></div>
+          <ul>
+            <li><span class="ck">✓</span> フィード（投稿・いいね・コメント）</li>
+            <li><span class="ck">✓</span> フレンド・チャット（リアルタイム）</li>
+            <li><span class="ck">✓</span> 🗺 バーチャルキャンパス</li>
+            <li><span class="ck">✓</span> タイピングゲーム</li>
+          </ul>
+          <a class="ed-btn ed-btn-primary" href="index.html">サイトに入る <span class="ar" aria-hidden="true">→</span></a>
+        </article>
+
+        <article class="ed-tier reveal">
+          <h3>コミュニティ</h3>
+          <p class="tag">仲間とつながる場所</p>
+          <div class="ed-price">¥0 <small>/ 永久に</small></div>
+          <ul>
+            <li><span class="ck">✓</span> イベント</li>
+            <li><span class="ck">✓</span> グループ</li>
+            <li><span class="ck">✓</span> フレンド</li>
+          </ul>
+          <a class="ed-btn ed-btn-ghost" href="index.html">サイトに入る</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CTA banner ===== -->
+  <div class="ed-container ed-cta-wrap">
+    <div class="ed-cta">
+      <span class="blob blob1" aria-hidden="true"></span>
+      <span class="blob blob2" aria-hidden="true"></span>
+      <h2 class="ed-h2">準備はいい？</h2>
+      <p>アカウントを作って、船に乗ろう。</p>
+      <div class="ed-cta-actions">
+        <a class="ed-btn ed-btn-primary" href="index.html">サイトに入る <span class="ar" aria-hidden="true">→</span></a>
+        <a class="ed-btn ed-btn-ghost" href="pages/register.html">新規登録</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Footer ===== -->
+  <footer class="ed-footer">
+    <div class="ed-container">
+      <div class="ed-foot-grid">
+        <div class="ed-foot-brand">
+          <div class="ed-brand">
+            <div class="ed-logo-tile" aria-hidden="true">🏴‍☠️</div>
+            <span class="ed-wordmark">Blackbeard Tavern</span>
+          </div>
+          <p>便利なツール、SNS、バーチャルキャンパスが一つになった、学生のためのプラットフォーム。</p>
+          <div class="ed-socials">
+            <a class="ed-social" href="index.html" aria-label="Home">🏠</a>
+            <a class="ed-social" href="pages/campus.html" aria-label="Campus">🗺</a>
+            <a class="ed-social" href="pages/typing.html" aria-label="Typing">⌨️</a>
+          </div>
+        </div>
+        <div class="ed-foot-col">
+          <h4>機能</h4>
+          <a href="index.html">ツール</a>
+          <a href="pages/friends.html">SNS</a>
+          <a href="pages/campus.html">キャンパス</a>
+          <a href="pages/typing.html">タイピングゲーム</a>
+        </div>
+        <div class="ed-foot-col">
+          <h4>情報</h4>
+          <a href="intro.html">サイト紹介</a>
+          <a href="#tech">使用技術</a>
+          <a href="#craft">設計思想</a>
+        </div>
+        <div class="ed-foot-col">
+          <h4>アカウント</h4>
+          <a href="pages/login.html">ログイン</a>
+          <a href="pages/register.html">新規登録</a>
+          <a href="pages/profile.html">マイプロフィール</a>
+        </div>
+      </div>
+      <div class="ed-foot-bottom">
+        <span>© 2026 Blackbeard Tavern · 八王子</span>
+        <span>学生の、学生による、学生のための場所。</span>
+      </div>
+    </div>
+  </footer>
 
   <script src="js/intro.js"></script>
 </body>

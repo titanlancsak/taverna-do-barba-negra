@@ -22,8 +22,8 @@ const observer = new IntersectionObserver((entries) => {
 
 revealEls.forEach((el) => observer.observe(el));
 
-// Ao clicar em "entrar", marca a sessão pra o index não redirecionar de volta pra intro
-document.querySelectorAll('.intro-enter-btn').forEach((btn) => {
+// Ao clicar em "entrar no site", marca a sessão pra o index não redirecionar de volta pra intro
+document.querySelectorAll('a[href="index.html"]').forEach((btn) => {
   btn.addEventListener('click', () => sessionStorage.setItem('introSeen', '1'));
 });
 
@@ -36,10 +36,9 @@ function splitGraphemes(str) {
   return Array.from(str);
 }
 
-// Aplica o efeito nos títulos, parágrafos, tagline e cards
-const waveEls = document.querySelectorAll(
-  '.intro-hero-content h1, .intro-tagline, .intro-block h2, .intro-block p, .intro-card'
-);
+// Aplica o efeito só nos títulos de display (H1, H2 e a citação), pra manter
+// o ar editorial sem fragmentar parágrafos longos em spans por letra.
+const waveEls = document.querySelectorAll('.ed-h1, .ed-h2, .ed-quote');
 
 // Envolve cada letra num <span>, percorrendo os nós filhos pra preservar <br> etc.
 function wrapChars(el) {
