@@ -66,7 +66,11 @@ app.use(
   })
 );
 
-app.use(cors());
+// CORS restrito às mesmas origens permitidas no Socket.io (antes era liberado a
+// qualquer origem). Em produção o frontend é servido na mesma origem da API
+// (API_BASE=''), então o CORS nem é acionado; em dev o front (localhost:8080)
+// chama a API (localhost:3000) cross-origin — origem já incluída em CLIENT_ORIGINS.
+app.use(cors({ origin: CLIENT_ORIGINS }));
 app.use(express.json());
 
 // --- Servir o frontend estático e a mídia enviada por usuários ---
