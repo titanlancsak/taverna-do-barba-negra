@@ -46,6 +46,51 @@
       'QRコードジェネレーター': 'QR code generator', 'サブネット計算機': 'Subnet calculator',
       '無料の本': 'Free books', 'Linuxディストロ': 'Linux distros', '便利なスクリプト': 'Handy scripts',
       'Linuxラボ': 'Linux lab', 'Ciscoラボ': 'Cisco lab',
+      // Fase 2 — amigos / chat
+      'フレンド': 'Friends', '学校のメールでフレンド追加': 'Add a friend by school email',
+      'リクエストを送る': 'Send request', '保留中のリクエスト': 'Pending requests',
+      'マイフレンド': 'My friends', 'グループ': 'Groups', '会話': 'Conversations',
+      '読み込み中...': 'Loading...', '招待して会話する': 'Invite to chat', '招待': 'Invite',
+      'メンバーを見る': 'View members', 'メンバー': 'Members', '閉じる': 'Close',
+      'メディアを追加': 'Add media', 'メッセージを入力...': 'Type a message...',
+      'グループ名': 'Group name', 'グループメンバー': 'Group members',
+      '承認': 'Accept', '拒否': 'Decline', 'チャット': 'Chat', '会話を削除': 'Delete conversation',
+      'グループを退出': 'Leave group', 'あいさつしよう！👋': 'Say hi! 👋',
+      'まだメッセージがありません。あいさつしよう！👋': 'No messages yet. Say hi! 👋',
+      'まだどのグループにも参加していません。フレンドとのチャットから「＋」で作れます。': 'You’re not in any group yet. Create one from a friend chat with the “+”.',
+      'まだフレンドがいません。上から追加しましょう！': 'No friends yet. Add some above!',
+      'グループの読み込みに失敗しました。': 'Failed to load groups.',
+      'フレンドの読み込みに失敗しました。': 'Failed to load friends.',
+      'メッセージの読み込みに失敗しました。': 'Failed to load messages.',
+      'メンバーの読み込みに失敗しました。': 'Failed to load members.',
+      'リクエストの読み込みに失敗しました。': 'Failed to load requests.',
+      '会話がまだありません。左のフレンドから「チャット」を押しましょう！': 'No conversations yet. Press “Chat” on a friend on the left!',
+      '会話の読み込みに失敗しました。': 'Failed to load conversations.',
+      '保留中のリクエストはありません。': 'No pending requests.',
+      '招待できるフレンドがいません。': 'No friends to invite.',
+      'アップロードに失敗しました': 'Upload failed', 'グループの作成に失敗しました': 'Failed to create group',
+      'グループの削除に失敗しました': 'Failed to delete group', 'グループの退出に失敗しました': 'Failed to leave group',
+      'グループを作成': 'Create group', 'グループを作成中...': 'Creating group...',
+      'グループ名を入力してください。': 'Please enter a group name.',
+      'フレンドリクエストを送信しました！': 'Friend request sent!',
+      'リクエストの送信に失敗しました': 'Failed to send request', 'リクエストを送信中...': 'Sending request...',
+      '会話の削除に失敗しました': 'Failed to delete conversation',
+      '少なくとも1人選んでください。': 'Please select at least one person.',
+      '招待しました！': 'Invited!', '招待に失敗しました': 'Failed to invite', '招待中...': 'Inviting...',
+      // Fase 2 — eventos
+      'イベントを作成': 'Create event', 'イベント名': 'Event name', '時間': 'Time',
+      '場所': 'Location', '説明': 'Description', '📷 写真を追加': '📷 Add photo',
+      'イベントを読み込み中...': 'Loading events...',
+      '今後のイベントはありません。最初のイベントを作成しましょう！': 'No upcoming events. Create the first one!',
+      'イベントの読み込みに失敗しました。': 'Failed to load events.',
+      '✓ 参加中（取消）': '✓ Attending (cancel)', '参加する': 'Attend', 'イベントを削除': 'Delete event',
+      'イベント名を入力してください。': 'Please enter an event name.',
+      '日付を入力してください。': 'Please enter a date.',
+      '日付は YYYY/MM/DD の形式で入力してください。': 'Please enter the date as YYYY/MM/DD.',
+      'イベントを作成中...': 'Creating event...', 'イベントを作成しました！': 'Event created!',
+      'イベントの作成に失敗しました': 'Failed to create event',
+      'イベントの削除に失敗しました': 'Failed to delete event',
+      '参加状況の更新に失敗しました': 'Failed to update attendance',
       // Home / feed
       'Blackbeard Tavern へようこそ — オールインワンのツールボックスです。': 'Welcome to Blackbeard Tavern — your all-in-one toolbox.',
       'コミュニティフィード': 'Community feed',
@@ -111,6 +156,51 @@
       'QRコードジェネレーター': 'Gerador de QR code', 'サブネット計算機': 'Calculadora de sub-rede',
       '無料の本': 'Livros grátis', 'Linuxディストロ': 'Distros Linux', '便利なスクリプト': 'Scripts úteis',
       'Linuxラボ': 'Laboratório Linux', 'Ciscoラボ': 'Laboratório Cisco',
+      // Fase 2 — amigos / chat
+      'フレンド': 'Amigos', '学校のメールでフレンド追加': 'Adicionar amigo pelo e-mail da escola',
+      'リクエストを送る': 'Enviar pedido', '保留中のリクエスト': 'Pedidos pendentes',
+      'マイフレンド': 'Meus amigos', 'グループ': 'Grupos', '会話': 'Conversas',
+      '読み込み中...': 'Carregando...', '招待して会話する': 'Convidar para conversar', '招待': 'Convidar',
+      'メンバーを見る': 'Ver membros', 'メンバー': 'Membros', '閉じる': 'Fechar',
+      'メディアを追加': 'Adicionar mídia', 'メッセージを入力...': 'Digite uma mensagem...',
+      'グループ名': 'Nome do grupo', 'グループメンバー': 'Membros do grupo',
+      '承認': 'Aceitar', '拒否': 'Recusar', 'チャット': 'Chat', '会話を削除': 'Excluir conversa',
+      'グループを退出': 'Sair do grupo', 'あいさつしよう！👋': 'Diga oi! 👋',
+      'まだメッセージがありません。あいさつしよう！👋': 'Ainda não há mensagens. Diga oi! 👋',
+      'まだどのグループにも参加していません。フレンドとのチャットから「＋」で作れます。': 'Você ainda não está em nenhum grupo. Crie um a partir de um chat com um amigo usando o “+”.',
+      'まだフレンドがいません。上から追加しましょう！': 'Você ainda não tem amigos. Adicione acima!',
+      'グループの読み込みに失敗しました。': 'Falha ao carregar os grupos.',
+      'フレンドの読み込みに失敗しました。': 'Falha ao carregar os amigos.',
+      'メッセージの読み込みに失敗しました。': 'Falha ao carregar as mensagens.',
+      'メンバーの読み込みに失敗しました。': 'Falha ao carregar os membros.',
+      'リクエストの読み込みに失敗しました。': 'Falha ao carregar os pedidos.',
+      '会話がまだありません。左のフレンドから「チャット」を押しましょう！': 'Ainda não há conversas. Toque em “Chat” em um amigo à esquerda!',
+      '会話の読み込みに失敗しました。': 'Falha ao carregar as conversas.',
+      '保留中のリクエストはありません。': 'Nenhum pedido pendente.',
+      '招待できるフレンドがいません。': 'Nenhum amigo para convidar.',
+      'アップロードに失敗しました': 'Falha no envio', 'グループの作成に失敗しました': 'Falha ao criar o grupo',
+      'グループの削除に失敗しました': 'Falha ao excluir o grupo', 'グループの退出に失敗しました': 'Falha ao sair do grupo',
+      'グループを作成': 'Criar grupo', 'グループを作成中...': 'Criando grupo...',
+      'グループ名を入力してください。': 'Digite um nome de grupo.',
+      'フレンドリクエストを送信しました！': 'Pedido de amizade enviado!',
+      'リクエストの送信に失敗しました': 'Falha ao enviar o pedido', 'リクエストを送信中...': 'Enviando pedido...',
+      '会話の削除に失敗しました': 'Falha ao excluir a conversa',
+      '少なくとも1人選んでください。': 'Selecione ao menos uma pessoa.',
+      '招待しました！': 'Convite enviado!', '招待に失敗しました': 'Falha ao convidar', '招待中...': 'Convidando...',
+      // Fase 2 — eventos
+      'イベントを作成': 'Criar evento', 'イベント名': 'Nome do evento', '時間': 'Horário',
+      '場所': 'Local', '説明': 'Descrição', '📷 写真を追加': '📷 Adicionar foto',
+      'イベントを読み込み中...': 'Carregando eventos...',
+      '今後のイベントはありません。最初のイベントを作成しましょう！': 'Nenhum evento futuro. Crie o primeiro!',
+      'イベントの読み込みに失敗しました。': 'Falha ao carregar os eventos.',
+      '✓ 参加中（取消）': '✓ Participando (cancelar)', '参加する': 'Participar', 'イベントを削除': 'Excluir evento',
+      'イベント名を入力してください。': 'Digite o nome do evento.',
+      '日付を入力してください。': 'Digite a data.',
+      '日付は YYYY/MM/DD の形式で入力してください。': 'Digite a data no formato YYYY/MM/DD.',
+      'イベントを作成中...': 'Criando evento...', 'イベントを作成しました！': 'Evento criado!',
+      'イベントの作成に失敗しました': 'Falha ao criar o evento',
+      'イベントの削除に失敗しました': 'Falha ao excluir o evento',
+      '参加状況の更新に失敗しました': 'Falha ao atualizar a participação',
       'Blackbeard Tavern へようこそ — オールインワンのツールボックスです。': 'Bem-vindo à Blackbeard Tavern — sua caixa de ferramentas tudo-em-um.',
       'コミュニティフィード': 'Feed da comunidade',
       'いま何を考えていますか、海賊さん？': 'No que você está pensando, pirata?',
@@ -171,6 +261,51 @@
       'QRコードジェネレーター': 'Generador de código QR', 'サブネット計算機': 'Calculadora de subredes',
       '無料の本': 'Libros gratis', 'Linuxディストロ': 'Distros de Linux', '便利なスクリプト': 'Scripts útiles',
       'Linuxラボ': 'Laboratorio Linux', 'Ciscoラボ': 'Laboratorio Cisco',
+      // Fase 2 — amigos / chat
+      'フレンド': 'Amigos', '学校のメールでフレンド追加': 'Agregar amigo por correo escolar',
+      'リクエストを送る': 'Enviar solicitud', '保留中のリクエスト': 'Solicitudes pendientes',
+      'マイフレンド': 'Mis amigos', 'グループ': 'Grupos', '会話': 'Conversaciones',
+      '読み込み中...': 'Cargando...', '招待して会話する': 'Invitar a conversar', '招待': 'Invitar',
+      'メンバーを見る': 'Ver miembros', 'メンバー': 'Miembros', '閉じる': 'Cerrar',
+      'メディアを追加': 'Agregar medio', 'メッセージを入力...': 'Escribe un mensaje...',
+      'グループ名': 'Nombre del grupo', 'グループメンバー': 'Miembros del grupo',
+      '承認': 'Aceptar', '拒否': 'Rechazar', 'チャット': 'Chat', '会話を削除': 'Eliminar conversación',
+      'グループを退出': 'Salir del grupo', 'あいさつしよう！👋': '¡Saluda! 👋',
+      'まだメッセージがありません。あいさつしよう！👋': 'Aún no hay mensajes. ¡Saluda! 👋',
+      'まだどのグループにも参加していません。フレンドとのチャットから「＋」で作れます。': 'Aún no estás en ningún grupo. Crea uno desde un chat con un amigo usando el “+”.',
+      'まだフレンドがいません。上から追加しましょう！': 'Aún no tienes amigos. ¡Agrega arriba!',
+      'グループの読み込みに失敗しました。': 'Error al cargar los grupos.',
+      'フレンドの読み込みに失敗しました。': 'Error al cargar los amigos.',
+      'メッセージの読み込みに失敗しました。': 'Error al cargar los mensajes.',
+      'メンバーの読み込みに失敗しました。': 'Error al cargar los miembros.',
+      'リクエストの読み込みに失敗しました。': 'Error al cargar las solicitudes.',
+      '会話がまだありません。左のフレンドから「チャット」を押しましょう！': 'Aún no hay conversaciones. ¡Pulsa “Chat” en un amigo a la izquierda!',
+      '会話の読み込みに失敗しました。': 'Error al cargar las conversaciones.',
+      '保留中のリクエストはありません。': 'No hay solicitudes pendientes.',
+      '招待できるフレンドがいません。': 'No hay amigos para invitar.',
+      'アップロードに失敗しました': 'Error al subir', 'グループの作成に失敗しました': 'Error al crear el grupo',
+      'グループの削除に失敗しました': 'Error al eliminar el grupo', 'グループの退出に失敗しました': 'Error al salir del grupo',
+      'グループを作成': 'Crear grupo', 'グループを作成中...': 'Creando grupo...',
+      'グループ名を入力してください。': 'Escribe un nombre de grupo.',
+      'フレンドリクエストを送信しました！': '¡Solicitud de amistad enviada!',
+      'リクエストの送信に失敗しました': 'Error al enviar la solicitud', 'リクエストを送信中...': 'Enviando solicitud...',
+      '会話の削除に失敗しました': 'Error al eliminar la conversación',
+      '少なくとも1人選んでください。': 'Selecciona al menos una persona.',
+      '招待しました！': '¡Invitación enviada!', '招待に失敗しました': 'Error al invitar', '招待中...': 'Invitando...',
+      // Fase 2 — eventos
+      'イベントを作成': 'Crear evento', 'イベント名': 'Nombre del evento', '時間': 'Hora',
+      '場所': 'Lugar', '説明': 'Descripción', '📷 写真を追加': '📷 Añadir foto',
+      'イベントを読み込み中...': 'Cargando eventos...',
+      '今後のイベントはありません。最初のイベントを作成しましょう！': 'No hay eventos próximos. ¡Crea el primero!',
+      'イベントの読み込みに失敗しました。': 'Error al cargar los eventos.',
+      '✓ 参加中（取消）': '✓ Asistiendo (cancelar)', '参加する': 'Asistir', 'イベントを削除': 'Eliminar evento',
+      'イベント名を入力してください。': 'Escribe el nombre del evento.',
+      '日付を入力してください。': 'Escribe la fecha.',
+      '日付は YYYY/MM/DD の形式で入力してください。': 'Escribe la fecha en formato YYYY/MM/DD.',
+      'イベントを作成中...': 'Creando evento...', 'イベントを作成しました！': '¡Evento creado!',
+      'イベントの作成に失敗しました': 'Error al crear el evento',
+      'イベントの削除に失敗しました': 'Error al eliminar el evento',
+      '参加状況の更新に失敗しました': 'Error al actualizar la asistencia',
       'Blackbeard Tavern へようこそ — オールインワンのツールボックスです。': 'Bienvenido a Blackbeard Tavern — tu caja de herramientas todo en uno.',
       'コミュニティフィード': 'Feed de la comunidad',
       'いま何を考えていますか、海賊さん？': '¿Qué estás pensando, pirata?',
@@ -239,9 +374,39 @@
   var LANG = detect();
   var TABLE = DICT[LANG] || null; // null quando LANG === 'ja'
 
-  function lookup(core) {
+  // Padrões (regex) para textos com partes variáveis (números, datas, nomes)
+  // que não casam com uma chave fixa do dicionário.
+  function pad(s) { s = String(s); return s.length < 2 ? '0' + s : s; }
+  var WK = {
+    en: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+    pt: ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'],
+    es: ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb']
+  };
+  var JP_WK = ['日', '月', '火', '水', '木', '金', '土'];
+  var PATTERNS = [
+    { // data no estilo japonês: 2026年10月29日（水） [· hora]
+      re: /^(📅\s*)?(\d{4})年(\d{1,2})月(\d{1,2})日（([日月火水木金土])）([\s\S]*)$/,
+      fn: function (m) {
+        var i = JP_WK.indexOf(m[5]);
+        var w = (WK[LANG] || WK.en)[i] || m[5];
+        var date = LANG === 'en' ? (m[2] + '/' + pad(m[3]) + '/' + pad(m[4]))
+                                 : (pad(m[4]) + '/' + pad(m[3]) + '/' + m[2]);
+        return (m[1] || '') + date + ' (' + w + ')' + m[6];
+      }
+    },
+    { re: /^(\d+)人参加$/, fn: function (m) { return m[1] + (LANG === 'en' ? ' attending' : LANG === 'pt' ? ' participando' : ' asistiendo'); } },
+    { re: /^(\d+)人のメンバー$/, fn: function (m) { return m[1] + (LANG === 'en' ? ' members' : LANG === 'pt' ? ' membros' : ' miembros'); } },
+    { re: /^作成者:\s*([\s\S]*)$/, fn: function (m) { return (LANG === 'en' ? 'Created by: ' : LANG === 'pt' ? 'Criado por: ' : 'Creado por: ') + m[1]; } }
+  ];
+
+  function translateString(core) {
     if (!TABLE) return undefined;
-    return TABLE[core];
+    if (TABLE[core] !== undefined) return TABLE[core];
+    for (var i = 0; i < PATTERNS.length; i++) {
+      var mm = core.match(PATTERNS[i].re);
+      if (mm) return PATTERNS[i].fn(mm);
+    }
+    return undefined;
   }
 
   // ---- Tradução de nós de texto (preservando espaços nas bordas) ----
@@ -252,7 +417,7 @@
     if (!m) return;
     var core = m[2];
     if (!core) return;
-    var t = lookup(core);
+    var t = translateString(core);
     if (t !== undefined && t !== core) node.nodeValue = m[1] + t + m[3];
   }
 
@@ -264,13 +429,13 @@
       var v = el.getAttribute(a);
       var tv = v && v.trim();
       if (!tv) continue;
-      var t = lookup(tv);
+      var t = translateString(tv);
       if (t !== undefined && t !== tv) el.setAttribute(a, t);
     }
     // valor de botões/inputs do tipo submit/button
     if (el.tagName === 'INPUT' && (el.type === 'submit' || el.type === 'button')) {
       var vv = el.value && el.value.trim();
-      if (vv) { var tt = lookup(vv); if (tt !== undefined && tt !== vv) el.value = tt; }
+      if (vv) { var tt = translateString(vv); if (tt !== undefined && tt !== vv) el.value = tt; }
     }
   }
 
@@ -313,10 +478,10 @@
     var title = document.title || '';
     if (title.indexOf(sep) !== -1) {
       var parts = title.split(sep);
-      var t = lookup(parts[0].trim());
+      var t = translateString(parts[0].trim());
       if (t !== undefined) { parts[0] = t; document.title = parts.join(sep); }
     } else {
-      var tt = lookup(title.trim());
+      var tt = translateString(title.trim());
       if (tt !== undefined) document.title = tt;
     }
   }
@@ -412,5 +577,5 @@
   }
 
   // Exposto para outros scripts que queiram traduzir uma string manualmente
-  window.__i18n = { t: function (s) { var r = lookup(s); return r === undefined ? s : r; }, lang: LANG };
+  window.__i18n = { t: function (s) { var r = translateString(String(s)); return r === undefined ? s : r; }, lang: LANG };
 })();
