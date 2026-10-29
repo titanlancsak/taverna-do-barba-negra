@@ -1,15 +1,9 @@
 const express = require('express');
-const rateLimit = require('express-rate-limit');
 const { register, verifyEmail, login, getMe, forgotPassword, resetPassword, deleteAccount } = require('./authController');
 const { requireAuth } = require('../../middleware/authMiddleware');
+const { authLimiter } = require('../../middleware/rateLimiters');
 
 const router = express.Router();
-
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 10,
-  message: { error: '試行回数が多すぎます。しばらくしてからもう一度お試しください。' }
-});
 
 router.post('/register', authLimiter, register);
 router.get('/verify-email', verifyEmail);
