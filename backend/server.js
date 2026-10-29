@@ -53,7 +53,10 @@ app.use(
       useDefaults: true,
       directives: {
         'script-src': ["'self'", "'wasm-unsafe-eval'", 'https://cdn.socket.io', 'https://cdn.jsdelivr.net'],
-        'style-src': ["'self'", "'unsafe-inline'"],
+        // Google Fonts (Zen Kaku Gothic New): CSS em fonts.googleapis.com;
+        // os arquivos de fonte (fonts.gstatic.com) caem no font-src padrão ('self' https: data:).
+        'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+        'font-src': ["'self'", 'https://fonts.gstatic.com', 'data:'],
         'img-src': ["'self'", 'data:'],
         'media-src': ["'self'"],
         'connect-src': ["'self'", 'ws:', 'wss:'],
