@@ -29,12 +29,16 @@ jobs:
       - name: Configurar Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: npm
           cache-dependency-path: backend/package-lock.json
 
+      # npm install (não npm ci): o sharp traz dependências opcionais específicas
+      # por plataforma (variantes @img/sharp-* e emnapi para o fallback wasm). Um
+      # package-lock gerado no macOS do dev não casa exatamente com o que o runner
+      # Linux precisa, então o npm ci estrito falha; o npm install resolve isso.
       - name: Instalar dependências
-        run: npm ci
+        run: npm install --no-audit --no-fund
 
       - name: Rodar testes
         run: npm test
