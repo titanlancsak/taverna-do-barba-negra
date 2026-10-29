@@ -77,10 +77,12 @@ function buildNav() {
   function buildPanel(items) {
     const panel = document.createElement('div');
     panel.className = 'nav-panel';
+    panel.setAttribute('role', 'menu');
     items.forEach(([label, href]) => {
       const a = document.createElement('a');
       a.href = href;
       a.textContent = label;
+      a.setAttribute('role', 'menuitem');
       panel.appendChild(a);
     });
     return panel;
@@ -93,6 +95,8 @@ function buildNav() {
   const snsBtn = document.createElement('button');
   snsBtn.className = 'nav-menu-btn';
   snsBtn.textContent = 'SNS ▾';
+  snsBtn.setAttribute('aria-haspopup', 'true');
+  snsBtn.setAttribute('aria-expanded', 'false');
 
   const snsPanel = buildPanel(snsItems);
 
@@ -105,6 +109,7 @@ function buildNav() {
     const logoutLink = document.createElement('a');
     logoutLink.href = '#';
     logoutLink.textContent = 'ログアウト';
+    logoutLink.setAttribute('role', 'menuitem');
     logoutLink.addEventListener('click', (e) => {
       e.preventDefault();
       logout();
@@ -133,6 +138,8 @@ function buildNav() {
   const toolsBtn = document.createElement('button');
   toolsBtn.className = 'nav-menu-btn';
   toolsBtn.textContent = 'ツール ▾';
+  toolsBtn.setAttribute('aria-haspopup', 'true');
+  toolsBtn.setAttribute('aria-expanded', 'false');
 
   const toolsPanel = buildPanel(tools);
 
@@ -146,19 +153,36 @@ function buildNav() {
   header.appendChild(right);
 
   // Abrir/fechar os menus
+  function syncAria() {
+    snsBtn.setAttribute('aria-expanded', String(snsPanel.classList.contains('open')));
+    toolsBtn.setAttribute('aria-expanded', String(toolsPanel.classList.contains('open')));
+  }
+  function closeMenus() {
+    snsPanel.classList.remove('open');
+    toolsPanel.classList.remove('open');
+    syncAria();
+  }
   function toggle(panel, other) {
     return (e) => {
       e.stopPropagation();
       other.classList.remove('open');
       panel.classList.toggle('open');
+      syncAria();
     };
   }
   snsBtn.addEventListener('click', toggle(snsPanel, toolsPanel));
   toolsBtn.addEventListener('click', toggle(toolsPanel, snsPanel));
   [snsPanel, toolsPanel].forEach(p => p.addEventListener('click', (e) => e.stopPropagation()));
-  document.addEventListener('click', () => {
-    snsPanel.classList.remove('open');
-    toolsPanel.classList.remove('open');
+  document.addEventListener('click', closeMenus);
+  // Esc fecha os menus e devolve o foco ao botão correspondente
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    const snsWasOpen = snsPanel.classList.contains('open');
+    const toolsWasOpen = toolsPanel.classList.contains('open');
+    if (!snsWasOpen && !toolsWasOpen) return;
+    closeMenus();
+    if (snsWasOpen) snsBtn.focus();
+    else if (toolsWasOpen) toolsBtn.focus();
   });
 }
 
