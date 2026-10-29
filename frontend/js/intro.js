@@ -1,6 +1,10 @@
 // Página de apresentação (intro): revela os elementos conforme entram na tela
 // e reverte quando saem (ou seja, ao rolar de volta pra cima eles somem de novo).
 
+// Traduz o conteúdo ANTES de qualquer fragmentação de texto (wrapChars abaixo
+// quebra os títulos em <span> por caractere, o que impediria o i18n de casar).
+if (window.__i18n && window.__i18n.apply) window.__i18n.apply();
+
 const revealEls = document.querySelectorAll('.reveal');
 
 const observer = new IntersectionObserver((entries) => {

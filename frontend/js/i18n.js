@@ -225,6 +225,45 @@
       // Fase 3 — notificações / busca (global)
       '通知': 'Notifications', 'すべて既読にする': 'Mark all as read', '通知はまだありません。': 'No notifications yet.',
       'たった今': 'just now', 'ユーザー': 'Users', '結果がありません': 'No results',
+      // Fase 4a — campus
+      'Enter を押してチャット…': 'Press Enter to chat…', 'クリックで全体マップ': 'Click for full map',
+      'クリックで拡大': 'Click to zoom', '音楽': 'Music',
+      '矢印キーまたは WASD で移動 · Enter でチャット': 'Move with arrow keys or WASD · Enter to chat',
+      // Fase 4a — digitação
+      'カテゴリ': 'Category', 'ここに入力…': 'Type here…', 'コマンドを解説 ▾': 'Explain command ▾',
+      'デイリー': 'Daily', 'デイリーチャレンジ': 'Daily challenge', 'ミス': 'Misses', 'ランキング': 'Ranking',
+      '実績': 'Achievements', '履歴': 'History', '新しい文': 'New sentence', '精度': 'Accuracy', '言語': 'Language',
+      '「新しい文」を押して、下の入力欄にタイプしてください。': 'Press “New sentence” and type in the field below.',
+      '本日のランキング': 'Today’s ranking', 'まだ履歴がありません。': 'No history yet.', 'まだ記録がありません。': 'No records yet.',
+      'WPM · 精度': 'WPM · Accuracy', '— 実績解除:': '— Achievement unlocked:', 'すべて': 'All',
+      'コマンドの解説を隠す ▴': 'Hide command explanation ▴', '完了！': 'Done!', '本日の課題:': 'Today’s challenge:',
+      '読み込みに失敗しました': 'Failed to load', '例': 'Example', '概要': 'Overview', '用途': 'Usage',
+      // Fase 4a — admin
+      'ステータス — サーバー監視': 'Status — server monitoring', '更新': 'Refresh',
+      '管理パネル — アカウント': 'Admin panel — accounts', '通報 — モデレーション': 'Reports — moderation',
+      '停止': 'Ban', '却下': 'Dismiss', '対応済みにする': 'Mark resolved', '停止解除': 'Unban',
+      '理由:': 'Reason:', '投稿者:': 'Posted by:', '通報者:': 'Reported by:', '接続数:': 'Connections:',
+      'オンラインのユーザー': 'Online users', '（削除済み）': '(deleted)', '通報はありません。': 'No reports.',
+      '有効': 'Active', '管理者': 'Admin', '停止中': 'Banned', '登録:': 'Registered:', 'オフライン': 'Offline', 'オンライン': 'Online',
+      'コア · 負荷:': 'Cores · load:', 'サーバー': 'Server', 'スパム': 'Spam', 'ディスク': 'Disk', 'データベース': 'Database',
+      '不明': 'Unknown', '不適切なコンテンツ': 'Inappropriate content', '停止の理由（任意）:': 'Ban reason (optional):',
+      '匿名の海賊': 'Anonymous pirate', '取得できません': 'Unavailable', '対応済み': 'Resolved', '操作に失敗しました': 'Action failed',
+      '攻撃的な内容': 'Offensive content', '最終更新:': 'Last updated:', '未対応': 'Pending', '稼働時間:': 'Uptime:', '応答:': 'Response:',
+      // Fase 4a — intro
+      'Blackbeard Tavern とは？': 'What is Blackbeard Tavern?',
+      'HTML・CSS・JavaScript（Vanilla）／ Phaser': 'HTML/CSS/JavaScript (Vanilla) / Phaser',
+      'Node.js・Express ／ Socket.io ／ PM2': 'Node.js, Express / Socket.io / PM2',
+      '⚙️ 使用技術': '⚙️ Tech stack', 'ようこそ': 'Welcome', 'インフラ': 'Infrastructure',
+      'キャラクターで歩き回り、他のユーザーと出会えます。': 'Walk around as a character and meet other users.',
+      'サイトに入る': 'Enter the site', 'スクロールして見る ↓': 'Scroll to explore ↓',
+      'タイピングゲーム（EN/JA・ランキング・実績）': 'Typing game (EN/JA · ranking · achievements)',
+      'バックエンド': 'Backend', 'フィード（投稿・いいね・コメント）': 'Feed (posts · likes · comments)',
+      'フレンド・チャット（リアルタイム）': 'Friends & chat (real time)', 'フロントエンド': 'Frontend',
+      'メディア処理': 'Media processing', 'メール': 'Email', 'リアルタイムのマルチプレイヤー空間。': 'A real-time multiplayer space.',
+      '便利なツール、SNS、バーチャルキャンパスが一つになった、': 'Handy tools, a social network and a virtual campus, all in one —',
+      '学生のためのオールインワン・プラットフォーム': 'an all-in-one platform for students',
+      '学生のためのサイトです。': 'A site for students.', '準備はいい？': 'Ready?', '認証': 'Authentication',
+      '💬 ソーシャル（SNS）': '💬 Social (SNS)', '🗺 バーチャルキャンパス': '🗺 Virtual campus', '🛠 ツール': '🛠 Tools',
       '© 2026 Blackbeard Tavern': '© 2026 Blackbeard Tavern'
     },
     pt: {
@@ -412,6 +451,45 @@
       // Fase 3 — notificações / busca (global)
       '通知': 'Notificações', 'すべて既読にする': 'Marcar tudo como lido', '通知はまだありません。': 'Ainda não há notificações.',
       'たった今': 'agora mesmo', 'ユーザー': 'Usuários', '結果がありません': 'Sem resultados',
+      // Fase 4a — campus
+      'Enter を押してチャット…': 'Pressione Enter para conversar…', 'クリックで全体マップ': 'Clique para o mapa completo',
+      'クリックで拡大': 'Clique para ampliar', '音楽': 'Música',
+      '矢印キーまたは WASD で移動 · Enter でチャット': 'Mova com as setas ou WASD · Enter para conversar',
+      // Fase 4a — digitação
+      'カテゴリ': 'Categoria', 'ここに入力…': 'Digite aqui…', 'コマンドを解説 ▾': 'Explicar comando ▾',
+      'デイリー': 'Diário', 'デイリーチャレンジ': 'Desafio diário', 'ミス': 'Erros', 'ランキング': 'Ranking',
+      '実績': 'Conquistas', '履歴': 'Histórico', '新しい文': 'Nova frase', '精度': 'Precisão', '言語': 'Idioma',
+      '「新しい文」を押して、下の入力欄にタイプしてください。': 'Pressione "Nova frase" e digite no campo abaixo.',
+      '本日のランキング': 'Ranking de hoje', 'まだ履歴がありません。': 'Ainda não há histórico.', 'まだ記録がありません。': 'Ainda não há registros.',
+      'WPM · 精度': 'WPM · Precisão', '— 実績解除:': '— Conquista desbloqueada:', 'すべて': 'Todos',
+      'コマンドの解説を隠す ▴': 'Ocultar explicação ▴', '完了！': 'Concluído!', '本日の課題:': 'Desafio de hoje:',
+      '読み込みに失敗しました': 'Falha ao carregar', '例': 'Exemplo', '概要': 'Visão geral', '用途': 'Uso',
+      // Fase 4a — admin
+      'ステータス — サーバー監視': 'Status — monitoramento do servidor', '更新': 'Atualizar',
+      '管理パネル — アカウント': 'Painel admin — contas', '通報 — モデレーション': 'Denúncias — moderação',
+      '停止': 'Banir', '却下': 'Rejeitar', '対応済みにする': 'Marcar como resolvido', '停止解除': 'Desbanir',
+      '理由:': 'Motivo:', '投稿者:': 'Autor:', '通報者:': 'Denunciado por:', '接続数:': 'Conexões:',
+      'オンラインのユーザー': 'Usuários online', '（削除済み）': '(excluído)', '通報はありません。': 'Nenhuma denúncia.',
+      '有効': 'Ativo', '管理者': 'Admin', '停止中': 'Banido', '登録:': 'Cadastrado:', 'オフライン': 'Offline', 'オンライン': 'Online',
+      'コア · 負荷:': 'Núcleos · carga:', 'サーバー': 'Servidor', 'スパム': 'Spam', 'ディスク': 'Disco', 'データベース': 'Banco de dados',
+      '不明': 'Desconhecido', '不適切なコンテンツ': 'Conteúdo impróprio', '停止の理由（任意）:': 'Motivo do banimento (opcional):',
+      '匿名の海賊': 'Pirata anônimo', '取得できません': 'Indisponível', '対応済み': 'Resolvido', '操作に失敗しました': 'Falha na operação',
+      '攻撃的な内容': 'Conteúdo ofensivo', '最終更新:': 'Última atualização:', '未対応': 'Pendente', '稼働時間:': 'Tempo ativo:', '応答:': 'Resposta:',
+      // Fase 4a — intro
+      'Blackbeard Tavern とは？': 'O que é a Blackbeard Tavern?',
+      'HTML・CSS・JavaScript（Vanilla）／ Phaser': 'HTML/CSS/JavaScript (Vanilla) / Phaser',
+      'Node.js・Express ／ Socket.io ／ PM2': 'Node.js, Express / Socket.io / PM2',
+      '⚙️ 使用技術': '⚙️ Tecnologias', 'ようこそ': 'Bem-vindo', 'インフラ': 'Infraestrutura',
+      'キャラクターで歩き回り、他のユーザーと出会えます。': 'Ande como um personagem e encontre outros usuários.',
+      'サイトに入る': 'Entrar no site', 'スクロールして見る ↓': 'Role para ver ↓',
+      'タイピングゲーム（EN/JA・ランキング・実績）': 'Jogo de digitação (EN/JA · ranking · conquistas)',
+      'バックエンド': 'Backend', 'フィード（投稿・いいね・コメント）': 'Feed (posts · curtidas · comentários)',
+      'フレンド・チャット（リアルタイム）': 'Amigos e chat (tempo real)', 'フロントエンド': 'Frontend',
+      'メディア処理': 'Processamento de mídia', 'メール': 'E-mail', 'リアルタイムのマルチプレイヤー空間。': 'Um espaço multiplayer em tempo real.',
+      '便利なツール、SNS、バーチャルキャンパスが一つになった、': 'Ferramentas úteis, rede social e campus virtual, tudo em um —',
+      '学生のためのオールインワン・プラットフォーム': 'uma plataforma tudo-em-um para estudantes',
+      '学生のためのサイトです。': 'Um site para estudantes.', '準備はいい？': 'Pronto?', '認証': 'Autenticação',
+      '💬 ソーシャル（SNS）': '💬 Social (SNS)', '🗺 バーチャルキャンパス': '🗺 Campus virtual', '🛠 ツール': '🛠 Ferramentas',
       '© 2026 Blackbeard Tavern': '© 2026 Blackbeard Tavern'
     },
     es: {
@@ -599,6 +677,45 @@
       // Fase 3 — notificações / busca (global)
       '通知': 'Notificaciones', 'すべて既読にする': 'Marcar todo como leído', '通知はまだありません。': 'Aún no hay notificaciones.',
       'たった今': 'justo ahora', 'ユーザー': 'Usuarios', '結果がありません': 'Sin resultados',
+      // Fase 4a — campus
+      'Enter を押してチャット…': 'Pulsa Enter para chatear…', 'クリックで全体マップ': 'Clic para el mapa completo',
+      'クリックで拡大': 'Clic para ampliar', '音楽': 'Música',
+      '矢印キーまたは WASD で移動 · Enter でチャット': 'Muévete con flechas o WASD · Enter para chatear',
+      // Fase 4a — mecanografía
+      'カテゴリ': 'Categoría', 'ここに入力…': 'Escribe aquí…', 'コマンドを解説 ▾': 'Explicar comando ▾',
+      'デイリー': 'Diario', 'デイリーチャレンジ': 'Desafío diario', 'ミス': 'Errores', 'ランキング': 'Ranking',
+      '実績': 'Logros', '履歴': 'Historial', '新しい文': 'Nueva frase', '精度': 'Precisión', '言語': 'Idioma',
+      '「新しい文」を押して、下の入力欄にタイプしてください。': 'Pulsa "Nueva frase" y escribe en el campo de abajo.',
+      '本日のランキング': 'Ranking de hoy', 'まだ履歴がありません。': 'Aún no hay historial.', 'まだ記録がありません。': 'Aún no hay registros.',
+      'WPM · 精度': 'WPM · Precisión', '— 実績解除:': '— Logro desbloqueado:', 'すべて': 'Todos',
+      'コマンドの解説を隠す ▴': 'Ocultar explicación ▴', '完了！': '¡Completado!', '本日の課題:': 'Desafío de hoy:',
+      '読み込みに失敗しました': 'Error al cargar', '例': 'Ejemplo', '概要': 'Resumen', '用途': 'Uso',
+      // Fase 4a — admin
+      'ステータス — サーバー監視': 'Estado — monitoreo del servidor', '更新': 'Actualizar',
+      '管理パネル — アカウント': 'Panel admin — cuentas', '通報 — モデレーション': 'Reportes — moderación',
+      '停止': 'Banear', '却下': 'Descartar', '対応済みにする': 'Marcar como resuelto', '停止解除': 'Desbanear',
+      '理由:': 'Motivo:', '投稿者:': 'Autor:', '通報者:': 'Reportado por:', '接続数:': 'Conexiones:',
+      'オンラインのユーザー': 'Usuarios en línea', '（削除済み）': '(eliminado)', '通報はありません。': 'Sin reportes.',
+      '有効': 'Activo', '管理者': 'Admin', '停止中': 'Baneado', '登録:': 'Registrado:', 'オフライン': 'Offline', 'オンライン': 'Online',
+      'コア · 負荷:': 'Núcleos · carga:', 'サーバー': 'Servidor', 'スパム': 'Spam', 'ディスク': 'Disco', 'データベース': 'Base de datos',
+      '不明': 'Desconocido', '不適切なコンテンツ': 'Contenido inapropiado', '停止の理由（任意）:': 'Motivo del baneo (opcional):',
+      '匿名の海賊': 'Pirata anónimo', '取得できません': 'No disponible', '対応済み': 'Resuelto', '操作に失敗しました': 'Error en la operación',
+      '攻撃的な内容': 'Contenido ofensivo', '最終更新:': 'Última actualización:', '未対応': 'Pendiente', '稼働時間:': 'Tiempo activo:', '応答:': 'Respuesta:',
+      // Fase 4a — intro
+      'Blackbeard Tavern とは？': '¿Qué es Blackbeard Tavern?',
+      'HTML・CSS・JavaScript（Vanilla）／ Phaser': 'HTML/CSS/JavaScript (Vanilla) / Phaser',
+      'Node.js・Express ／ Socket.io ／ PM2': 'Node.js, Express / Socket.io / PM2',
+      '⚙️ 使用技術': '⚙️ Tecnologías', 'ようこそ': 'Bienvenido', 'インフラ': 'Infraestructura',
+      'キャラクターで歩き回り、他のユーザーと出会えます。': 'Camina como un personaje y conoce a otros usuarios.',
+      'サイトに入る': 'Entrar al sitio', 'スクロールして見る ↓': 'Desplázate para ver ↓',
+      'タイピングゲーム（EN/JA・ランキング・実績）': 'Juego de mecanografía (EN/JA · ranking · logros)',
+      'バックエンド': 'Backend', 'フィード（投稿・いいね・コメント）': 'Feed (publicaciones · me gusta · comentarios)',
+      'フレンド・チャット（リアルタイム）': 'Amigos y chat (tiempo real)', 'フロントエンド': 'Frontend',
+      'メディア処理': 'Procesamiento de medios', 'メール': 'Correo', 'リアルタイムのマルチプレイヤー空間。': 'Un espacio multijugador en tiempo real.',
+      '便利なツール、SNS、バーチャルキャンパスが一つになった、': 'Herramientas útiles, red social y campus virtual, todo en uno —',
+      '学生のためのオールインワン・プラットフォーム': 'una plataforma todo en uno para estudiantes',
+      '学生のためのサイトです。': 'Un sitio para estudiantes.', '準備はいい？': '¿Listo?', '認証': 'Autenticación',
+      '💬 ソーシャル（SNS）': '💬 Social (SNS)', '🗺 バーチャルキャンパス': '🗺 Campus virtual', '🛠 ツール': '🛠 Herramientas',
       '© 2026 Blackbeard Tavern': '© 2026 Blackbeard Tavern'
     }
   };
@@ -646,7 +763,9 @@
     // "tempo atrás" (feed e notificações): 5分前 / 3時間前 / 2日前
     { re: /^(\d+)分前$/, fn: function (m) { return LANG === 'en' ? m[1] + ' min ago' : LANG === 'pt' ? 'há ' + m[1] + ' min' : 'hace ' + m[1] + ' min'; } },
     { re: /^(\d+)時間前$/, fn: function (m) { return LANG === 'en' ? m[1] + ' h ago' : LANG === 'pt' ? 'há ' + m[1] + ' h' : 'hace ' + m[1] + ' h'; } },
-    { re: /^(\d+)日前$/, fn: function (m) { var one = m[1] === '1'; return LANG === 'en' ? m[1] + (one ? ' day ago' : ' days ago') : LANG === 'pt' ? 'há ' + m[1] + (one ? ' dia' : ' dias') : 'hace ' + m[1] + (one ? ' día' : ' días'); } }
+    { re: /^(\d+)日前$/, fn: function (m) { var one = m[1] === '1'; return LANG === 'en' ? m[1] + (one ? ' day ago' : ' days ago') : LANG === 'pt' ? 'há ' + m[1] + (one ? ' dia' : ' dias') : 'hace ' + m[1] + (one ? ' día' : ' días'); } },
+    // contador de presença no campus: "🟢 3人" / "3人"
+    { re: /^(🟢\s*)?(\d+)人$/, fn: function (m) { return (m[1] || '') + m[2] + (LANG === 'es' ? ' en línea' : ' online'); } }
   ];
 
   function translateString(core) {
@@ -761,9 +880,34 @@
     location.reload();
   }
 
+  // Seletor flutuante para páginas sem header (ex.: intro), com estilos inline
+  // (não depende do style.css). Linha de 4 botões no canto superior direito.
+  function buildFloatingSwitcher() {
+    if (document.querySelector('.i18n-switch')) return;
+    var box = document.createElement('div');
+    box.className = 'i18n-switch';
+    box.style.cssText = 'position:fixed;top:12px;right:12px;z-index:3000;display:flex;gap:6px;' +
+      'background:rgba(20,14,8,.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);' +
+      'padding:5px;border-radius:999px;border:1px solid rgba(232,181,58,.35);font-family:sans-serif;';
+    SUPPORTED.forEach(function (code) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.setAttribute('data-no-i18n', '');
+      b.textContent = SHORT[code];
+      var active = code === LANG;
+      b.style.cssText = 'cursor:pointer;border:none;border-radius:999px;padding:5px 10px;font-size:12px;' +
+        'font-weight:700;background:' + (active ? 'linear-gradient(135deg,#f0c24a,#c8860b)' : 'transparent') +
+        ';color:' + (active ? '#231405' : '#e8d9b8') + ';';
+      b.addEventListener('click', function () { setLang(code); });
+      box.appendChild(b);
+    });
+    document.body.appendChild(box);
+  }
+
   function buildSwitcher() {
     var header = document.querySelector('header');
-    if (!header || header.querySelector('.i18n-switch')) return;
+    if (header && header.querySelector('.i18n-switch')) return;
+    if (!header) { buildFloatingSwitcher(); return; }
 
     var side = document.createElement('div');
     side.className = 'nav-side nav-right i18n-switch';
@@ -826,6 +970,13 @@
     init();
   }
 
-  // Exposto para outros scripts que queiram traduzir uma string manualmente
-  window.__i18n = { t: function (s) { var r = translateString(String(s)); return r === undefined ? s : r; }, lang: LANG };
+  // Exposto para outros scripts:
+  //  - t(s): traduz uma string manualmente
+  //  - apply(root): traduz o DOM agora (usado pela intro ANTES de fragmentar os
+  //    títulos em <span> por caractere, senão não casaria mais com o dicionário)
+  window.__i18n = {
+    t: function (s) { var r = translateString(String(s)); return r === undefined ? s : r; },
+    apply: function (root) { if (TABLE) { translateElement(root || document.body); translateTitle(); } },
+    lang: LANG
+  };
 })();
