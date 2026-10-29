@@ -2314,3 +2314,161 @@ main.subnet-page {
   .sc-table tbody th { width: 48%; }
   .sc-vlsm-req { flex-wrap: wrap; }
 }
+
+/* =====================================================================
+   CAMADA PREMIUM (tema Taverna) — só decoração sobre os tokens de :root.
+   Vem por último de propósito: eleva superfícies, botões e campos sem
+   alterar layout (nada de display/flex/padding estrutural).
+   ===================================================================== */
+
+/* Tipografia dos títulos */
+h1, h2, h3 { font-family: var(--font); letter-spacing: 0.005em; }
+h1 { font-weight: 900; }
+h2, h3 { font-weight: 700; }
+
+/* ---- Botões primários (dourado): gradiente + brilho no hover ---- */
+button,
+#add-friend-btn,
+.accept-btn,
+#post-submit-btn {
+  background: var(--accent-grad);
+  color: var(--on-accent);
+  border: none;
+  border-radius: var(--pill);
+  font-family: var(--font);
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.14s ease, box-shadow 0.14s ease, filter 0.14s ease;
+}
+button:hover,
+#add-friend-btn:hover,
+.accept-btn:hover,
+#post-submit-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: var(--glow);
+  filter: saturate(1.08);
+}
+button:active { transform: translateY(0); }
+button:disabled { opacity: 0.55; cursor: not-allowed; box-shadow: none; }
+
+/* ---- Botões secundários: superfície translúcida, não dourado ---- */
+.decline-btn,
+.remove-friend-btn,
+.comment-form button,
+.post-actions button {
+  background: var(--surface-hover);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--pill);
+  transition: background 0.16s, border-color 0.16s, color 0.16s;
+}
+.decline-btn:hover,
+.remove-friend-btn:hover,
+.comment-form button:hover {
+  background: rgba(58, 44, 30, 0.8);
+  border-color: var(--border-strong);
+  color: var(--accent);
+}
+.post-actions button:hover { background: var(--surface-hover); color: var(--text); }
+
+/* ---- Campos de texto: fundo profundo, borda sutil, foco com anel ---- */
+input:not([type="file"]):not([type="checkbox"]):not([type="radio"]),
+select,
+textarea,
+.comment-form input,
+#add-friend-email {
+  background: rgba(15, 10, 6, 0.55);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font);
+  outline: none;
+  transition: border-color 0.16s, box-shadow 0.16s, background 0.16s;
+}
+input:not([type="file"]):not([type="checkbox"]):not([type="radio"]):focus,
+select:focus,
+textarea:focus,
+.comment-form input:focus,
+#add-friend-email:focus {
+  border-color: var(--border-strong);
+  box-shadow: var(--ring);
+  background: rgba(15, 10, 6, 0.72);
+}
+::placeholder { color: var(--text-faint); }
+
+/* ---- Superfícies/cards: translúcido + blur + borda dourada + sombra ---- */
+#post-form-box,
+.post-card,
+.friend-card,
+.request-card,
+.conversation-item,
+.script-card,
+#player-box,
+.intro-card {
+  background: var(--surface);
+  backdrop-filter: blur(10px) saturate(120%);
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+#player-box, .script-card { border-radius: var(--radius-lg); }
+
+/* Realce sutil ao passar o mouse nos cards "clicáveis"/sociais */
+.post-card,
+.friend-card,
+.request-card,
+.conversation-item {
+  transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+}
+.post-card:hover,
+.friend-card:hover,
+.request-card:hover,
+.conversation-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+  border-color: var(--border-strong);
+}
+.conversation-item:hover { background: var(--surface-hover); }
+
+/* Caixa de novo post: realce dourado ao focar dentro */
+#post-form-box:focus-within {
+  border-color: var(--border-strong);
+  box-shadow: var(--glow);
+}
+
+/* ---- Acentos de texto num dourado mais rico/consistente ---- */
+.post-author-name,
+.comment-author,
+.friend-name,
+.request-name,
+.conversation-name,
+#now-playing,
+.script-card h3,
+.link-list a,
+.file-label {
+  color: var(--accent);
+}
+
+/* Divisórias internas dos cards alinhadas ao token de borda */
+.post-form-actions,
+.post-actions,
+.comments-box {
+  border-top-color: var(--border) !important;
+}
+
+/* Avatares com anel dourado discreto */
+.post-author-pic,
+.friend-pic,
+.request-pic,
+.conversation-pic {
+  border: 2px solid var(--border-strong);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .post-card:hover,
+  .friend-card:hover,
+  .request-card:hover,
+  .conversation-item:hover,
+  button:hover { transform: none; }
+}
