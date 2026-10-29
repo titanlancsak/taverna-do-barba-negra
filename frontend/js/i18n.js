@@ -1205,9 +1205,11 @@
   }
 
   function buildSwitcher() {
-    var header = document.querySelector('header');
-    if (header && header.querySelector('.i18n-switch')) return;
-    if (!header) { buildFloatingSwitcher(); return; }
+    // Páginas podem fornecer um ponto de montagem (ex.: a intro editorial o põe
+    // dentro da nav e estiliza via intro.css). Sem mount, cai no <header> comum.
+    var host = document.getElementById('lang-switch-mount') || document.querySelector('header');
+    if (host && host.querySelector('.i18n-switch')) return;
+    if (!host) { buildFloatingSwitcher(); return; }
 
     var side = document.createElement('div');
     side.className = 'nav-side nav-right i18n-switch';
@@ -1237,7 +1239,7 @@
 
     side.appendChild(btn);
     side.appendChild(panel);
-    header.appendChild(side);
+    host.appendChild(side);
 
     btn.addEventListener('click', function (e) {
       e.stopPropagation();
