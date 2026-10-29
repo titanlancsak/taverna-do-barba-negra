@@ -193,6 +193,13 @@ buildNav();
 function addSiteBackground() {
   if (!window.location.pathname.includes('profile.html')) return; // só no perfil
   if (document.getElementById('site-bg')) return;
+
+  // Pula o vídeo de fundo (pesado) no mobile, com movimento reduzido ou em
+  // economia de dados — o CSS já cai num fundo escuro estático nesses casos.
+  const mq = (q) => typeof window.matchMedia === 'function' && window.matchMedia(q).matches;
+  const saveData = navigator.connection && navigator.connection.saveData;
+  if (mq('(max-width: 700px)') || mq('(prefers-reduced-motion: reduce)') || saveData) return;
+
   const isInPages = window.location.pathname.includes('/pages/');
   const src = (isInPages ? '../' : '') + 'assets/img/tavern-bg.mp4';
 
