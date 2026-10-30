@@ -5,7 +5,8 @@ const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
 
-const MEDIA_DIR = path.join(__dirname, '..', '..', '..', 'frontend', 'assets', 'chat-media');
+const { mediaDir } = require('../../config/paths');
+const MEDIA_DIR = mediaDir('chat-media');
 
 // Lista as conversas do usuário (uma linha por pessoa com quem já trocou mensagem)
 async function getConversations(req, res) {
@@ -182,17 +183,11 @@ async function deleteConversation(req, res) {
 
     // Avisa em tempo real: minhas outras abas e o outro usuário (pra fechar/atualizar o chat)
     const io = req.app.get('io');
-    const onlineUsers = req.app.get('onlineUsers');
-    if (io && onlineUsers) {
+    if (io) {
       [userId, otherUserId].forEach(uid => {
-        const sockets = onlineUsers.get(uid);
-        if (sockets) {
-          sockets.forEach(socketId => {
-            io.to(socketId).emit('conversation_deleted', {
-              withUserId: uid === userId ? otherUserId : userId
-            });
-          });
-        }
+        io.to(`user:${uid}`).emit('conversation_deleted', {
+          withUserId: uid === userId ? otherUserId : userId
+        });
       });
     }
 

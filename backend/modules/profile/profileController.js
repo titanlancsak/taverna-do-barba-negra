@@ -4,7 +4,8 @@ const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
 
-const PROFILE_PICS_DIR = path.join(__dirname, '..', '..', '..', 'frontend', 'assets', 'profile-pictures');
+const { mediaDir } = require('../../config/paths');
+const PROFILE_PICS_DIR = mediaDir('profile-pictures');
 
 async function updateProfile(req, res) {
   try {

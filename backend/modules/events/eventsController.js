@@ -5,7 +5,8 @@ const fs = require('fs');
 const crypto = require('crypto');
 const { isAdminEmail } = require('../../config/admins');
 
-const MEDIA_DIR = path.join(__dirname, '..', '..', '..', 'frontend', 'assets', 'event-media');
+const { mediaDir } = require('../../config/paths');
+const MEDIA_DIR = mediaDir('event-media');
 
 // Cria um evento (com foto opcional, reprocessada com sharp)
 async function createEvent(req, res) {

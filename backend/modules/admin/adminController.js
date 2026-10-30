@@ -33,14 +33,12 @@ async function banUser(req, res) {
     const reason = (req.body && req.body.reason ? String(req.body.reason).trim() : '') || null;
     await pool.query('UPDATE users SET is_banned = TRUE, ban_reason = $1 WHERE id = $2', [reason, targetId]);
 
-    // Desconecta na hora os sockets do usuário banido
+    // Desconecta na hora os sockets do usuário banido, em qualquer instância.
+    // disconnectSockets opera sobre a sala `user:<id>` e, com o adapter Redis,
+    // alcança sockets conectados em outras instâncias atrás do ALB.
     const io = req.app.get('io');
-    const onlineUsers = req.app.get('onlineUsers');
-    if (io && onlineUsers) {
-      const sockets = onlineUsers.get(targetId);
-      if (sockets) {
-        sockets.forEach((socketId) => io.sockets.sockets.get(socketId)?.disconnect(true));
-      }
+    if (io) {
+      io.in(`user:${targetId}`).disconnectSockets(true);
     }
 
     res.json({ message: 'ユーザーを停止しました' });

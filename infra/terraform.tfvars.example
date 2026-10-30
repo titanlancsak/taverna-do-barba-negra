@@ -1,0 +1,24 @@
+# Copie para terraform.tfvars e ajuste. NÃO versione o terraform.tfvars real
+# se ele contiver segredos (já está no .gitignore).
+
+project     = "taverna"
+aws_region  = "ap-northeast-1"
+domain      = "blackbeardtavern.me"
+subdomain   = "app"
+github_repo = "titanlancsak/taverna-do-barba-negra"
+
+email_domain = "blackbeardtavern.me"
+# resend_api_key = "re_xxx"   # ou via env: export TF_VAR_resend_api_key=re_xxx
+
+# --- Escala / custo ---
+# Para demonstrar multi-instância atrás do ALB:
+#   enable_redis  = true
+#   desired_count = 2
+enable_redis  = true
+desired_count = 1
+
+# --- DNS ---
+# true  = cria hosted zone delegada do subdomínio (recomendado, seguro)
+# false = usa hosted_zone_id de uma zona existente
+create_hosted_zone = true
+# hosted_zone_id   = "Z..."

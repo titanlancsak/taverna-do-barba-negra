@@ -6,7 +6,8 @@ const fs = require('fs');
 const crypto = require('crypto');
 const { isAdminEmail } = require('../../config/admins');
 
-const MEDIA_DIR = path.join(__dirname, '..', '..', '..', 'frontend', 'assets', 'feed-media');
+const { mediaDir } = require('../../config/paths');
+const MEDIA_DIR = mediaDir('feed-media');
 
 async function createPost(req, res) {
   try {

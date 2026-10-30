@@ -32,12 +32,10 @@ async function createNotification(io, onlineUsers, { userId, actorId, type, refe
       unreadCount: parseInt(unread.rows[0].count)
     };
 
-    const userSockets = onlineUsers.get(userId);
-    if (userSockets) {
-      userSockets.forEach(socketId => {
-        io.to(socketId).emit('new_notification', notification);
-      });
-    }
+    // Emite para a sala do usuário (`user:<id>`): atinge todas as abas do usuário
+    // em qualquer instância via adapter Redis. O parâmetro onlineUsers é mantido
+    // na assinatura por compatibilidade com os chamadores (presença/contagem).
+    io.to(`user:${userId}`).emit('new_notification', notification);
   } catch (err) {
     console.error('Failed to create notification:', err);
   }

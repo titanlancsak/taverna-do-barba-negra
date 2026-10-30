@@ -18,3 +18,17 @@ frontend/assets/event-media/*
 # Binários do laboratório v86 (grandes; baixados manualmente)
 frontend/assets/v86/*
 !frontend/assets/v86/README.txt
+
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+# tfvars reais podem conter segredos (ex.: resend_api_key) — não versionar.
+# O .example e o .terraform.lock.hcl ficam versionados.
+infra/terraform.tfvars
+infra/**/terraform.tfvars
+*.auto.tfvars
+override.tf
+override.tf.json

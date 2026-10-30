@@ -1,0 +1,24 @@
+# Dependências (reinstaladas dentro da imagem)
+**/node_modules
+
+# Segredos e artefatos locais
+backend/.env
+backend/uploads/*
+backend/converted/*
+**/.DS_Store
+*.log
+
+# Mídia enviada por usuários (vive no EFS em produção)
+frontend/assets/profile-pictures/*
+frontend/assets/chat-media/*
+frontend/assets/feed-media/*
+frontend/assets/event-media/*
+
+# Binários grandes baixados manualmente (laboratório v86)
+frontend/assets/v86/*
+
+# Não precisam ir para a imagem da aplicação
+.git
+.github
+infra
+docs
